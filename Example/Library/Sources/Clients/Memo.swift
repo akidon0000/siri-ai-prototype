@@ -8,26 +8,101 @@ public struct Memo: Sendable, Equatable, Identifiable {
 
     public let id: UUID
     public var title: String
-    public var isDone: Bool
+    public var isCompleted: Bool
     public var priority: Priority
     public var creationDate: Date
+    public var completionDate: Date?
     /// 共有している相手のID。空なら自分だけのメモ。
     public var sharedWith: [String]
+    public var note: String?
+    public var tags: Set<String>
+    public var dueDate: DateComponents?
+    public var isFlagged: Bool
+    public var listID: UUID
 
     public init(
         id: UUID = UUID(),
         title: String,
-        isDone: Bool = false,
+        isCompleted: Bool = false,
         priority: Priority = .normal,
         creationDate: Date = .now,
-        sharedWith: [String] = []
+        completionDate: Date? = nil,
+        sharedWith: [String] = [],
+        note: String? = nil,
+        tags: Set<String> = [],
+        dueDate: DateComponents? = nil,
+        isFlagged: Bool = false,
+        listID: UUID = MemoList.defaultID
     ) {
         self.id = id
         self.title = title
-        self.isDone = isDone
+        self.isCompleted = isCompleted
         self.priority = priority
         self.creationDate = creationDate
+        self.completionDate = completionDate
         self.sharedWith = sharedWith
+        self.note = note
+        self.tags = tags
+        self.dueDate = dueDate
+        self.isFlagged = isFlagged
+        self.listID = listID
+    }
+}
+
+/// メモを入れるリスト。
+public struct MemoList: Sendable, Equatable, Identifiable {
+    public static let defaultID = UUID(uuidString: "10000000-0000-0000-0000-000000000000")!
+    public static let `default` = MemoList(id: defaultID, name: "メモ")
+
+    public let id: UUID
+    public var name: String
+
+    public init(id: UUID = UUID(), name: String) {
+        self.id = id
+        self.name = name
+    }
+}
+
+/// `MemoClient.update(_:_:)` に渡す変更。nil の項目は変えない。
+public struct MemoChange: Sendable, Equatable {
+    public var title: String?
+    public var isCompleted: Bool?
+    public var note: String?
+    public var tags: Set<String>?
+    public var dueDate: DateComponents?
+    public var isFlagged: Bool?
+    public var listID: UUID?
+
+    public init(
+        title: String? = nil,
+        isCompleted: Bool? = nil,
+        note: String? = nil,
+        tags: Set<String>? = nil,
+        dueDate: DateComponents? = nil,
+        isFlagged: Bool? = nil,
+        listID: UUID? = nil
+    ) {
+        self.title = title
+        self.isCompleted = isCompleted
+        self.note = note
+        self.tags = tags
+        self.dueDate = dueDate
+        self.isFlagged = isFlagged
+        self.listID = listID
+    }
+
+    /// 変更を `memo` に当てる。完了にしたときは完了日時も入れる。
+    public func apply(to memo: inout Memo, now: Date = .now) {
+        if let title { memo.title = title }
+        if let isCompleted {
+            memo.completionDate = isCompleted ? (memo.completionDate ?? now) : nil
+            memo.isCompleted = isCompleted
+        }
+        if let note { memo.note = note }
+        if let tags { memo.tags = tags }
+        if let dueDate { memo.dueDate = dueDate }
+        if let isFlagged { memo.isFlagged = isFlagged }
+        if let listID { memo.listID = listID }
     }
 }
 

@@ -7,11 +7,11 @@ struct MemoSnippetView: View {
 
     var body: some View {
         HStack {
-            Label(memo.title, systemImage: memo.isDone ? "checkmark.circle.fill" : "circle")
+            Label(memo.title, systemImage: memo.isCompleted ? "checkmark.circle.fill" : "circle")
             Spacer()
             // ボタンにintentを渡すと、押したときにアプリを開かずにそのintentが実行される
             Button("完了", intent: CompleteMemoIntent(memo: memo))
-                .disabled(memo.isDone)
+                .disabled(memo.isCompleted)
         }
         .padding()
     }

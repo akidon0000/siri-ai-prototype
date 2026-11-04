@@ -50,7 +50,39 @@ struct MemoIntentTests {
         _ = try await intent.perform()
 
         let stored = await client.storage.first { $0.id == TestMemoClient.milkID }
-        #expect(stored?.isDone == true)
+        #expect(stored?.isCompleted == true)
+    }
+
+    @Test func createMemoIntentAddsMemoToList() async throws {
+        let intent = CreateMemoIntent()
+        intent.title = "卵を買う"
+        intent.tags = ["買い物"]
+
+        let result = try await intent.perform()
+
+        let memo = try #require(result.value)
+        #expect(memo.title == "卵を買う")
+        #expect(memo.list.id == MemoList.defaultID)
+        let stored = await client.storage.first { $0.id == memo.id }
+        #expect(stored?.tags == ["買い物"])
+    }
+
+    @Test func updateMemoIntentChangesOnlyGivenProperties() async throws {
+        let intent = UpdateMemoIntent()
+        intent.target = MemoEntity(TestMemoClient.seed[0])
+        intent.isCompleted = true
+
+        let result = try await intent.perform()
+
+        let memo = try #require(result.value)
+        #expect(memo.isCompleted)
+        #expect(memo.title == "牛乳を買う")
+        #expect(memo.completionDate != nil)
+    }
+
+    @Test func memoListQueryFindsListByName() async throws {
+        let lists = try await MemoListQuery().entities(matching: "メモ")
+        #expect(lists.map(\.id) == [MemoList.defaultID])
     }
 
     @Test func memoQueryFindsMemosByName() async throws {

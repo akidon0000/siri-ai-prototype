@@ -31,26 +31,22 @@ public nonisolated final class MemoStore: Sendable {
         }
     }
 
-    func add(title: String, priority: MemoPriority) async throws -> MemoEntity {
-        let memo = try await memoClient.add(title: title, priority: priority.clientValue)
-        memosDidChange()
-        return MemoEntity(memo)
-    }
+    // MARK: 読み取り
 
     func memos(for ids: [MemoEntity.ID]) async throws -> [MemoEntity] {
-        try await memoClient.memos(for: ids).map(MemoEntity.init)
+        try await entities(memoClient.memos(for: ids))
     }
 
     func recentMemos() async throws -> [MemoEntity] {
-        try await memoClient.recentMemos().map(MemoEntity.init)
+        try await entities(memoClient.recentMemos())
     }
 
     func memos(matching string: String) async throws -> [MemoEntity] {
-        try await memoClient.memos(matching: string).map(MemoEntity.init)
+        try await entities(memoClient.memos(matching: string))
     }
 
     func allMemos() async throws -> [MemoEntity] {
-        try await memoClient.allMemos().map(MemoEntity.init)
+        try await entities(memoClient.allMemos())
     }
 
     func memo(for id: MemoEntity.ID) async throws -> MemoEntity {
@@ -66,14 +62,63 @@ public nonisolated final class MemoStore: Sendable {
         try await memoClient.contains(title: title)
     }
 
+    func allLists() async throws -> [MemoListEntity] {
+        try await memoClient.allLists().map(MemoListEntity.init)
+    }
+
+    // MARK: 書き込み
+
+    func add(title: String, priority: MemoPriority) async throws -> MemoEntity {
+        try await add(Memo(title: title, priority: priority.clientValue))
+    }
+
+    func add(
+        title: String,
+        note: String? = nil,
+        tags: Set<String> = [],
+        dueDate: DateComponents? = nil,
+        isFlagged: Bool = false,
+        list: MemoListEntity? = nil
+    ) async throws -> MemoEntity {
+        try await add(Memo(
+            title: title,
+            note: note,
+            tags: tags,
+            dueDate: dueDate,
+            isFlagged: isFlagged,
+            listID: list?.id ?? MemoList.defaultID
+        ))
+    }
+
+    private func add(_ memo: Memo) async throws -> MemoEntity {
+        let added = try await memoClient.add(memo)
+        memosDidChange()
+        return try await entities([added])[0]
+    }
+
+    func update(_ id: MemoEntity.ID, _ change: MemoChange) async throws -> MemoEntity {
+        let updated = try await memoClient.update(id, change)
+        memosDidChange()
+        return try await entities([updated])[0]
+    }
+
     func delete(_ ids: [MemoEntity.ID]) async throws {
         try await memoClient.delete(ids)
         memosDidChange()
     }
 
     func complete(_ id: MemoEntity.ID) async throws {
-        try await memoClient.complete(id)
-        memosDidChange()
+        _ = try await update(id, MemoChange(isCompleted: true))
+    }
+
+    // MARK: 変換と通知
+
+    /// リストの名前も入れた `MemoEntity` を作る。
+    private func entities(_ memos: [Memo]) async throws -> [MemoEntity] {
+        let lists = try await memoClient.allLists()
+        return memos.map { memo in
+            MemoEntity(memo, list: lists.first { $0.id == memo.listID } ?? .default)
+        }
     }
 
     func memosDidChange() {

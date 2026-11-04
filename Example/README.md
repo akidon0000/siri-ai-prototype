@@ -45,6 +45,15 @@ intent の中身がチュートリアルのコードとほぼ同じ形になる�
   そのため、フレーズから参照する `AddMemoIntent`・`CompleteMemoIntent`・`MemoEntity`・`MemoPriority` は `public` にしてある。
   `updateAppShortcutParameters()` は、アプリが `MemoStore.configure(client:onChange:)` に渡すクロージャから呼ぶ。
 
+- **第5章のスキーマは、チュートリアルのコードだけではビルドが通らない。** Xcode 27.1 で次を指摘され、直した。
+  | 指摘 | 直したこと |
+  |---|---|
+  | `reminders.locationTrigger` に `event` と `place` が無い | `MemoLocationTriggerEvent`（`.reminders.locationTriggerEvent`、ケースは `arrive`/`depart`）と `PlaceDescriptor` を足した |
+  | `reminders.section` に `name` と `list` が無い | `MemoSectionEntity` に足した |
+  | スキーマの intent に渡す Entity にクエリの準拠が足りない | `MemoListQuery`・`MemoSectionQuery` を `EntityStringQuery` にし、`MemoLocationTriggerEntity` を `TransientAppEntity` にした |
+  | マクロが付いた Entity の `init` で `used before being initialized` | スキーマ外の保存プロパティ（`id`・`sharedWith`）を先に代入する |
+- **`ActivateConversationIntent`（`.assistant.activate`）は入れていない。** entitlement の申請が要り、ワークショップの作るものにも入っていないため。
+
 ## 第1章で決めたこと
 
 Siri 連携は App Intents だけで書き、SiriKit（Intents / IntentsUI / `.intentdefinition`）は使わない。

@@ -19,7 +19,7 @@ import Testing
     try await client.complete(memo.id)
 
     #expect(try await client.recentMemos().isEmpty)
-    #expect(try await client.allMemos().first?.isDone == true)
+    #expect(try await client.allMemos().first?.isCompleted == true)
 }
 
 @Test func deletedMemoIsGoneAndTitleCheckIgnoresCase() async throws {
