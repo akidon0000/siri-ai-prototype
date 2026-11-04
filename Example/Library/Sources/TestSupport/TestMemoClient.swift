@@ -27,7 +27,8 @@ public actor TestMemoClient: MemoClient {
             title: memo.title, isCompleted: memo.isCompleted, priority: memo.priority,
             creationDate: Date(timeIntervalSince1970: Double(nextID * 100)),
             sharedWith: memo.sharedWith, note: memo.note, tags: memo.tags,
-            dueDate: memo.dueDate, isFlagged: memo.isFlagged, listID: memo.listID
+            dueDate: memo.dueDate, isFlagged: memo.isFlagged, listID: memo.listID,
+            lockedBody: memo.lockedBody, revision: memo.revision
         )
         storage.append(memo)
         return memo
@@ -67,5 +68,14 @@ public actor TestMemoClient: MemoClient {
 
     public func allLists() -> [MemoList] {
         [.default]
+    }
+
+    // このアプリにはアカウントも添付も無いので、IDをそのまま名前にし、読み取った文字は空にする
+    public func displayNames(for userIDs: [String]) -> [String] {
+        userIDs
+    }
+
+    public func recognizedText(for id: UUID) -> String {
+        ""
     }
 }

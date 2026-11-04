@@ -33,6 +33,16 @@ struct MemoListView: View {
                             Task { await model.complete(memo) }
                         }
                     }
+                    .contextMenu {
+                        Picker("優先度", selection: Binding(
+                            get: { memo.priority },
+                            set: { priority in Task { await model.setPriority(priority, for: memo) } }
+                        )) {
+                            ForEach(MemoPriority.allCases, id: \.self) { priority in
+                                Text(MemoPriority.caseDisplayRepresentations[priority]?.title ?? "")
+                            }
+                        }
+                    }
                 }
                 .onDelete { offsets in
                     let targets = offsets.map { visibleMemos[$0] }
@@ -78,6 +88,11 @@ private struct MemoRow: View {
             Text(memo.title)
                 .strikethrough(memo.isCompleted)
                 .foregroundStyle(memo.isCompleted ? .secondary : .primary)
+            if memo.priority == .high {
+                Image(systemName: "exclamationmark")
+                    .foregroundStyle(.orange)
+                    .accessibilityLabel("優先度 高")
+            }
         }
     }
 }

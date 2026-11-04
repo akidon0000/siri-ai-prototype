@@ -49,6 +49,23 @@ final class MemoListModel {
         }
     }
 
+    func setPriority(_ priority: MemoPriority, for memo: MemoEntity) async {
+        do {
+            try await store.setPriority(priority, for: memo.id)
+
+            // スキーマに合わせていないツールのintentも、同じようにdonateできる
+            #if SIRI_AI_PREVIEW
+            guard #available(iOS 27.3, *) else { return }
+            #endif
+            let intent = SetMemoPriorityIntent()
+            intent.memo = memo
+            intent.priority = priority
+            try await IntentDonationManager.shared.donate(intent: intent)
+        } catch {
+            errorMessage = String(describing: error)
+        }
+    }
+
     func delete(_ memos: [MemoEntity]) async {
         do {
             try await store.delete(memos.map(\.id))

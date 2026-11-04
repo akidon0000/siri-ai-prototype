@@ -23,8 +23,14 @@ extension MemoListEntity {
     }
 }
 
-// スキーマのintentに渡すEntityは、名前で探せるクエリ（EntityStringQuery）が要る
-struct MemoListQuery: EntityStringQuery {
+// リストは数が少ないので、Spotlightの索引に入れずに全件を返す
+// EnumerableEntityQuery にすると、Siriはこの全件の中からリストを見つけられる
+// スキーマのintentに渡すEntityなので、名前で探せる EntityStringQuery にもしておく
+struct MemoListQuery: EnumerableEntityQuery, EntityStringQuery {
+    func allEntities() async throws -> [MemoListEntity] {
+        try await MemoStore.shared.allLists()
+    }
+
     func entities(for identifiers: [MemoListEntity.ID]) async throws -> [MemoListEntity] {
         try await MemoStore.shared.allLists().filter { identifiers.contains($0.id) }
     }
