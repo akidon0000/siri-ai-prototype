@@ -166,6 +166,15 @@ public nonisolated final class MemoStore: Sendable {
         memosDidChange()
     }
 
+    /// 全てのメモを初期データに戻し、索引も作り直す。
+    func resetToSeedData() async throws {
+        let old = try await memoClient.allMemos().map(\.id)
+        try await memoClient.replaceAll(with: Memo.sampleMemos)
+        try await memoIndexer.remove(old)
+        try await memoIndexer.index(allMemos())
+        memosDidChange()
+    }
+
     func complete(_ id: MemoEntity.ID) async throws {
         _ = try await update(id, MemoChange(isCompleted: true))
     }

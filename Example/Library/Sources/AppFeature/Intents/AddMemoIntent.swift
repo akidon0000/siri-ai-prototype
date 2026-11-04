@@ -16,6 +16,7 @@ public struct AddMemoIntent: AppIntent, PredictableIntent {
 
     public init() {}
 
+    // 対応する全ての言語で、自然な1文として読めるかをShortcutsアプリで確かめる
     public static var parameterSummary: some ParameterSummary {
         Summary("\(\.$title)を優先度\(\.$priority)で追加")
     }
@@ -26,6 +27,7 @@ public struct AddMemoIntent: AppIntent, PredictableIntent {
         }
     }
 
+    // Shortcutsから実行すると、この行に置いたブレークポイントで止まる
     public func perform() async throws -> some IntentResult & ReturnsValue<MemoEntity> & ProvidesDialog & ShowsSnippetIntent {
         // 同じ名前のメモがあれば、その場で別の名前を聞き返す
         if try await MemoStore.shared.contains(title: title) {

@@ -57,6 +57,15 @@ public struct Memo: Sendable, Equatable, Identifiable {
     }
 }
 
+extension Memo {
+    /// テストと動作確認で使う初期データ。
+    public static let sampleMemos: [Memo] = [
+        Memo(title: "牛乳を買う", priority: .high, tags: ["買い物"]),
+        Memo(title: "パンを買う", tags: ["買い物"]),
+        Memo(title: "歯医者を予約する"),
+    ]
+}
+
 /// メモを入れるリスト。
 public struct MemoList: Sendable, Equatable, Identifiable {
     public static let defaultID = UUID(uuidString: "10000000-0000-0000-0000-000000000000")!
