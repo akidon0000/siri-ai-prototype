@@ -4,13 +4,29 @@ import Foundation
 import TestSupport
 import Testing
 
+/// Spotlightの代わりに、索引への登録と削除を記録する。
+actor RecordingIndexer: MemoIndexing {
+    private(set) var indexed: [MemoEntity.ID] = []
+    private(set) var removed: [MemoEntity.ID] = []
+
+    func index(_ memos: [MemoEntity]) {
+        indexed += memos.map(\.id)
+    }
+
+    func remove(_ ids: [MemoEntity.ID]) {
+        removed += ids
+    }
+}
+
 /// `MemoStore.shared` を差し替えるので、このスイートの中は順に実行する。
 @Suite(.serialized)
 struct MemoIntentTests {
     let client = TestMemoClient()
+    let indexer = RecordingIndexer()
 
     init() {
         MemoStore.shared.configure(client: client)
+        MemoStore.shared.configure(indexer: indexer)
     }
 
     @Test func addMemoIntentAddsAndReturnsMemo() async throws {
@@ -78,6 +94,28 @@ struct MemoIntentTests {
         #expect(memo.isCompleted)
         #expect(memo.title == "牛乳を買う")
         #expect(memo.completionDate != nil)
+    }
+
+    @Test func addingUpdatingAndDeletingKeepSpotlightIndexInSync() async throws {
+        let added = try await MemoStore.shared.add(title: "卵を買う")
+        _ = try await MemoStore.shared.update(added.id, MemoChange(title: "卵を2パック買う"))
+        try await MemoStore.shared.delete([added.id])
+
+        #expect(await indexer.indexed == [added.id, added.id])
+        #expect(await indexer.removed == [added.id])
+    }
+
+    @Test func memoQueryReturnsTitlesWithoutBuildingEntities() async throws {
+        let representations = try await MemoQuery().displayRepresentations(for: [TestMemoClient.milkID])
+        #expect(representations.keys.contains(TestMemoClient.milkID))
+    }
+
+    @Test func visualSearchLabelsMatchTitleOrTags() async throws {
+        _ = try await MemoStore.shared.add(title: "Buy milk", tags: ["dairy"])
+        let byTitle = try await MemoStore.shared.memos(matchingAnyOf: ["milk"])
+        let byTag = try await MemoStore.shared.memos(matchingAnyOf: ["Dairy"])
+        #expect(byTitle.map(\.title) == ["Buy milk"])
+        #expect(byTag.map(\.title) == ["Buy milk"])
     }
 
     @Test func memoListQueryFindsListByName() async throws {

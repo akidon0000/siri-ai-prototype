@@ -2,8 +2,9 @@ import AppIntents
 import Clients
 
 // Remindersドメインの reminder スキーマに合わせる。AppEntity への準拠はマクロが付ける
+// IndexedEntity・Transferable への準拠は MemoEntity+Spotlight.swift と MemoEntity+Transferable.swift
 @AppEntity(schema: .reminders.reminder)
-public struct MemoEntity {
+public struct MemoEntity: Sendable {
     // システムがこのメモを指すときに使う、変わらないID
     public let id: UUID
     var title: String

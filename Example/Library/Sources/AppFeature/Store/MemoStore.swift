@@ -14,6 +14,7 @@ public nonisolated final class MemoStore: Sendable {
 
     private let client = Mutex<(any MemoClient)?>(nil)
     private let onChange = Mutex<(@Sendable () -> Void)?>(nil)
+    private let indexer = Mutex<any MemoIndexing>(MemoSpotlightIndexer())
 
     init() {}
 
@@ -22,6 +23,15 @@ public nonisolated final class MemoStore: Sendable {
     public func configure(client: any MemoClient, onChange: (@Sendable () -> Void)? = nil) {
         self.client.withLock { $0 = client }
         self.onChange.withLock { $0 = onChange }
+    }
+
+    /// Spotlightの索引を差し替える。テストで、追加・更新・削除のたびに索引が更新されるかを確かめるために使う。
+    public func configure(indexer: any MemoIndexing) {
+        self.indexer.withLock { $0 = indexer }
+    }
+
+    private var memoIndexer: any MemoIndexing {
+        indexer.withLock { $0 }
     }
 
     private var memoClient: any MemoClient {
@@ -62,6 +72,29 @@ public nonisolated final class MemoStore: Sendable {
         try await memoClient.contains(title: title)
     }
 
+    func titles(for ids: [MemoEntity.ID]) async throws -> [MemoEntity.ID: String] {
+        let memos = try await memoClient.memos(for: ids)
+        return Dictionary(uniqueKeysWithValues: memos.map { ($0.id, $0.title) })
+    }
+
+    /// ビジュアルインテリジェンスのラベルのどれかを、タイトルかタグに含むメモ。
+    func memos(matchingAnyOf labels: [String]) async throws -> [MemoEntity] {
+        try await allMemos().filter { memo in
+            labels.contains { label in
+                memo.title.localizedCaseInsensitiveContains(label)
+                    || memo.tags.contains { $0.localizedCaseInsensitiveCompare(label) == .orderedSame }
+            }
+        }
+    }
+
+    func reindexAll() async throws {
+        try await memoIndexer.index(allMemos())
+    }
+
+    func reindex(_ ids: [MemoEntity.ID]) async throws {
+        try await memoIndexer.index(memos(for: ids))
+    }
+
     func allLists() async throws -> [MemoListEntity] {
         try await memoClient.allLists().map(MemoListEntity.init)
     }
@@ -91,19 +124,24 @@ public nonisolated final class MemoStore: Sendable {
     }
 
     private func add(_ memo: Memo) async throws -> MemoEntity {
-        let added = try await memoClient.add(memo)
+        let added = try await entities([memoClient.add(memo)])[0]
+        // 追加・更新・削除のたびに索引も直す。索引が古いと、消したメモがSpotlightに残る
+        try await memoIndexer.index([added])
+        await MemoNotification.scheduleDueNotification(for: added)
         memosDidChange()
-        return try await entities([added])[0]
+        return added
     }
 
     func update(_ id: MemoEntity.ID, _ change: MemoChange) async throws -> MemoEntity {
-        let updated = try await memoClient.update(id, change)
+        let updated = try await entities([memoClient.update(id, change)])[0]
+        try await memoIndexer.index([updated])
         memosDidChange()
-        return try await entities([updated])[0]
+        return updated
     }
 
     func delete(_ ids: [MemoEntity.ID]) async throws {
         try await memoClient.delete(ids)
+        try await memoIndexer.remove(ids)
         memosDidChange()
     }
 

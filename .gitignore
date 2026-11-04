@@ -5,3 +5,6 @@
 DerivedData/
 *.xcuserstate
 xcuserdata/
+ios/App/build/
+Example/App/build/
+Example/App/build-device/

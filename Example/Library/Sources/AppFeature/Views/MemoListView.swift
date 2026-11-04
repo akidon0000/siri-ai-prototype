@@ -1,9 +1,11 @@
+import AppIntents
 import Components
 import SwiftUI
 
 struct MemoListView: View {
     @Binding var searchText: String
     @State private var model = MemoListModel()
+    @State private var selection = Set<UUID>()
 
     private var visibleMemos: [MemoEntity] {
         guard !searchText.isEmpty else { return model.memos }
@@ -11,7 +13,7 @@ struct MemoListView: View {
     }
 
     var body: some View {
-        List {
+        List(selection: $selection) {
             Section {
                 HStack {
                     TextField("新しいメモ", text: $model.draftTitle)
@@ -49,6 +51,10 @@ struct MemoListView: View {
         }
         .navigationTitle("メモ")
         .searchable(text: $searchText, prompt: "メモを検索")
+        // 選択中のメモをSiriに伝える。「これを完了にして」の「これ」になる
+        .appEntityIdentifier(forSelectionType: UUID.self) { id in
+            EntityIdentifier(for: MemoEntity.self, identifier: id)
+        }
         .alert("操作できませんでした", isPresented: .constant(model.errorMessage != nil)) {
             Button("OK") { model.errorMessage = nil }
         } message: {
