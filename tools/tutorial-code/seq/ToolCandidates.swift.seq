@@ -1,0 +1,22 @@
+#name ToolCandidates.swift
+1|import AppIntents
+1|
+1|// ○ ツールにする: 1文で頼めて、その文からパラメータを埋められる
+1|// 「牛乳のメモを優先度高にして」なら、memo と priority が1文に入っている
+1|@AppIntent(.tool)
+1|struct SetMemoPriorityIntent: AppIntent { /* 次のセクションで作る */ }
+2|
+2|// × 付けない: Siriで使えるスキーマに合わせたintentは、それだけでSiriに公開されている
+2|// @AppIntent(.tool, schema: .reminders.createReminder) と書くとビルドエラーになる
+2|@AppIntent(schema: .reminders.createReminder)
+2|struct CreateMemoIntent { /* 第5章 */ }
+3|
+3|// × 付けない: 実行する操作を持たない、ウィジェットの設定用intent
+3|// （perform() で独自の操作をしているなら、WidgetConfigurationIntent でもツールにできる）
+3|struct SelectMemoListIntent: WidgetConfigurationIntent { /* … */ }
+3|// × 付けない: ショートカットの途中の1手順としてしか意味を持たないintent
+3|// × 付けない: 注文や支払いのように、人が明示的に始めるべき副作用を持つintent
+4|
+4|// ○ ツールにする: スキーマに無い「条件でメモを探す」
+4|@AppIntent(.tool)
+4|struct FindMemosIntent: AppIntent { /* 後のセクションで作る */ }

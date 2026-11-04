@@ -91,6 +91,8 @@
                 Siri・Shortcuts・Spotlightが必要とするメタデータは、ビルド時にコンパイラが
                 このコードから生成する。アプリをインストールした時点でShortcutsアプリに
                 「メモを完了にする」が並び、事前の登録処理は要らない。
+
+                @Code(name: "CompleteMemoIntent.swift", file: "CompleteMemoIntent-04.swift", previousFile: "CompleteMemoIntent-03.swift")
             }
         }
     }
@@ -109,12 +111,14 @@
                 置き換え元のSiriKitのintentクラス名を書く。これで旧intentを使った既存のショートカットと
                 donationが、新しいApp Intentでそのまま動き続ける。
 
-                @Code(name: "CompleteMemoIntent.swift", file: "CompleteMemoIntent-04.swift", previousFile: "CompleteMemoIntent-03.swift")
+                @Code(name: "CompleteMemoIntent.swift", file: "CompleteMemoIntent-05.swift", previousFile: "CompleteMemoIntent-04.swift")
             }
 
             @Step {
                 このPoCはSiriKitを一度も使っていないので、実装時にはこの移行は不要。
-                新規アプリはApp Intentsだけで始めればよい。
+                新規アプリはApp Intentsだけで始めればよい。そのことをコメントに残しておく。
+
+                @Code(name: "CompleteMemoIntent.swift", file: "CompleteMemoIntent-06.swift", previousFile: "CompleteMemoIntent-05.swift")
             }
         }
     }

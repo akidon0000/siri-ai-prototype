@@ -12,6 +12,7 @@
 | 0001 | Siri PoCをApp+Library構成で作り、Android共有用sharedパッケージは作らない | Accepted | pickle-appのApp+Library(SPM)パターンを踏襲するが、shared/CI/配信は対象外にする | [0001-app-library-skeleton-without-shared-package.md](0001-app-library-skeleton-without-shared-package.md) |
 | 0002 | DocCチュートリアルで理解を先行させ、Siri実装はコピペプロンプトで後から着手する | Accepted | `AppFeature.docc` にTutorial形式で5章を作り、各章末のプロンプトで段階的に実装を依頼する | [0002-docc-tutorial-defers-siri-implementation.md](0002-docc-tutorial-defers-siri-implementation.md) |
 | 0003 | DocCチュートリアルのコードを、行ごとにステップ番号を付けたソースから生成する | Accepted | `tools/tutorial-code/seq/*.seq` からステップ別スナップショットを生成し、1ステップ5行程度の制限と参照の整合を自動で確かめる | [0003-generate-tutorial-code-snapshots-from-tagged-sources.md](0003-generate-tutorial-code-snapshots-from-tagged-sources.md) |
+| 0004 | チュートリアルのコードにコメントを書き、行数制限から外す。ベータのAPIにはタグを付ける | Accepted | `//` コメントは行数制限に数えず、説明だけのステップでもコードを見せ続ける。iOS 27.3 betaのセクションに `【iOS 27.3 beta】` を付ける | [0004-tutorial-code-comments-and-beta-tags.md](0004-tutorial-code-comments-and-beta-tags.md) |
 
 ### 状態
 

@@ -12,5 +12,6 @@ Memo の文脈を Apple Intelligence に渡す実装を追加して。
 - AddMemoIntent を PredictableIntent に準拠させる
 - MemoEntity を Transferable に準拠させる
 - MemoVisualSearchQuery (IntentValueQuery, SemanticContentDescriptor) を追加する
+- 「さらに表示」用に ShowMemoSearchResultsIntent (@AppIntent(schema: .visualIntelligence.semanticContentSearch)) を追加する
 
 参考: docs/apple-intelligence/apple-intelligence-and-siri-ai.md, docs/apple-intelligence/apple-intelligence.md

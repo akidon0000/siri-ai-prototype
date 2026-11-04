@@ -4,9 +4,12 @@
 1|
 1|struct MemoListFooter: View {
 2|    var body: some View {
+2-2|        // AddMemoIntent に登録したフレーズを「Siriに〜と話しかけてみてください」と表示する
 2-2|        SiriTipView(intent: AddMemoIntent())
 3|        VStack {
+3|            // AddMemoIntent に登録したフレーズを「Siriに〜と話しかけてみてください」と表示する
 3|            SiriTipView(intent: AddMemoIntent())
+3|            // タップすると、Shortcutsアプリでこのアプリのショートカット一覧が開く
 3|            ShortcutsLink()
 3|        }
 2|    }

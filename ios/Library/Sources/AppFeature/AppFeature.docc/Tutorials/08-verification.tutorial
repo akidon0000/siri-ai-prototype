@@ -87,22 +87,28 @@
             @Step {
                 Shortcutsアプリで新規ショートカットを作り、アクションの一覧にアプリのintentが並ぶかを見る。
                 第2章の `parameterSummary` が自然な1文として読めるか、対応する全ての言語で確かめる。
+
+                @Code(name: "AddMemoIntent.swift", file: "AddMemoIntent-13.swift", previousFile: "AddMemoIntent-12.swift")
             }
 
             @Step {
                 intentの結果を次のアクションにつなぎ、`MemoEntity` が正しい型のまま流れるかを確かめる。
                 `perform()` の先頭にブレークポイントを置いてShortcutsから実行すると、そこで止まる。
+
+                @Code(name: "AddMemoIntent.swift", file: "AddMemoIntent-14.swift", previousFile: "AddMemoIntent-13.swift")
             }
 
             @Step {
                 実機のSpotlightでメモのタイトルを検索し、結果をタップしてアプリの該当画面が開くかを確かめる。
                 App Shortcutのフレーズが、入力途中の候補として出るかも見る。
                 索引をやり直したいときは、設定 > デベロッパのCoreSpotlight Testingから初期化できる。
+
+                @Code(name: "MemoSpotlightIndexer.swift", file: "MemoSpotlightIndexer-04.swift", previousFile: "MemoSpotlightIndexer-03.swift")
             }
         }
     }
 
-    @Section(title: "Siri Evaluationsで会話を自動テストする") {
+    @Section(title: "Siri Evaluationsで会話を自動テストする【iOS 27.3 beta】") {
         @ContentAndMedia {
             Siri Evaluationsは、Siriへの依頼を台本（シナリオ）として書いて実行し、
             Siriがどのintentを呼んだか、どのEntityを見つけたかを期待と比べる。
@@ -185,12 +191,18 @@
             @Step {
                 言い回しを変え、「えーと」のような言葉も混ぜる。メモを画面に出した状態と出していない状態で、
                 「これを完了にして」が通じるかを比べる。
+                通じた言い方は、Siri Evaluationsのシナリオにも足して毎回確かめる。
+
+                @Code(name: "MemoSiriEvaluationTests.swift", file: "MemoSiriEvaluationTests-10.swift", previousFile: "MemoSiriEvaluationTests-09.swift")
             }
 
             @Step {
                 「牛乳のメモをメールで送って」のように、他のアプリにまたがる依頼も試す。
                 AirPodsのように画面が無い状態で、音声の応答だけで結果が伝わるかを確かめる。
                 アプリが対応する全ての言語で同じことをする。
+                足したシナリオにもテストを付けておくと、intentの説明やapp skillを直したときに効果が分かる。
+
+                @Code(name: "MemoSiriEvaluationTests.swift", file: "MemoSiriEvaluationTests-11.swift", previousFile: "MemoSiriEvaluationTests-10.swift")
             }
         }
     }

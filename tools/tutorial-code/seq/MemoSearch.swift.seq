@@ -1,19 +1,25 @@
 #name MemoSearch.swift
 1|import AppIntents
 1|
+1|// Siriが依頼の文から直接組み立てる検索条件。クエリで探さずに値を作れる
+2|// .generable は AppEntityTraits の値。[.generable] と配列でも書ける。変数や計算した値は渡せない
+2|// スキーマに合わせた一時的なEntityなら @AppEntity(.generable, schema: ...) と書く
 1|@AppEntity(.generable)
 1|struct MemoSearch: TransientAppEntity {
 1|    static let typeDisplayRepresentation: TypeDisplayRepresentation = "メモ検索"
-2|
-2|    @Property(title: "キーワード", description: "メモのタイトルに含まれる語")
-2|    var keyword: String
-2|
-2|    @Property(title: "優先度", description: "絞り込む優先度。空なら全ての優先度")
-2|    var priorities: [MemoPriority]
 3|
-3|    var displayRepresentation: DisplayRepresentation {
-3|        "「\(keyword)」の検索"
-3|    }
+3|    // Siriはこの description を見て、依頼のどの部分をどのプロパティに入れるかを決める
+3|    @Property(title: "キーワード", description: "メモのタイトルに含まれる語")
+3|    var keyword: String
 3|
-3|    init() {}
+3|    // 使える型は値型・AppEnum・GenerableなEntityと、それらの配列だけ
+3|    @Property(title: "優先度", description: "絞り込む優先度。空なら全ての優先度")
+3|    var priorities: [MemoPriority]
+4|
+4|    var displayRepresentation: DisplayRepresentation {
+4|        "「\(keyword)」の検索"
+4|    }
+4|
+4|    // システムが値を作るときに使う
+4|    init() {}
 1|}

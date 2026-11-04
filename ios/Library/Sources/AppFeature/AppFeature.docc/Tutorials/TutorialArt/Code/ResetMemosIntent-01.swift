@@ -1,3 +1,4 @@
+// テスト専用のintent。リリースビルドには入れない
 #if DEBUG
 import AppIntents
 

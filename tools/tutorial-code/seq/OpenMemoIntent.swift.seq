@@ -1,11 +1,14 @@
 #name OpenMemoIntent.swift
 1|import AppIntents
 1|
+1|// .system.open: 検索結果のメモをタップしたときなどに、アプリでそのメモを開く
 1|@AppIntent(schema: .system.open)
 1|struct OpenMemoIntent: OpenIntent {
+1|    // 開くメモ
 1|    var target: MemoEntity
 2|
 2|    func perform() async throws -> some IntentResult {
+2|        // アプリの画面をそのメモに切り替える
 2|        await MemoNavigator.shared.show(target.id)
 2|        return .result()
 2|    }

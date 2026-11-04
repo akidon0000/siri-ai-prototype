@@ -1,27 +1,41 @@
 #name MemoShortcuts.swift
 1|import AppIntents
 1|
+1|// コンパイラがこの型を見つけて登録する。登録処理を呼ぶ必要は無い
 1|struct MemoShortcuts: AppShortcutsProvider {
 2|    static var appShortcuts: [AppShortcut] {
+8|        // アクションボタンにも割り当てられる。画面を見ずに押されても伝わる応答にしておく（第4章）
 2|        AppShortcut(
 2|            intent: AddMemoIntent(),
+2|            // フレーズには必ず \(.applicationName) を入れる
 2-2|            phrases: ["\(.applicationName)にメモを追加して"]
 3-3|            phrases: ["\(.applicationName)にメモを追加して"],
+4|            // \(\.$priority) には優先度（低・通常・高）が入る。String型のパラメータは埋め込めない
 4|            phrases: [
 4|                "\(.applicationName)にメモを追加して",
 4|                "\(.applicationName)に優先度\(\.$priority)のメモを追加",
 4|            ],
+3|            // ShortcutsアプリやSpotlightのタイルに出る、短い名前とアイコン
 3|            shortTitle: "メモを追加",
 3|            systemImageName: "note.text.badge.plus"
 2|        )
 5|
 5|        AppShortcut(
 5|            intent: CompleteMemoIntent(),
+5|            // MemoEntity を埋め込むと、メモのタイトルそのものをフレーズの一部として言える
 5|            phrases: ["\(.applicationName)で\(\.$memo)を完了にして"],
 5|            shortTitle: "メモを完了",
 5|            systemImageName: "checkmark.circle"
 5|        )
 2|    }
 6|
+6|    // Shortcutsアプリでのタイルの色
 6|    static let shortcutTileColor: ShortcutTileColor = .orange
+7|
+7|    // この言い方ではアプリを起動しない、というフレーズ
+7|    static var negativePhrases: NegativeAppShortcutPhrases {
+7|        NegativeAppShortcutPhrases(phrases: [
+7|            "\(.applicationName)の使い方を教えて",
+7|        ])
+7|    }
 1|}

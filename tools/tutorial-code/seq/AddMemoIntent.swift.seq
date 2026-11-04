@@ -2,41 +2,54 @@
 1|import AppIntents
 1|
 1-11|struct AddMemoIntent: AppIntent {
+12|// PredictableIntent: 提案として表示されるときの文言を決められる
 12|struct AddMemoIntent: AppIntent, PredictableIntent {
+1|    // ShortcutsアプリやSpotlightに表示される操作名
 1|    static let title: LocalizedStringResource = "メモを追加"
+2|    // Shortcutsアプリでの説明。Siriもこれを読んでintentの役割を知る
 2|    static let description = IntentDescription("新しいメモを1件追加する。")
 3|
 3-7|    @Parameter(title: "タイトル")
+8|    // 値が無いとき、Siriはこの文で聞き返す
 8|    @Parameter(title: "タイトル", requestValueDialog: "どんなメモを追加しますか？")
 3|    var title: String
 4|
+4|    // AppEnumなので、Siriは「低・通常・高」の中から選ぶ。言われなければ通常
 4|    @Parameter(title: "優先度", default: .normal)
 4|    var priority: MemoPriority
 6|
+6|    // Shortcutsアプリでは、パラメータを埋め込んだこの1文として表示される
+13|    // 対応する全ての言語で、自然な1文として読めるかをShortcutsアプリで確かめる
 6|    static var parameterSummary: some ParameterSummary {
 6|        Summary("\(\.$title)を優先度\(\.$priority)で追加")
 6|    }
 12|
+12|    // 提案には「「牛乳を買う」をメモに追加」のような短い説明を出す
 12|    static var predictionConfiguration: some IntentPredictionConfiguration {
 12|        IntentPrediction(parameters: (\Self.$title)) { title in
 12|            DisplayRepresentation(title: "「\(title)」をメモに追加")
 12|        }
 12|    }
 5|
+14|    // Shortcutsから実行すると、この行に置いたブレークポイントで止まる
 5-6|    func perform() async throws -> some IntentResult & ReturnsValue<MemoEntity> {
 7-9|    func perform() async throws -> some IntentResult & ReturnsValue<MemoEntity> & ProvidesDialog {
 10-10|    func perform() async throws -> some IntentResult & ReturnsValue<MemoEntity> & ProvidesDialog & ShowsSnippetView {
 11|    func perform() async throws -> some IntentResult & ReturnsValue<MemoEntity> & ProvidesDialog & ShowsSnippetIntent {
+9|        // 同じ名前のメモがあれば、その場で別の名前を聞き返す
 9|        if try await MemoStore.shared.contains(title: title) {
 9|            title = try await $title.requestValue("同じ名前のメモがあります。別の名前にしますか？")
 9|        }
 5|        let memo = try await MemoStore.shared.add(title: title, priority: priority)
+5|        // 作ったメモを返すと、ショートカットの次のアクションに渡せる
 5-6|        return .result(value: memo)
 7|        return .result(
 7|            value: memo,
+7|            // full は画面が無いときに読み上げる文、supporting は画面と一緒に出す短い文
 7-9|            dialog: IntentDialog(full: "「\(memo.title)」をメモに追加しました。", supporting: "追加しました")
 10|            dialog: IntentDialog(full: "「\(memo.title)」をメモに追加しました。", supporting: "追加しました"),
 10-10|            view: MemoSnippetView(memo: memo)
+11|            // ボタンを押せるスニペットは、ビューではなく SnippetIntent で返す
 11|            snippetIntent: MemoSnippetIntent(memo: memo)
 7|        )
 5|    }

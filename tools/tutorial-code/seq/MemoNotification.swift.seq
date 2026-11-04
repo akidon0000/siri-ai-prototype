@@ -5,6 +5,7 @@
 1|func makeDueNotification(for memo: MemoEntity) -> UNMutableNotificationContent {
 1|    let content = UNMutableNotificationContent()
 2|    content.title = memo.title
+2|    // 通知にメモを結び付ける。通知を見ながら「これを完了にして」と言える
 2|    content.appEntityIdentifiers = [
 2|        EntityIdentifier(for: MemoEntity.self, identifier: memo.id)
 2|    ]

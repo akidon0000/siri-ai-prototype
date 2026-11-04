@@ -1,0 +1,16 @@
+#name ShowMemoSearchResultsIntent.swift
+1|import AppIntents
+1|import VisualIntelligence
+1|
+1|// ビジュアルインテリジェンスの「さらに表示」から呼ばれ、アプリ内の検索結果を開く
+1|@AppIntent(schema: .visualIntelligence.semanticContentSearch)
+1|struct ShowMemoSearchResultsIntent {
+1|    // カメラやスクリーンショットから読み取った内容
+1|    var semanticContent: VisualIntelligence.SceneDescriptor
+2|
+2|    func perform() async throws -> some IntentResult {
+2|        // MemoVisualSearchQuery と同じ条件で探した一覧を、アプリの画面に出す
+2|        await MemoNavigator.shared.showVisualSearchResults(for: semanticContent)
+2|        return .result()
+2|    }
+1|}

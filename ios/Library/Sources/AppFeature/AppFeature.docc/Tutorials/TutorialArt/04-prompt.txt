@@ -9,6 +9,7 @@ Memo の Intent に、Siriとの会話まわりを実装して。
 - MemoSnippetView と MemoSnippetIntent (SnippetIntent) を作り、完了ボタンで CompleteMemoIntent を実行する
 - AddMemoIntent の結果に ShowsSnippetIntent を加える（ReturnsValue<MemoEntity> は残す）
 - MemoEntity を SnippetRepresentableEntity に準拠させ、CardSnippet を返す
+- CompleteMemoIntent に ProvidesDialog の応答を足し、メモが無いときは MemoIntentError (CustomLocalizedStringResourceConvertible) を投げる
 - 応答文は docs/apple-intelligence/siri-human-interface-guidelines.md の指針に沿わせる（アプリ名を入れない、音声だけで伝わる）
 
 参考: docs/apple-intelligence/siri-human-interface-guidelines.md

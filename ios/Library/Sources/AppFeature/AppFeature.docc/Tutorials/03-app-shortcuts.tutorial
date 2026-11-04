@@ -73,6 +73,8 @@
                 `AppShortcutsProvider` の `negativePhrases` に登録できる。
                 Appleは、ローカライズされたフレーズや表示名を匿名化してモデルの学習に使う場合があると明記しているので、
                 実際に人が口にする自然な言い方を選ぶ。
+
+                @Code(name: "MemoShortcuts.swift", file: "MemoShortcuts-07.swift", previousFile: "MemoShortcuts-06.swift")
             }
         }
     }
@@ -108,6 +110,8 @@
                 App ShortcutはiPhoneやApple Watchのアクションボタンにも割り当てられる。
                 アクションボタンから押されたときは画面を見ていないこともあるので、
                 第4章で作る音声の応答だけで結果が伝わるようにしておく。
+
+                @Code(name: "MemoShortcuts.swift", file: "MemoShortcuts-08.swift", previousFile: "MemoShortcuts-07.swift")
             }
         }
     }

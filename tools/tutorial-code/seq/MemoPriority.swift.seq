@@ -1,11 +1,14 @@
 #name MemoPriority.swift
 1|import AppIntents
 1|
+1|// AppEnum にすると、Siriは決まった選択肢の中から値を選ぶ。フレーズにも埋め込める
 1|enum MemoPriority: String, AppEnum {
 1|    case low, normal, high
 2|
+2|    // ShortcutsアプリやSiriでの型の名前
 2|    static let typeDisplayRepresentation: TypeDisplayRepresentation = "優先度"
 3|
+3|    // 読み上げと表示に使う、各ケースの名前
 3|    static let caseDisplayRepresentations: [MemoPriority: DisplayRepresentation] = [
 3|        .low: "低",
 3|        .normal: "通常",

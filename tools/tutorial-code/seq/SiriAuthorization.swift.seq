@@ -1,6 +1,7 @@
 #name SiriAuthorization.swift
 1|import Intents
 1|
+1|// SiriKitで必要だった利用許可のダイアログ。App Intentsでは要らない
 1|func requestSiriAccess() {
 1|    INPreferences.requestSiriAuthorization { status in
 1|        print("Siri:", status == .authorized ? "許可" : "未許可")

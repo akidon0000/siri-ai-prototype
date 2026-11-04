@@ -1,15 +1,18 @@
 #name MemoListEntity.swift
 1|import AppIntents
 1|
+1|// Remindersドメインの list スキーマ。id と name は名前も型もスキーマ通りにする
 1|@AppEntity(schema: .reminders.list)
 1|struct MemoListEntity {
 1|    let id: UUID
 1|    var name: String
+2|    // スキーマが求める残りの必須プロパティ
 2|    var type: MemoListType
 2|
 2|    var displayRepresentation: DisplayRepresentation {
 2|        DisplayRepresentation(title: "\(name)")
 2|    }
 3|
+3|    // リストを探すクエリ
 3|    static let defaultQuery = MemoListQuery()
 1|}

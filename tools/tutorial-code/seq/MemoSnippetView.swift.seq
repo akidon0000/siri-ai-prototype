@@ -1,6 +1,7 @@
 #name MemoSnippetView.swift
 1|import SwiftUI
 1|
+1|// Siriの結果に出すビュー。アプリの画面より小さく、要点だけを見せる
 1|struct MemoSnippetView: View {
 1|    let memo: MemoEntity
 2|
@@ -9,6 +10,7 @@
 3|        HStack {
 3-3|            Label(memo.title, systemImage: memo.isDone ? "checkmark.circle.fill" : "circle")
 4|            Label(memo.title, systemImage: memo.isCompleted ? "checkmark.circle.fill" : "circle")
+3|            // ボタンにintentを渡すと、押したときにアプリを開かずにそのintentが実行される
 3|            Button("完了", intent: CompleteMemoIntent(memo: memo))
 3|        }
 2|    }

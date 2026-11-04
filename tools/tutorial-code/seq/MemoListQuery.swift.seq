@@ -1,0 +1,15 @@
+#name MemoListQuery.swift
+1|import AppIntents
+1|
+1|// リストは数が少ないので、Spotlightの索引に入れずに全件を返す
+1|// EnumerableEntityQuery にすると、Siriはこの全件の中からリストを見つけられる
+1|struct MemoListQuery: EnumerableEntityQuery {
+1|    func allEntities() async throws -> [MemoListEntity] {
+1|        try await MemoStore.shared.allLists()
+1|    }
+2|
+2|    // EntityQuery としての、IDからリストを返す処理も要る
+2|    func entities(for identifiers: [MemoListEntity.ID]) async throws -> [MemoListEntity] {
+2|        try await MemoStore.shared.lists(for: identifiers)
+2|    }
+1|}

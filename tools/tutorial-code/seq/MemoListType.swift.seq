@@ -1,6 +1,7 @@
 #name MemoListType.swift
 1|import AppIntents
 1|
+1|// Remindersドメインの listType スキーマ。AppEnum への準拠はマクロが付ける
 1|@AppEnum(schema: .reminders.listType)
 1|enum MemoListType: String {
 1|    case standard

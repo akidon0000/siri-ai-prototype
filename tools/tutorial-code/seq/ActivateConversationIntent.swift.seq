@@ -1,11 +1,14 @@
 #name ActivateConversationIntent.swift
 1|import AppIntents
 1|
+1|// 日本でサイドボタンを長押ししたときに呼ばれる。entitlementの申請が要る
 1|@AppIntent(schema: .assistant.activate)
 1|struct ActivateConversationIntent {
+1|    // アプリを前面に出してから実行する
 1|    static let supportedModes: IntentModes = .foreground
 2|
 2|    func perform() async throws -> some IntentResult {
+2|        // アプリ内の音声アシスタントで聞き取りを始める
 2|        await ConversationController.shared.startListening()
 2|        return .result()
 2|    }

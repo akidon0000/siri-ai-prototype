@@ -1,0 +1,14 @@
+#name MemoIntentError.swift
+1|import AppIntents
+1|
+1|// intentが投げるエラー。Siriはこの型の文をそのまま読み上げる
+1|enum MemoIntentError: Error, CustomLocalizedStringResourceConvertible {
+1|    case memoDeleted
+2|
+2|    var localizedStringResource: LocalizedStringResource {
+2|        switch self {
+2|        // 何が起きたかを、その状況の言葉で伝える。広告や課金の勧誘は入れない
+2|        case .memoDeleted: "そのメモはもう削除されています"
+2|        }
+2|    }
+1|}

@@ -1,0 +1,20 @@
+#name MemoSchemaMap.swift
+1|import AppIntents
+1|
+1|// Siriで使えるドメイン（Reminders・Mail・Photosなど）のスキーマに合わせると、Siriにも公開される
+1|@AppIntent(schema: .reminders.createReminder)
+1|struct CreateMemoIntent { /* … */ }
+1|
+1|// Shortcutsアプリでだけ使えるドメイン（Journaling・Booksなど）のスキーマは、Siriには公開されない
+1|@AppIntent(schema: .journal.createEntry)
+1|struct CreateJournalEntryIntent { /* … */ }
+2|
+2|// Memoは完了・未完了を持つので、NotesではなくRemindersのスキーマに合わせる
+2|@AppEntity(schema: .reminders.reminder)
+2|struct MemoEntity { /* … */ }
+2|// 更新と削除も .reminders.updateReminder と .reminders.deleteReminders に合わせる
+3|
+3|// Mailのように use-case group を持つドメインでは、組のスキーマを全て採用する
+3|// 一部だけを採用すると、欠けているスキーマごとにビルド警告が出る
+4|
+4|// Xcodeで reminders_ と入力して補完からスキーマを選ぶと、必要なプロパティが全て入ったテンプレートが展開される

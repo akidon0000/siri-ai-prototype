@@ -3,4 +3,5 @@ import Evaluations
 import SiriEvaluations
 import Testing
 
+// アプリのintentとEntityを名前で引くための定義
 let memoIntents = IntentDefinitions(bundleIdentifier: "com.akidon0000.SiriAIPrototype")

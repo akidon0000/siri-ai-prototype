@@ -7,6 +7,7 @@
 2|
 2|    var body: some View {
 2|        Text(memo.title)
+3|            // 表示中のメモをNSUserActivityに載せ、「これ」がどのメモかをSiriに伝える
 3|            .userActivity("com.akidon0000.SiriAIPrototype.memo") { activity in
 3|                activity.title = memo.title
 3|                activity.appEntityIdentifier = EntityIdentifier(for: MemoEntity.self, identifier: memo.id)

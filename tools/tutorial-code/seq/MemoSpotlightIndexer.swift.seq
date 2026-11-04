@@ -2,13 +2,17 @@
 1|import AppIntents
 1|import CoreSpotlight
 1|
+1|// Spotlightのセマンティック索引に、メモを入れたり消したりする
+4|// 索引をやり直したいときは、端末の 設定 > デベロッパ > CoreSpotlight Testing で初期化できる
 1|struct MemoSpotlightIndexer {
 1|    private let searchIndex = CSSearchableIndex(name: "memos")
 2|
+2|    // 追加・更新したメモを索引に入れる
 2|    func index(_ memos: [MemoEntity]) async throws {
 2|        try await searchIndex.indexAppEntities(memos)
 2|    }
 3|
+3|    // 削除したメモを索引から消す
 3|    func remove(_ ids: [MemoEntity.ID]) async throws {
 3|        try await searchIndex.deleteAppEntities(identifiedBy: ids, ofType: MemoEntity.self)
 3|    }
