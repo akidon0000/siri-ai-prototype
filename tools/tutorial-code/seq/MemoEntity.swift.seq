@@ -1,5 +1,6 @@
 #name MemoEntity.swift
 1|import AppIntents
+15|import CoreSpotlight
 1|
 7|@AppEntity(schema: .reminders.reminder)
 1-6|struct MemoEntity: AppEntity {
@@ -27,6 +28,29 @@
 13|
 13|    @Property(title: "同期リビジョン", visibility: .internal)
 13|    var revision: Int
+14|
+14|    @ComputedProperty(title: "期限切れ", description: "期限を過ぎていて、まだ完了していなければtrue")
+14|    var isOverdue: Bool {
+14|        !isCompleted && (dueDate?.date.map { $0 < .now } ?? false)
+14|    }
+15|
+15|    @ComputedProperty(title: "本文", description: "メモの本文のテキスト", indexingKey: \.contentDescription)
+15|    var noteText: String {
+15|        note.map { String($0.characters) } ?? ""
+15|    }
+16|
+16|    @ComputedProperty(title: "リスト名", description: "メモが入っているリストの名前",
+16|                      customIndexingKey: CSCustomAttributeKey(keyName: "com_akidon0000_SiriAIPrototype_MemoEntity_listName")!)
+16|    var listName: String {
+16|        list.name
+16|    }
+17|
+17|    @DeferredProperty(title: "共有相手", description: "このメモを共有している人の名前", authenticationPolicy: .requiresAuthentication)
+17|    var collaboratorNames: [String] {
+17|        get async {
+17|            await MemoStore.shared.displayNames(for: sharedWith)
+17|        }
+17|    }
 2-6|
 2-6|    static let typeDisplayRepresentation: TypeDisplayRepresentation = "メモ"
 3|

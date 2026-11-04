@@ -5,7 +5,8 @@
         ここで作る `MemoEntity` と `AddMemoIntent` は、第4章以降でも同じファイルを育てていく。
 
         教材: `docs/app-intents/app-intents.md`、
-        Apple Developer Documentation「Defining app entities for your custom data types」
+        [App Intents](https://developer.apple.com/documentation/appintents)、
+        [Defining app entities for your custom data types](https://developer.apple.com/documentation/appintents/defining-app-entities-for-your-custom-data-types)
     }
 
     @Section(title: "App Entity: データをシステムに見せる") {

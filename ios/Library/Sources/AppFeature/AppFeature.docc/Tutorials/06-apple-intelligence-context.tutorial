@@ -5,10 +5,11 @@
         カメラ（ビジュアルインテリジェンス）という6つの経路で、Apple Intelligenceにアプリの文脈を渡す。
 
         教材: `docs/apple-intelligence/apple-intelligence-and-siri-ai.md`、
-        Apple Developer Documentation「Making app entities available in Spotlight」
-        「Providing contextual cues to Apple Intelligence and Siri」
-        「Donating your app's data and actions to the system」、
-        WWDC26「Explore advanced App Intents features for Siri and Apple Intelligence」
+        [Making app entities available in Spotlight](https://developer.apple.com/documentation/appintents/making-app-entities-available-in-spotlight)、
+        [Providing contextual cues to Apple Intelligence and Siri](https://developer.apple.com/documentation/appintents/providing-contextual-cues-to-apple-intelligence-and-siri)、
+        [Donating your app's data and actions to the system](https://developer.apple.com/documentation/appintents/donating-your-apps-data-and-actions-to-the-system)、
+        [Integrating your app with visual intelligence](https://developer.apple.com/documentation/visualintelligence/integrating-your-app-with-visual-intelligence)、
+        [WWDC26: Explore advanced App Intents features for Siri and Apple Intelligence](https://developer.apple.com/videos/play/wwdc2026/343/)
     }
 
     @Section(title: "Spotlightのセマンティック索引に載せる") {
