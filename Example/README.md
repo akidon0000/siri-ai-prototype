@@ -37,6 +37,17 @@ intent の中身がチュートリアルのコードとほぼ同じ形になる�
 | 7 | ツール（`SetMemoPriorityIntent`、`FindMemosIntent`）と app skill |
 | 8 | `ResetMemosIntent`、App Intents Testing の UI テスト、Siri Evaluations の評価 |
 
+## 第1章で決めたこと
+
+Siri 連携は App Intents だけで書き、SiriKit（Intents / IntentsUI / `.intentdefinition`）は使わない。
+チュートリアルの `CompleteMemoIntent` は `CustomIntentMigratedAppIntent` に準拠しているが、
+これは SiriKit のカスタムintentから移行するアプリのためのもので、SiriKit を使ったことのないこのアプリには付けない。
+
+```bash
+grep -rn --include="*.swift" "import Intents" Example/   # 1件も出ないこと
+find Example -name "*.intentdefinition"                   # 1件も出ないこと
+```
+
 ## iOS 27.3 beta の API
 
 第4章の `CardSnippet`、第7章のツールと app skill、第8章の Siri Evaluations は iOS 27.3 beta の SDK にしか無い。
