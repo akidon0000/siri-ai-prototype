@@ -24,6 +24,10 @@ struct MemoListView: View {
                         Task { await model.complete(memo) }
                     }
                 }
+            } footer: {
+                MemoListFooter()
+                    .padding(.top, 24)
+                    .frame(maxWidth: .infinity)
             }
         }
         .overlay {
