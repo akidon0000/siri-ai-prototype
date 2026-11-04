@@ -1,10 +1,11 @@
 Tutorial 5 (Siri AI Developer PreviewのToolIntent) を読んで理解した。
 Tutorial 2〜4 で作った Memo の AppIntent を Siri AI Developer Preview 向けに拡張して。
 
-- AddMemoIntent / ListMemosIntent / CompleteMemoIntent に @AppIntent(AppIntentTraits) を付けて
-  ToolIntent として公開する
+- AddMemoIntent / ListMemosIntent / CompleteMemoIntent に @AppIntent(.tool) を付けて
+  ToolIntent として公開する（title / description / 各@Parameterのdescriptionを埋める）
+- 検索条件用に MemoSearch: TransientAppEntity を @AppEntity(.generable) で定義する
 - 複数のIntentをまとめて使う操作（例: 「今日やることを全部終わらせて」）向けに、
-  app skill を1つ用意する
+  Skills.skillsbundle/Skills/memo-xxx/SKILL.md として app skill を1つ用意する
 - Siri Integration Advisor や Siri Evaluations で検証する手順をAppFeature.docc内のメモとして残す
 
 参考: docs/apple-intelligence/siri-ai-developer-preview.md

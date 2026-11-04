@@ -2,7 +2,9 @@ Tutorial 4 (Apple IntelligenceとSiri AIへの統合) を読んで理解した�
 Memo の AppEntity を Apple Intelligence から見つけられるようにして。
 
 - Memo を Transferable に準拠させる
-- Spotlightインデックス向けに IndexedEntity 対応を追加する（CSSearchableItemAttributeSet）
-- 新しいメモを追加したときに donation (donate) を呼ぶ
+- Memo を IndexedEntity に準拠させ、CSSearchableIndex.indexAppEntities でSpotlightに載せる
+- UIからメモを追加したときに IntentDonationManager.shared.donate で donation する
+- Memo を OwnershipProvidingEntity に準拠させ、共有メモかどうかの所有権を返す
+- メモ一覧ビューに appEntityIdentifier(forSelectionType:) でオンスクリーンコンテキストを付ける
 
 参考: docs/apple-intelligence/apple-intelligence-and-siri-ai.md, docs/apple-intelligence/apple-intelligence.md
