@@ -1,0 +1,21 @@
+#name SetMemoPriorityIntent.swift
+1|import AppIntents
+1|
+4|@AppIntent(.tool)
+1|struct SetMemoPriorityIntent: AppIntent {
+1|    static let title: LocalizedStringResource = "メモの優先度を変える"
+5|    static let description = IntentDescription("メモ1件の優先度を、低・通常・高のいずれかに変更する。")
+2|
+2-4|    @Parameter(title: "メモ")
+5|    @Parameter(title: "メモ", description: "優先度を変えたいメモ")
+2|    var memo: MemoEntity
+2|
+2-4|    @Parameter(title: "優先度")
+5|    @Parameter(title: "優先度", description: "変更後の優先度。低・通常・高のいずれか")
+2|    var priority: MemoPriority
+3|
+3|    func perform() async throws -> some IntentResult {
+3|        try await MemoStore.shared.setPriority(priority, for: memo.id)
+3|        return .result()
+3|    }
+1|}

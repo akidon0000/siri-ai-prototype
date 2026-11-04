@@ -1,0 +1,261 @@
+@Tutorial(time: 30) {
+    @Intro(title: "Siri AI Developer Preview: ツールとapp skill") {
+        Siri AI Developer Previewでは、スキーマに当てはまらないアプリ独自の操作とデータも、
+        Siriが見つけて実行できるようになる。その入口が、App Intentを「ツール」にする `@AppIntent(.tool)` と、
+        複数のツールの使い方を教える「app skill」。
+
+        教材: `docs/apple-intelligence/siri-ai-developer-preview.md`、
+        Apple Developer Documentation「Bringing custom actions and content to Siri」
+        「Orchestrating complex actions with app skills」「ToolIntent」「GenerableEntity」
+    }
+
+    @Section(title: "Siriがツールを呼べる場面") {
+        @ContentAndMedia {
+            Siriがアプリのツールを使うのは、そのアプリが会話に関係していると判断できるときに限られる。
+        }
+
+        @Steps {
+            @Step {
+                アプリが前面にあるとき、Live Activityが動いているとき、Siriアプリでの会話にアプリが出てきたときは、
+                アプリ名を言わなくてもツールが使われる。例: 配車アプリのLive Activityを見ながら
+                「迎えの場所を変えて」と言う。
+            }
+
+            @Step {
+                アプリが後ろにあるときは、依頼にアプリ名が入っていればツールが使われる。
+                また、そのアプリのEntityが検索結果に出てきたときにも使われる。
+            }
+
+            @Step {
+                Developer Previewは、Apple Intelligence対応デバイスのiOS・iPadOS・macOS・visionOSで動く。
+                試せるのは、開発用プロファイルで署名して実機で動かす場合と、TestFlightの内部テスターだけ。
+                外部テスターやApp Store版では動かない。新しいentitlementの追加や別プログラムへの参加は要らない。
+            }
+        }
+    }
+
+    @Section(title: "ツールにするintentを選ぶ") {
+        @ContentAndMedia {
+            どのintentをツールにするかはアプリが決める。全てをツールにすればよいわけではない。
+        }
+
+        @Steps {
+            @Step {
+                向いているのは、1文で頼めて、その文からパラメータを埋められる操作。
+                「牛乳のメモを優先度高にして」なら、メモと優先度の両方が1文に入っている。
+            }
+
+            @Step {
+                第5章でSiriが使えるスキーマ（`createReminder` など）に合わせたintentには、ツールの指定を付けない。
+                スキーマに合わせた時点でSiriに公開されていて、付けるとビルドエラーになる。
+                Shortcuts専用ドメインのスキーマ（例: Booksの `openBook`）だけは、
+                `@AppIntent(.tool, schema:)` のように併用できる。
+            }
+
+            @Step {
+                ウィジェットの設定用intentのように実行する操作を持たないもの、
+                ショートカットの途中の1手順としてしか意味を持たないもの、
+                注文と支払いのように人が明示的に始めるべき副作用を持つものも、ツールにしない。
+            }
+
+            @Step {
+                Memoアプリでは、作成・更新・削除は第5章のスキーマで公開済み。
+                スキーマに無い「優先度を変える」と「条件でメモを探す」をツールにする。
+            }
+        }
+    }
+
+    @Section(title: "ツールを作る") {
+        @ContentAndMedia {
+            優先度を変える `SetMemoPriorityIntent` を、普通のApp Intentとして作ってからツールにする。
+        }
+
+        @Steps {
+            @Step {
+                `AppIntent` に準拠した構造体と `title` を書く。
+
+                @Code(name: "SetMemoPriorityIntent.swift", file: "SetMemoPriorityIntent-01.swift")
+            }
+
+            @Step {
+                対象のメモと新しい優先度を `@Parameter` で受け取る。
+
+                @Code(name: "SetMemoPriorityIntent.swift", file: "SetMemoPriorityIntent-02.swift", previousFile: "SetMemoPriorityIntent-01.swift")
+            }
+
+            @Step {
+                `perform()` を書く。ここまでは第2章と同じ普通のApp Intent。
+
+                @Code(name: "SetMemoPriorityIntent.swift", file: "SetMemoPriorityIntent-03.swift", previousFile: "SetMemoPriorityIntent-02.swift")
+            }
+
+            @Step {
+                型の上に `@AppIntent(.tool)` を付ける。マクロが `ToolIntent` への準拠を足し、
+                このintentはSiriが呼べるツールになる。変更はこの1行だけ。
+
+                @Code(name: "SetMemoPriorityIntent.swift", file: "SetMemoPriorityIntent-04.swift", previousFile: "SetMemoPriorityIntent-03.swift")
+            }
+
+            @Step {
+                `description` と、各 `@Parameter` の `description` を足す。Siriのモデルは、
+                これらを読んでツールが何をするか・何を渡せばよいかを判断する。
+                アプリを知らない人に向けて書き、値の形式・範囲・単位があれば書いておく。
+
+                @Code(name: "SetMemoPriorityIntent.swift", file: "SetMemoPriorityIntent-05.swift", previousFile: "SetMemoPriorityIntent-04.swift")
+            }
+        }
+    }
+
+    @Section(title: "Siriに値を組み立ててもらう") {
+        @ContentAndMedia {
+            「優先度が高い買い物のメモを探して」のような依頼では、検索条件そのものは
+            アプリのデータベースに存在しない。こうした値は、Siriが依頼の文から直接組み立てられるようにする。
+        }
+
+        @Steps {
+            @Step {
+                検索条件を表す `MemoSearch` を `TransientAppEntity` として作り、`@AppEntity(.generable)` を付ける。
+                マクロが `GenerableEntity` への準拠を足し、Siriはクエリを呼ばずにこの値を作れるようになる。
+
+                @Code(name: "MemoSearch.swift", file: "MemoSearch-01.swift")
+            }
+
+            @Step {
+                プロパティを `@Property` で宣言し、それぞれに `description` を付ける。
+                Siriはこの説明を見て、依頼のどの部分をどのプロパティに入れるかを決める。
+                Generableなエンティティのプロパティにできるのは、`String` などの値型・App Enum・
+                別のGenerableなエンティティ・それらの配列だけで、それ以外の型はコンパイルエラーになる。
+                優先度を配列にしているのはこのため。
+
+                @Code(name: "MemoSearch.swift", file: "MemoSearch-02.swift", previousFile: "MemoSearch-01.swift")
+            }
+
+            @Step {
+                `displayRepresentation` と、システムが値を作るための `init()` を足す。
+
+                @Code(name: "MemoSearch.swift", file: "MemoSearch-03.swift", previousFile: "MemoSearch-02.swift")
+            }
+
+            @Step {
+                `MemoSearch` を受け取るツール `FindMemosIntent` を作る。
+
+                @Code(name: "FindMemosIntent.swift", file: "FindMemosIntent-01.swift")
+            }
+
+            @Step {
+                `description` と、`MemoSearch` 型のパラメータを足す。
+
+                @Code(name: "FindMemosIntent.swift", file: "FindMemosIntent-02.swift", previousFile: "FindMemosIntent-01.swift")
+            }
+
+            @Step {
+                `perform()` で検索結果の `MemoEntity` の配列を返す。返したメモは、
+                次に呼ぶ `SetMemoPriorityIntent` や `UpdateMemoIntent` にそのまま渡される。
+                パラメータの型が `MemoEntity` のようにアプリが持つEntityなら、
+                Siriは組み立てずに `MemoQuery` で探す。
+
+                @Code(name: "FindMemosIntent.swift", file: "FindMemosIntent-03.swift", previousFile: "FindMemosIntent-02.swift")
+            }
+        }
+    }
+
+    @Section(title: "見せてよい範囲を決める") {
+        @ContentAndMedia {
+            Entityの情報は、既定では認証なしでSiriやShortcutsに表示される。
+            見られたくない値はプロパティごとに制限する。
+        }
+
+        @Steps {
+            @Step {
+                鍵付きメモの本文を `@Property` で足し、`authenticationPolicy` に
+                `.requiresLocalDeviceAuthentication` を指定する。Siriは本文を含む応答の前に端末の認証を求める。
+                プロパティの指定が効くのはSiriの応答だけなので、intentの結果そのものが機微な情報なら、
+                intentの側で認証を要求する。
+
+                @Code(name: "MemoEntity.swift", file: "MemoEntity-12.swift", previousFile: "MemoEntity-11.swift")
+            }
+
+            @Step {
+                同期用のリビジョン番号のように、アプリの外では意味が無い値には `visibility: .internal` を付ける。
+                Siri・Shortcutsには出ず、アプリとそのextension（ウィジェットなど）だけが使える。
+                `.internal` を `indexingKey` と一緒に使うとSpotlightから見えてしまうので、併用しない。
+
+                @Code(name: "MemoEntity.swift", file: "MemoEntity-13.swift", previousFile: "MemoEntity-12.swift")
+            }
+        }
+    }
+
+    @Section(title: "複数のツールを使う手順を教える: app skill") {
+        @ContentAndMedia {
+            1つのツールは1つの操作しかしない。「溜まったメモを整理して」のような依頼では、
+            探す・完了にする・優先度を変えるを組み合わせる必要があるが、個々のツールの説明だけでは
+            Siriが組み合わせ方を判断できないことがある。そこで、追加の指示をapp skillとして渡す。
+            形式は `name` と `description` のfrontmatterとMarkdownの本文で、Claude Codeの
+            `.claude/skills/*/SKILL.md` と同じ形をしている。
+        }
+
+        @Steps {
+            @Step {
+                Xcodeの File > New > File from Template で Skills Bundle を選び、名前は `Skills` のまま、
+                アプリのターゲットに追加する。1つのスキルにつきフォルダを1つ作り、中に `SKILL.md` だけを置く。
+                アプリのターゲットに置ける `.skillsbundle` は1つだけで、
+                Copy Bundle Resourcesに入っていないとSiriに渡らない。
+
+                @Code(name: "Skills.skillsbundle", file: "SkillsBundle-01.txt")
+            }
+
+            @Step {
+                frontmatterに `name` と `description` を書く。`name` は小文字・数字・ハイフンの1〜64文字で、
+                フォルダ名と一致させる。`description` は1行・1024文字以内。
+                Siriはまず `description` だけを読んで、このスキルを使うかどうかを決める。
+
+                @Code(name: "memo-triage/SKILL.md", file: "MemoTriageSkill-01.txt")
+            }
+
+            @Step {
+                本文に手順を書く（10,000文字まで）。intentは `SetMemoPriorityIntent` のような型名ではなく、
+                「優先度を変えるツール」のように役割で呼ぶ。titleやdescriptionなど、
+                コードに既に書いてあることは繰り返さない。
+
+                @Code(name: "memo-triage/SKILL.md", file: "MemoTriageSkill-02.txt", previousFile: "MemoTriageSkill-01.txt")
+            }
+
+            @Step {
+                やってはいけないことも書ける。ただしapp skillは決まった順で実行させる仕組みではない。
+                Siriが判断に使う追加情報で、書いた通りの順に必ずツールが呼ばれるわけではない。
+                動作の確認は、シミュレータではなく実機かTestFlightの内部テストで行う。
+
+                @Code(name: "memo-triage/SKILL.md", file: "MemoTriageSkill-03.txt", previousFile: "MemoTriageSkill-02.txt")
+            }
+        }
+    }
+
+    @Section(title: "Siri Integration Advisor") {
+        @ContentAndMedia {
+            Developer PreviewのXcodeには、App Intentsの実装を読んでSiri向けの改善点を示す
+            Siri Integration Advisorが入っている。
+        }
+
+        @Steps {
+            @Step {
+                Siriがアプリ独自の操作とデータを扱えるようにするための指摘と提案が出る
+                （具体的に何を指摘するかは公式ドキュメントに一覧が無いので、実装後にXcodeで確認する）。
+                コードを書いたら、第8章の自動テストに進む前にAdvisorの指摘を片付けておく。
+            }
+        }
+    }
+
+    @Section(title: "次のステップ") {
+        @ContentAndMedia {
+            スキーマに無い操作をツールにし、app skillを1つ用意してもらう。
+        }
+
+        @Steps {
+            @Step {
+                理解できたらこれをコピペする。
+
+                @Code(name: "prompt.txt", file: "07-prompt.txt")
+            }
+        }
+    }
+}

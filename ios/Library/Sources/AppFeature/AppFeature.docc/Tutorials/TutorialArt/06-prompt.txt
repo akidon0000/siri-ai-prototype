@@ -1,0 +1,16 @@
+Tutorial 6 (Apple Intelligenceに文脈を渡す) を読んで理解した。
+Memo の文脈を Apple Intelligence に渡す実装を追加して。
+
+- MemoEntity を IndexedEntity に準拠させ、attributeSet で tags を keywords に入れる
+- MemoSpotlightIndexer を作り、名前付きの CSSearchableIndex に indexAppEntities / deleteAppEntities する
+  （メモの追加・更新・削除のたびに呼ぶ）
+- MemoQuery を IndexedEntityQuery に準拠させ、再登録の2メソッドを実装する
+- メモ一覧に appEntityIdentifier(forSelectionType:)、詳細画面に NSUserActivity の appEntityIdentifier を付ける
+- MemoQuery に displayRepresentations(for:requestedComponents:) を実装する
+- 期限の通知を作るときに appEntityIdentifiers を設定する
+- UIからメモを追加したときに CreateMemoIntent を IntentDonationManager.shared.donate で donation する
+- AddMemoIntent を PredictableIntent に準拠させる
+- MemoEntity を Transferable に準拠させる
+- MemoVisualSearchQuery (IntentValueQuery, SemanticContentDescriptor) を追加する
+
+参考: docs/apple-intelligence/apple-intelligence-and-siri-ai.md, docs/apple-intelligence/apple-intelligence.md

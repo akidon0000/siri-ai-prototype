@@ -1,0 +1,13 @@
+#name MemoListFooter.swift
+1|import AppIntents
+1|import SwiftUI
+1|
+1|struct MemoListFooter: View {
+2|    var body: some View {
+2-2|        SiriTipView(intent: AddMemoIntent())
+3|        VStack {
+3|            SiriTipView(intent: AddMemoIntent())
+3|            ShortcutsLink()
+3|        }
+2|    }
+1|}

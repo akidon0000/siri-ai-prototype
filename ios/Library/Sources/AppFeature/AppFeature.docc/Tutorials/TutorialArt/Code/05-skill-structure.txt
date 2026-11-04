@@ -1,4 +1,0 @@
-Skills.skillsbundle/
-└── Skills/
-    └── memo-add/
-        └── SKILL.md

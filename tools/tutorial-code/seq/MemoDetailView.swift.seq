@@ -1,0 +1,15 @@
+#name MemoDetailView.swift
+1|import AppIntents
+1|import SwiftUI
+1|
+1|struct MemoDetailView: View {
+1|    let memo: MemoEntity
+2|
+2|    var body: some View {
+2|        Text(memo.title)
+3|            .userActivity("com.akidon0000.SiriAIPrototype.memo") { activity in
+3|                activity.title = memo.title
+3|                activity.appEntityIdentifier = EntityIdentifier(for: MemoEntity.self, identifier: memo.id)
+3|            }
+2|    }
+1|}

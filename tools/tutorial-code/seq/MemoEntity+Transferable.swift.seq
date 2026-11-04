@@ -1,0 +1,9 @@
+#name MemoEntity+Transferable.swift
+1|import AppIntents
+1|import CoreTransferable
+1|
+1|extension MemoEntity: Transferable {
+2|    static var transferRepresentation: some TransferRepresentation {
+2|        ProxyRepresentation(exporting: \.title)
+2|    }
+1|}

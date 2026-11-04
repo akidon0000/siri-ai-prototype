@@ -1,0 +1,24 @@
+#name CreateMemoIntent.swift
+1|import AppIntents
+1|
+1|@AppIntent(schema: .reminders.createReminder)
+1|struct CreateMemoIntent {
+1|    var title: String
+1|    var list: MemoListEntity?
+2|    var note: AttributedString?
+2|    var isFlagged: Bool?
+2|    var images: [IntentFile]
+2|    var tags: Set<String>
+2|    var urls: [URL]
+3|    var dueDate: DateComponents?
+3|    var recurrence: Calendar.RecurrenceRule?
+3|    var locationTrigger: MemoLocationTriggerEntity?
+3|    var section: MemoSectionEntity?
+5|
+5|    static let isAssistantOnly: Bool = true
+4|
+4|    func perform() async throws -> some ReturnsValue<MemoEntity> {
+4|        let memo = try await MemoStore.shared.add(title: title, list: list, dueDate: dueDate)
+4|        return .result(value: memo)
+4|    }
+1|}

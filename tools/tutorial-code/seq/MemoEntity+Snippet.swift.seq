@@ -1,0 +1,10 @@
+#name MemoEntity+Snippet.swift
+1|import AppIntents
+1|
+1|extension MemoEntity: SnippetRepresentableEntity {
+2|    static var snippet: some EntitySnippetContent<MemoEntity> {
+2|        CardSnippet(supportedFamilies: [.standard]) { memo, _ in
+2|            MemoSnippetView(memo: memo)
+2|        }
+2|    }
+1|}

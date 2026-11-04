@@ -1,0 +1,22 @@
+#name CompleteMemoIntent.swift
+1|import AppIntents
+1|
+1-3|struct CompleteMemoIntent: AppIntent {
+4|struct CompleteMemoIntent: AppIntent, CustomIntentMigratedAppIntent {
+4|    static let intentClassName = "CompleteMemoIntent"
+1|    static let title: LocalizedStringResource = "メモを完了にする"
+2|
+2|    @Parameter(title: "メモ")
+2|    var memo: MemoEntity
+5|
+5|    init() {}
+5|
+5|    init(memo: MemoEntity) {
+5|        self.memo = memo
+5|    }
+3|
+3|    func perform() async throws -> some IntentResult {
+3|        try await MemoStore.shared.complete(memo.id)
+3|        return .result()
+3|    }
+1|}

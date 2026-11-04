@@ -1,0 +1,9 @@
+#name MemoListType.swift
+1|import AppIntents
+1|
+1|@AppEnum(schema: .reminders.listType)
+1|enum MemoListType: String {
+1|    case standard
+1|
+1|    static let caseDisplayRepresentations: [Self: DisplayRepresentation] = [.standard: "通常"]
+1|}

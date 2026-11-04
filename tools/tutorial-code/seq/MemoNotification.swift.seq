@@ -1,0 +1,12 @@
+#name MemoNotification.swift
+1|import AppIntents
+1|import UserNotifications
+1|
+1|func makeDueNotification(for memo: MemoEntity) -> UNMutableNotificationContent {
+1|    let content = UNMutableNotificationContent()
+2|    content.title = memo.title
+2|    content.appEntityIdentifiers = [
+2|        EntityIdentifier(for: MemoEntity.self, identifier: memo.id)
+2|    ]
+1|    return content
+1|}

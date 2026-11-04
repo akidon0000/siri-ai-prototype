@@ -1,0 +1,22 @@
+#name UpdateMemoIntent.swift
+1|import AppIntents
+1|
+1|@AppIntent(schema: .reminders.updateReminder)
+1|struct UpdateMemoIntent {
+1|    var target: MemoEntity
+1|    var isCompleted: Bool?
+2|    var title: String?
+2|    var note: AttributedString?
+2|    var tags: Set<String>?
+2|    var urls: [URL]?
+2|    var dueDate: DateComponents?
+3|    var recurrence: Calendar.RecurrenceRule?
+3|    var isFlagged: Bool?
+3|    var list: MemoListEntity?
+3|    var locationTrigger: MemoLocationTriggerEntity?
+4|
+4|    func perform() async throws -> some ReturnsValue<MemoEntity> {
+4|        let memo = try await MemoStore.shared.update(target.id, title: title, isCompleted: isCompleted)
+4|        return .result(value: memo)
+4|    }
+1|}

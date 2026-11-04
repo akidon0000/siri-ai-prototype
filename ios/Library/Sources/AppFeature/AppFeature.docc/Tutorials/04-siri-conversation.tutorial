@@ -1,0 +1,251 @@
+@Tutorial(time: 35) {
+    @Intro(title: "Siriとの会話を設計する") {
+        intentが動いても、Siriの返事が素っ気なかったり、確認なしにメモを消したりしては使ってもらえない。
+        この章では、応答の言葉、聞き返し、実行前の確認、結果の見せ方（スニペット）を順に足し、
+        最後にHuman Interface Guidelinesの応答文の指針を確認する。
+
+        教材: `docs/apple-intelligence/siri-human-interface-guidelines.md`、
+        WWDC26「Explore advanced App Intents features for Siri and Apple Intelligence」、
+        Apple Developer Documentation「Displaying static and interactive snippets」
+    }
+
+    @Section(title: "応答を言葉で返す") {
+        @ContentAndMedia {
+            何も指定しなければ、Siriはintentの結果から応答を自分で組み立てる。
+            アプリ独自の言い回しにしたいときだけ、ダイアログを返す。
+        }
+
+        @Steps {
+            @Step {
+                `perform()` の戻り値に `ProvidesDialog` を加え、`.result` に `IntentDialog` を渡す。
+                `full` はAirPodsのように画面が無い環境で読み上げる文、`supporting` は画面と一緒に出す短い文。
+                画面が無くても伝わるように、`full` だけで何が起きたか分かる文にする。
+
+                @Code(name: "AddMemoIntent.swift", file: "AddMemoIntent-07.swift", previousFile: "AddMemoIntent-06.swift")
+            }
+        }
+    }
+
+    @Section(title: "足りない情報を聞き返す") {
+        @ContentAndMedia {
+            聞き返しには2種類ある。値が無いときの決まった聞き返しと、実行中の状況に応じた聞き返し。
+        }
+
+        @Steps {
+            @Step {
+                `@Parameter` に `requestValueDialog` を足す。`title` が無いまま呼ばれたとき、
+                Siriは既定の「タイトルは？」の代わりにこの文で聞き返す。
+                HIGにある通り「どれ？」より「どんなメモを追加しますか？」の方が答えやすい。
+
+                @Code(name: "AddMemoIntent.swift", file: "AddMemoIntent-08.swift", previousFile: "AddMemoIntent-07.swift")
+            }
+
+            @Step {
+                `perform()` の中で `$title.requestValue(_:)` を呼ぶと、実行の途中で聞き返せる。
+                ここでは同じ名前のメモが既にあるときだけ、別の名前を聞いている。
+                聞き返すたびに会話が1往復増えるので、本当に必要な場面に絞る。
+
+                @Code(name: "AddMemoIntent.swift", file: "AddMemoIntent-09.swift", previousFile: "AddMemoIntent-08.swift")
+            }
+        }
+    }
+
+    @Section(title: "実行前に確認する") {
+        @ContentAndMedia {
+            LLMを介した操作には、意図しない副作用のリスクがある。Siriは副作用の大きいintentを
+            自動で確認することがあるが、アプリ側からも確認を求められるし、
+            「このデータは他人と共有されている」という判断材料を渡すこともできる。
+        }
+
+        @Steps {
+            @Step {
+                メモを削除する `DeleteMemoIntent` を作る。
+
+                @Code(name: "DeleteMemoIntent.swift", file: "DeleteMemoIntent-01.swift")
+            }
+
+            @Step {
+                `perform()` の最初で `requestConfirmation(dialog:)` を呼ぶ。人が「はい」と答えれば次の行へ進み、
+                取り消せば例外が投げられて、削除の処理は実行されない。
+
+                @Code(name: "DeleteMemoIntent.swift", file: "DeleteMemoIntent-02.swift", previousFile: "DeleteMemoIntent-01.swift")
+            }
+
+            @Step {
+                メモに `sharedWith`（共有相手）を足す。
+
+                @Code(name: "MemoEntity.swift", file: "MemoEntity-05.swift", previousFile: "MemoEntity-04.swift")
+            }
+
+            @Step {
+                `MemoEntity` を `OwnershipProvidingEntity` に準拠させ、共有相手がいれば `.shared` を返す。
+                Siriは既定ではEntityを「その人だけのもの」とみなし、確認を省くことがある。
+                共有メモを更新するときには確認を挟んでもらえるようになる。
+                共有・公開ができないEntityには、この準拠を付けない。
+
+                @Code(name: "MemoEntity+Ownership.swift", file: "MemoEntity+Ownership-01.swift")
+            }
+        }
+    }
+
+    @Section(title: "結果を見せる") {
+        @ContentAndMedia {
+            Siriの画面にどう表示されるかは、Entityの `DisplayRepresentation` とスニペットで決まる。
+        }
+
+        @Steps {
+            @Step {
+                第2章ではタイトルだけだった `displayRepresentation` に、完了状態の `subtitle` と
+                SF Symbolsの `image` を足す。この表示は応答だけでなく、候補から選ぶとき・確認のとき・
+                Spotlightの検索結果でも使われる。
+
+                @Code(name: "MemoEntity.swift", file: "MemoEntity-06.swift", previousFile: "MemoEntity-05.swift")
+            }
+
+            @Step {
+                スニペット用のSwiftUIビューを作り、表示するメモを受け取る。
+
+                @Code(name: "MemoSnippetView.swift", file: "MemoSnippetView-01.swift")
+            }
+
+            @Step {
+                `body` で完了状態のアイコンとタイトルを表示する。スニペットはSiriの画面の一部として出るので、
+                アプリ本体の画面より情報を絞る。
+
+                @Code(name: "MemoSnippetView.swift", file: "MemoSnippetView-02.swift", previousFile: "MemoSnippetView-01.swift")
+            }
+
+            @Step {
+                `AddMemoIntent` の戻り値に `ShowsSnippetView` を加え、`.result` に `view:` を渡す。
+                Siriはダイアログと一緒に、このビューをカードとして表示する。
+
+                @Code(name: "AddMemoIntent.swift", file: "AddMemoIntent-10.swift", previousFile: "AddMemoIntent-09.swift")
+            }
+        }
+    }
+
+    @Section(title: "押せるスニペットにする") {
+        @ContentAndMedia {
+            追加したメモをその場で完了にできれば、アプリを開く必要が無くなる。
+            ボタンを持つスニペットは `SnippetIntent` で作る。
+        }
+
+        @Steps {
+            @Step {
+                スニペットのボタンから呼ぶために、第1章の `CompleteMemoIntent` に
+                メモを受け取るイニシャライザを足す。
+
+                @Code(name: "CompleteMemoIntent.swift", file: "CompleteMemoIntent-05.swift", previousFile: "CompleteMemoIntent-04.swift")
+            }
+
+            @Step {
+                `MemoSnippetView` に `Button(_:intent:)` を足す。ウィジェットと同じく、
+                スニペットのボタンはApp Intentを実行する。
+
+                @Code(name: "MemoSnippetView.swift", file: "MemoSnippetView-03.swift", previousFile: "MemoSnippetView-02.swift")
+            }
+
+            @Step {
+                `SnippetIntent` に準拠する `MemoSnippetIntent` を作る。
+
+                @Code(name: "MemoSnippetIntent.swift", file: "MemoSnippetIntent-01.swift")
+            }
+
+            @Step {
+                表示するメモを `@Parameter` で受け取る。
+
+                @Code(name: "MemoSnippetIntent.swift", file: "MemoSnippetIntent-02.swift", previousFile: "MemoSnippetIntent-01.swift")
+            }
+
+            @Step {
+                `AddMemoIntent` から渡せるように、メモを受け取るイニシャライザを足す。
+
+                @Code(name: "MemoSnippetIntent.swift", file: "MemoSnippetIntent-03.swift", previousFile: "MemoSnippetIntent-02.swift")
+            }
+
+            @Step {
+                `perform()` でビューを返す。ボタンが押されて `CompleteMemoIntent` が終わると、
+                システムはこの `perform()` をもう一度呼んでスニペットを描き直す。
+                何度呼ばれてもよいように、毎回 `MemoStore` から最新のメモを読み直し、副作用は持たせない。
+
+                @Code(name: "MemoSnippetIntent.swift", file: "MemoSnippetIntent-04.swift", previousFile: "MemoSnippetIntent-03.swift")
+            }
+
+            @Step {
+                `AddMemoIntent` の戻り値を `ShowsSnippetIntent` に変え、`view:` の代わりに
+                `snippetIntent:` を返す。`ReturnsValue<MemoEntity>` は残しているので、
+                このintentを使った既存のショートカットは壊れない。
+
+                @Code(name: "AddMemoIntent.swift", file: "AddMemoIntent-11.swift", previousFile: "AddMemoIntent-10.swift")
+            }
+        }
+    }
+
+    @Section(title: "Siri AIのカードに出す") {
+        @ContentAndMedia {
+            Siri AI経由でintentが実行されたとき、システムは `IntentDialog` や `ShowsSnippetView` を
+            表示しないことがある。Siri AIがアプリのデータを見せるときに使うのは、Entity側に用意したカード。
+        }
+
+        @Steps {
+            @Step {
+                `MemoEntity` を `SnippetRepresentableEntity` に準拠させる。
+
+                @Code(name: "MemoEntity+Snippet.swift", file: "MemoEntity+Snippet-01.swift")
+            }
+
+            @Step {
+                `snippet` で `CardSnippet` を返し、その中でこの章の `MemoSnippetView` を使い回す。
+                カードは事前に描画されて保存され、アプリが動いていないときにも表示される。
+                あとから内容を変えられないので、必要なデータはビューを返す前に揃えておく。
+                ボタンは使えて、押されるとintentが実行され、カードが描き直される。
+
+                @Code(name: "MemoEntity+Snippet.swift", file: "MemoEntity+Snippet-02.swift", previousFile: "MemoEntity+Snippet-01.swift")
+            }
+        }
+    }
+
+    @Section(title: "応答文の指針（HIG）") {
+        @ContentAndMedia {
+            SiriのHIGは、アプリが独自の応答を返すときの書き方を定めている。
+            ここまでのダイアログを、次の観点で見直す。
+        }
+
+        @Steps {
+            @Step {
+                独自の応答は、Siriの組み込みの応答で足りないときだけ用意する。
+                Siriは追加の設定なしでも多くの依頼に応答できる。
+            }
+
+            @Step {
+                短く、何が起きたかが分かる文にする。同じ応答を何度も聞くことになるので、
+                冗談や余計な言葉は入れない。応答にアプリ名も入れない。
+                どのアプリの応答かはシステムが表示・読み上げる。
+            }
+
+            @Step {
+                音声だけでも画面だけでも伝わるようにする。特定のデバイスに依存した言い方
+                （「この画面で」など）は避ける。依頼したデバイスと実行されるデバイスが違うことがある。
+            }
+
+            @Step {
+                エラーは状況に即して伝える。「完了できませんでした」より
+                「そのメモはもう削除されています」の方が分かる。広告や課金の勧誘は応答に入れない。
+            }
+        }
+    }
+
+    @Section(title: "次のステップ") {
+        @ContentAndMedia {
+            Memoのintentに、応答・聞き返し・削除の確認・スニペットを実装してもらう。
+        }
+
+        @Steps {
+            @Step {
+                理解できたらこれをコピペする。
+
+                @Code(name: "prompt.txt", file: "04-prompt.txt")
+            }
+        }
+    }
+}

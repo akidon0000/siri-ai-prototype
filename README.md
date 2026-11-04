@@ -52,9 +52,11 @@ fetched_at: 2026-11-04T00:00:00Z
 - `ios/Library` — SPMパッケージ（Clients / ClientsLive / Components / AppFeature / TestSupport）。
   pickle-app (akidon0000) のアーキテクチャを踏襲。Siri関連の実機能はまだ実装していない。
 - `ios/Library/Sources/AppFeature/AppFeature.docc` — DocC Tutorial形式のチュートリアル
-  （SiriKitの限界 → App Intentsの基礎 → App Shortcuts → Apple Intelligence/Siri AI統合 →
-  Siri AI Developer PreviewのToolIntent、の5章）。Xcodeの「Build Documentation」
-  （⌃⇧⌘D）で読める。各章末に、理解したあと実装を指示するためのコピペ用プロンプトがある。
+  （SiriKitからApp Intentsへ → App Intentsの基礎 → App Shortcuts → Siriとの会話の設計 →
+  スキーマ → Apple Intelligenceに文脈を渡す → Siri AI Developer Preview → 検証、の8章）。
+  Memoアプリのコードを1ステップ数行ずつ組み立て、変えた行がハイライトされる。
+  Xcodeの「Build Documentation」（⌃⇧⌘D）で読める。各章末に、理解したあと実装を指示するためのコピペ用プロンプトがある。
+  チュートリアルのコードは `tools/tutorial-code/` のソースから生成している（手順は [CLAUDE.md](./CLAUDE.md)）。
   GitHub Pagesでも公開していて、ブラウザから読める:
   [akidon0000.github.io/siri-ai-prototype/tutorials/siriaitutorials](https://akidon0000.github.io/siri-ai-prototype/tutorials/siriaitutorials/)
   （`ios/Library` 配下をmainにpushすると `.github/workflows/docc-pages.yml` が自動で再公開する）

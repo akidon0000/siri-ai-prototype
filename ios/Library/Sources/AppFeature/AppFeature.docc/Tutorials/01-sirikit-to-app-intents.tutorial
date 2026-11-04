@@ -1,0 +1,135 @@
+@Tutorial(time: 20) {
+    @Intro(title: "SiriKitからApp Intentsへ") {
+        SiriKitで「メモを完了にする」を実装するとどれだけの手間がかかったかを実際に書いてみて、
+        同じ操作をApp Intentsで書き直す。最後に、SiriKitのカスタムintentを使っていたアプリが
+        既存ユーザーのショートカットを壊さずにApp Intentsへ移行する方法を押さえる。
+
+        教材: `docs/sirikit/sirikit.md`、
+        Apple Developer Documentation「CustomIntentMigratedAppIntent」
+    }
+
+    @Section(title: "SiriKitのintentハンドラ") {
+        @ContentAndMedia {
+            SiriKitでは、まずXcodeの `.intentdefinition` ファイルでカスタムintentのスキーマを定義する。
+            Xcodeはそこから `CompleteMemoIntent` クラスと `CompleteMemoIntentHandling` プロトコルを生成し、
+            開発者はIntents app extensionの中でそのプロトコルに準拠したハンドラを書く。
+        }
+
+        @Steps {
+            @Step {
+                生成された `CompleteMemoIntentHandling` に準拠するクラスを用意する。
+                この型はアプリ本体ではなく、別ターゲットのIntents app extensionに置くのが基本だった。
+
+                @Code(name: "CompleteMemoIntentHandler.swift", file: "CompleteMemoIntentHandler-01.swift")
+            }
+
+            @Step {
+                1段階目の `resolveMemo` を書く。`intent.memo` が空なら `.needsValue()` を返し、
+                Siriに「どのメモ？」と聞き返させる。パラメータが1つ増えるたびに、
+                この `resolve〇〇` メソッドも1つずつ増えていく。
+
+                @Code(name: "CompleteMemoIntentHandler.swift", file: "CompleteMemoIntentHandler-02.swift", previousFile: "CompleteMemoIntentHandler-01.swift")
+            }
+
+            @Step {
+                2段階目の `confirm` を書く。実行してよい状態かを確かめて `.ready` を返す。
+                確認することが何も無くても、この段階は省略できなかった。
+
+                @Code(name: "CompleteMemoIntentHandler.swift", file: "CompleteMemoIntentHandler-03.swift", previousFile: "CompleteMemoIntentHandler-02.swift")
+            }
+
+            @Step {
+                3段階目の `handle` で、ようやくメモを完了にする。結果は完了ハンドラに
+                `CompleteMemoIntentResponse` を渡して返す。1つの操作を公開するのに、
+                スキーマ定義・extensionターゲット・3つのメソッドが必要だった。
+
+                @Code(name: "CompleteMemoIntentHandler.swift", file: "CompleteMemoIntentHandler-04.swift", previousFile: "CompleteMemoIntentHandler-03.swift")
+            }
+
+            @Step {
+                さらにSiriKitでは、アプリにSiri capabilityを追加したうえで、
+                `INPreferences.requestSiriAuthorization` でユーザーにSiriの利用許可を求める必要があった。
+                App Intentsにはこの許可ダイアログが無い。
+
+                @Code(name: "SiriAuthorization.swift", file: "SiriAuthorization-01.swift")
+            }
+        }
+    }
+
+    @Section(title: "App Intentsで書き直す") {
+        @ContentAndMedia {
+            同じ「メモを完了にする」をApp Intentsで書く。スキーマ定義のファイルもextensionも作らず、
+            アプリ本体（このPoCなら `ios/Library` のパッケージ）に構造体を1つ置くだけでよい。
+        }
+
+        @Steps {
+            @Step {
+                `AppIntent` に準拠した構造体を作り、`title` を付ける。
+                この `title` がShortcutsアプリやSpotlightに表示される操作名になる。
+
+                @Code(name: "CompleteMemoIntent.swift", file: "CompleteMemoIntent-01.swift")
+            }
+
+            @Step {
+                `@Parameter` で入力を宣言する。型は第2章で作る `MemoEntity`。
+                SiriKitの `resolveMemo` に相当する処理は書かなくてよい。値が無ければ
+                システムが `MemoEntity` の候補を使って聞き返してくれる。
+
+                @Code(name: "CompleteMemoIntent.swift", file: "CompleteMemoIntent-02.swift", previousFile: "CompleteMemoIntent-01.swift")
+            }
+
+            @Step {
+                `perform()` に処理を書く。async/awaitで書けて、失敗は `throw` すればよい。
+                SiriKitの `confirm` に当たる確認が必要なときは、第4章で扱う
+                `requestConfirmation` を `perform()` の中で呼ぶ。
+
+                @Code(name: "CompleteMemoIntent.swift", file: "CompleteMemoIntent-03.swift", previousFile: "CompleteMemoIntent-02.swift")
+            }
+
+            @Step {
+                Siri・Shortcuts・Spotlightが必要とするメタデータは、ビルド時にコンパイラが
+                このコードから生成する。アプリをインストールした時点でShortcutsアプリに
+                「メモを完了にする」が並び、事前の登録処理は要らない。
+            }
+        }
+    }
+
+    @Section(title: "既存のSiriKitユーザーを引き継ぐ") {
+        @ContentAndMedia {
+            SiriKit・Intents・IntentsUIは今もレガシーとしてサポートされているが、
+            Apple IntelligenceやSiri AIとの統合はApp Intentsでしかできない。
+            すでにSiriKitのカスタムintentを配布しているアプリは、ユーザーが作ったショートカットを
+            壊さないように移行する必要がある。
+        }
+
+        @Steps {
+            @Step {
+                `CustomIntentMigratedAppIntent` に準拠させ、`intentClassName` に
+                置き換え元のSiriKitのintentクラス名を書く。これで旧intentを使った既存のショートカットと
+                donationが、新しいApp Intentでそのまま動き続ける。
+
+                @Code(name: "CompleteMemoIntent.swift", file: "CompleteMemoIntent-04.swift", previousFile: "CompleteMemoIntent-03.swift")
+            }
+
+            @Step {
+                このPoCはSiriKitを一度も使っていないので、実装時にはこの移行は不要。
+                新規アプリはApp Intentsだけで始めればよい。
+            }
+        }
+    }
+
+    @Section(title: "次のステップ") {
+        @ContentAndMedia {
+            ここまでの内容に納得できたら、下のプロンプトをコピーしてClaude Codeに貼り付けてよい。
+            実装を依頼するものではなく、方針の確認と次章への準備だけを行う。
+        }
+
+        @Steps {
+            @Step {
+                理解できたらこれをコピペする。
+
+                @Code(name: "prompt.txt", file: "01-prompt.txt")
+            }
+        }
+    }
+}

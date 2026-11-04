@@ -1,0 +1,12 @@
+#name MemoEntity+Spotlight.swift
+1|import AppIntents
+1|import CoreSpotlight
+1|
+1|extension MemoEntity {
+2|    var attributeSet: CSSearchableItemAttributeSet {
+2-2|        CSSearchableItemAttributeSet()
+3|        let attributes = CSSearchableItemAttributeSet()
+3|        attributes.keywords = Array(tags)
+3|        return attributes
+2|    }
+1|}

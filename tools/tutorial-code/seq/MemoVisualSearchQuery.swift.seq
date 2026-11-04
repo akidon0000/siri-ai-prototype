@@ -1,0 +1,9 @@
+#name MemoVisualSearchQuery.swift
+1|import AppIntents
+1|import VisualIntelligence
+1|
+1|struct MemoVisualSearchQuery: IntentValueQuery {
+2|    func values(for input: SemanticContentDescriptor) async throws -> [MemoEntity] {
+2|        try await MemoStore.shared.memos(matchingAnyOf: input.labels)
+2|    }
+1|}

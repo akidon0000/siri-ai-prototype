@@ -1,25 +1,26 @@
 @Tutorials(name: "Siri AI PoC チュートリアル") {
     @Intro(title: "SiriKitからSiri AIまで") {
-        SiriKitからApp Intents、Apple Intelligence (Siri AI) までの流れを、
-        Apple公式ドキュメント（`docs/` 配下に原文保存済み）を教材に理解する。
+        SiriKitからApp Intents、スキーマ、Apple Intelligence、Siri AI Developer Previewまでを、
+        Memoアプリのコードを1ステップ数行ずつ組み立てながら理解する。
+        教材はApple公式ドキュメント（一部は `docs/` 配下に原文を保存済み）とWWDC26のセッション。
         各チュートリアルの最後に「理解できたらコピペするプロンプト」があるので、
         準備ができたものだけ実装を進めればよい。
     }
 
-    @Chapter(name: "第1章: SiriKitの限界") {
+    @Chapter(name: "第1章: SiriKitからApp Intentsへ") {
         @Image(source: "chapter1.svg", alt: "第1章のイメージ")
 
-        旧世代のIntents/IntentsUIフレームワークが何をしていたか、
-        なぜApp Intentsに置き換わったかを理解する。
+        SiriKitのresolve・confirm・handleを書いてみて、同じ操作をApp Intentsで書き直す。
+        SiriKitのカスタムintentを使っていたアプリの移行方法も押さえる。
 
-        @TutorialReference(tutorial: "doc:01-sirikit-limits")
+        @TutorialReference(tutorial: "doc:01-sirikit-to-app-intents")
     }
 
     @Chapter(name: "第2章: App Intentsの基礎") {
         @Image(source: "chapter2.svg", alt: "第2章のイメージ")
 
-        App Intent / App Entity / App Enum の3つの型でアプリの機能とデータを
-        システムに公開する仕組みを理解する。
+        App Entity・Entity Query・App Enum・App Intentの4つで、
+        アプリのデータと操作をシステムに公開する。
 
         @TutorialReference(tutorial: "doc:02-app-intents-basics")
     }
@@ -27,28 +28,53 @@
     @Chapter(name: "第3章: App Shortcutsでフレーズを固定する") {
         @Image(source: "chapter3.svg", alt: "第3章のイメージ")
 
-        AppShortcutsProviderとApp Shortcutで、決まったフレーズからApp Intentを
-        確実に呼び出す仕組みを理解する。
+        AppShortcutsProviderで話しかけるフレーズを登録し、アプリの中でもSiriTipViewで案内する。
 
         @TutorialReference(tutorial: "doc:03-app-shortcuts")
     }
 
-    @Chapter(name: "第4章: Apple IntelligenceとSiri AIへの統合") {
+    @Chapter(name: "第4章: Siriとの会話を設計する") {
         @Image(source: "chapter4.svg", alt: "第4章のイメージ")
 
-        セマンティック索引・オンスクリーンコンテキスト・donation・所有権・
-        スニペット・Transferableという6つの観点で、WWDC26の実例コードに沿って
-        App IntentsをApple Intelligence/Siri AIに統合する流れを理解する。
+        応答の言葉、聞き返し、実行前の確認と所有権、静的・インタラクティブなスニペット、
+        Siri AIのカード、HIGの応答文の指針を扱う。
 
-        @TutorialReference(tutorial: "doc:04-apple-intelligence-siri-ai")
+        @TutorialReference(tutorial: "doc:04-siri-conversation")
     }
 
-    @Chapter(name: "第5章: Siri AI Developer PreviewのToolIntent") {
+    @Chapter(name: "第5章: スキーマでApple Intelligenceに載せる") {
         @Image(source: "chapter5.svg", alt: "第5章のイメージ")
 
-        既存のApp Intentを `@AppIntent(AppIntentTraits)` でSiriが呼び出せる
-        「ツール」に変える、Siri AI Developer Preview固有の仕組みを理解する。
+        App schema domainsから合うドメインを選び、MemoをRemindersのスキーマに合わせる。
+        既存のショートカットを壊さない移行、アプリ内検索、日本限定のサイドボタン起動も扱う。
 
-        @TutorialReference(tutorial: "doc:05-siri-ai-tool-intent")
+        @TutorialReference(tutorial: "doc:05-app-schemas")
+    }
+
+    @Chapter(name: "第6章: Apple Intelligenceに文脈を渡す") {
+        @Image(source: "chapter6.svg", alt: "第6章のイメージ")
+
+        Spotlightのセマンティック索引、画面と通知への注釈、UI操作のdonation、
+        Transferable、ビジュアルインテリジェンスで、Siriに「どのメモの話か」を伝える。
+
+        @TutorialReference(tutorial: "doc:06-apple-intelligence-context")
+    }
+
+    @Chapter(name: "第7章: Siri AI Developer Preview") {
+        @Image(source: "chapter7.svg", alt: "第7章のイメージ")
+
+        スキーマに無い操作を `@AppIntent(.tool)` でツールにし、GenerableEntityと
+        app skillでSiriに複雑な依頼をこなしてもらう。
+
+        @TutorialReference(tutorial: "doc:07-siri-ai-tools")
+    }
+
+    @Chapter(name: "第8章: 検証する") {
+        @Image(source: "chapter8.svg", alt: "第8章のイメージ")
+
+        App Intents Testingの統合テスト、ShortcutsとSpotlightでの手動確認、
+        Siri Evaluationsでの会話の自動テストまでを書く。
+
+        @TutorialReference(tutorial: "doc:08-verification")
     }
 }

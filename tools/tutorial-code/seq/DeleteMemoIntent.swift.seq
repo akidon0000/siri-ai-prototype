@@ -1,0 +1,20 @@
+#name DeleteMemoIntent.swift
+1|import AppIntents
+1|
+3|@AppIntent(schema: .reminders.deleteReminders)
+1-2|struct DeleteMemoIntent: AppIntent {
+3|struct DeleteMemoIntent: DeleteIntent {
+1-2|    static let title: LocalizedStringResource = "メモを削除"
+1-2|
+1-2|    @Parameter(title: "メモ")
+1-2|    var memo: MemoEntity
+3|    var entities: [MemoEntity]
+2|
+2|    func perform() async throws -> some IntentResult {
+2-2|        try await requestConfirmation(dialog: "「\(memo.title)」を削除しますか？")
+2-2|        try await MemoStore.shared.delete(memo.id)
+3|        try await requestConfirmation(dialog: "\(entities.count)件のメモを削除しますか？")
+3|        try await MemoStore.shared.delete(entities.map(\.id))
+2|        return .result()
+2|    }
+1|}

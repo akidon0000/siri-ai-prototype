@@ -1,0 +1,12 @@
+Tutorial 8 (検証する) を読んで理解した。
+Memo の App Intents 実装を検証するテストを追加して。
+
+- AppFeature に #if DEBUG の ResetMemosIntent (isDiscoverable = false) を追加する
+- ios/App に UIテストのターゲットを追加し、App Intents Testing で
+  CreateMemoIntent の実行 / MemoEntity の entities(matching:) / spotlightQuery を確かめるテストを書く
+- 同じターゲットに Siri Evaluations の評価を書く
+  （1ターンの追加、Calls(.disallowed) で削除が呼ばれないこと、2ターンで聞き返しに答えるシナリオ）
+- Shortcuts アプリ・Spotlight・実機の Siri で手動確認する手順を ios/App の README にチェックリストとして残す
+
+参考: https://developer.apple.com/documentation/appintentstesting/testing-your-app-intents-code、
+https://developer.apple.com/documentation/sirievaluations

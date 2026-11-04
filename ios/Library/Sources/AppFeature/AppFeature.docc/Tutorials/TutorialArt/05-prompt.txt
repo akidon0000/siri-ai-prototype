@@ -1,13 +1,15 @@
-Tutorial 5 (Siri AI Developer PreviewのToolIntent) を読んで理解した。
-Tutorial 2〜4 で作った Memo の AppIntent を Siri AI Developer Preview 向けに拡張して。
+Tutorial 5 (スキーマでApple Intelligenceに載せる) を読んで理解した。
+Memo を App Intents の Reminders ドメインのスキーマに対応させて。
 
-- AddMemoIntent / ListMemosIntent / CompleteMemoIntent に @AppIntent(.tool) を付けて
-  ToolIntent として公開する（title / description / 各@Parameterのdescriptionを埋める）
-- 検索条件用に MemoSearch: TransientAppEntity を @AppEntity(.generable) で定義する
-- 複数のIntentをまとめて使う操作（例: 「今日やることを全部終わらせて」）向けに、
-  Skills.skillsbundle/Skills/memo-xxx/SKILL.md として app skill を1つ用意する
-- Siri Integration Advisor や Siri Evaluations で検証する手順をAppFeature.docc内のメモとして残す
+- MemoListType (@AppEnum(schema: .reminders.listType)) と MemoListEntity (@AppEntity(schema: .reminders.list)) を追加する
+- MemoEntity に @AppEntity(schema: .reminders.reminder) を付け、isDone を isCompleted に改名し、スキーマの必須プロパティを揃える
+- locationTrigger / section 用に .reminders.locationTrigger / .reminders.section スキーマのEntityも用意する
+- CreateMemoIntent (.reminders.createReminder) を新しく作り、isAssistantOnly = true にする（AddMemoIntent は残す）
+- UpdateMemoIntent (.reminders.updateReminder) を追加する
+- DeleteMemoIntent を .reminders.deleteReminders に合わせる
+- SearchMemosIntent (.system.searchInApp) と OpenMemoIntent (.system.open) を追加する
+- 各スキーマのテンプレートは Xcode の補完（reminders_ / system_）で展開したものと突き合わせる
+- 既存のテストと TestMemoClient を新しいプロパティに合わせて直す
 
-参考: docs/apple-intelligence/siri-ai-developer-preview.md
-
-注意: Siri AI Developer Preview はApple Intelligence対応デバイス/シミュレータでのみ動作する。
+参考: docs/apple-intelligence/apple-intelligence-and-siri-ai.md、
+https://developer.apple.com/documentation/appintents/app-schema-domain-reminders

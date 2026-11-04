@@ -1,0 +1,285 @@
+@Tutorial(time: 35) {
+    @Intro(title: "Apple Intelligenceに文脈を渡す") {
+        スキーマはビルド時に「何ができるか」を伝えるが、実行時に「どのメモの話か」を知る手段にはならない。
+        この章では、Spotlightの索引、画面に映っているもの、通知、UIで行った操作、他のアプリへの受け渡し、
+        カメラ（ビジュアルインテリジェンス）という6つの経路で、Apple Intelligenceにアプリの文脈を渡す。
+
+        教材: `docs/apple-intelligence/apple-intelligence-and-siri-ai.md`、
+        Apple Developer Documentation「Making app entities available in Spotlight」
+        「Providing contextual cues to Apple Intelligence and Siri」
+        「Donating your app's data and actions to the system」、
+        WWDC26「Explore advanced App Intents features for Siri and Apple Intelligence」
+    }
+
+    @Section(title: "Spotlightのセマンティック索引に載せる") {
+        @ContentAndMedia {
+            Apple IntelligenceはSpotlightのセマンティック検索を使ってアプリのデータを探す。
+            索引に載せたメモは、「牛乳のやつ」のようにあいまいに言われても、意味の近さで見つかる。
+        }
+
+        @Steps {
+            @Step {
+                `MemoEntity` を `IndexedEntity` に準拠させる。索引に載せるための要件はこれだけで、
+                `displayRepresentation` のタイトルやサブタイトルが索引の属性として自動で使われる。
+
+                @Code(name: "MemoEntity.swift", file: "MemoEntity-11.swift", previousFile: "MemoEntity-10.swift")
+            }
+
+            @Step {
+                自動で使われる属性以外も索引に入れたいときのために、`MemoEntity` のextensionを作る。
+
+                @Code(name: "MemoEntity+Spotlight.swift", file: "MemoEntity+Spotlight-01.swift")
+            }
+
+            @Step {
+                `attributeSet` を実装する。ここで返した `CSSearchableItemAttributeSet` の内容が、
+                自動で作られる属性に追加される。
+
+                @Code(name: "MemoEntity+Spotlight.swift", file: "MemoEntity+Spotlight-02.swift", previousFile: "MemoEntity+Spotlight-01.swift")
+            }
+
+            @Step {
+                メモのタグを `keywords` に入れる。タイトル・サブタイトル・画像を `attributeSet` にも入れた場合は、
+                `displayRepresentation` 側の値が優先される。
+
+                @Code(name: "MemoEntity+Spotlight.swift", file: "MemoEntity+Spotlight-03.swift", previousFile: "MemoEntity+Spotlight-02.swift")
+            }
+
+            @Step {
+                索引への登録を担う型を作る。既定の索引ではなく、名前を付けた `CSSearchableIndex` を使う。
+                既定の索引は試作とテスト用。
+
+                @Code(name: "MemoSpotlightIndexer.swift", file: "MemoSpotlightIndexer-01.swift")
+            }
+
+            @Step {
+                `indexAppEntities(_:)` でメモを索引に入れる。同じ `id` のメモが既にあれば、新しく作らずに更新される。
+                メモを追加したときと、タイトルなど表示に使う値が変わったときに呼ぶ。
+
+                @Code(name: "MemoSpotlightIndexer.swift", file: "MemoSpotlightIndexer-02.swift", previousFile: "MemoSpotlightIndexer-01.swift")
+            }
+
+            @Step {
+                メモを削除したら、`deleteAppEntities(identifiedBy:ofType:)` で索引からも消す。
+                消し忘れると、Siriが存在しないメモを見つけてしまう。
+
+                @Code(name: "MemoSpotlightIndexer.swift", file: "MemoSpotlightIndexer-03.swift", previousFile: "MemoSpotlightIndexer-02.swift")
+            }
+
+            @Step {
+                索引に問題が起きると、Spotlightはアプリに再登録を求めてくる。
+                `MemoQuery` を `IndexedEntityQuery` に準拠させ、全件を再登録する `reindexAllEntities` を書く。
+
+                @Code(name: "MemoQuery.swift", file: "MemoQuery-04.swift", previousFile: "MemoQuery-03.swift")
+            }
+
+            @Step {
+                指定された `id` だけを再登録する `reindexEntities(for:indexDescription:)` も書く。
+                Spotlightの挙動はシミュレータと実機で違うことがあるので、索引の確認は実機で行う。
+
+                @Code(name: "MemoQuery.swift", file: "MemoQuery-05.swift", previousFile: "MemoQuery-04.swift")
+            }
+        }
+    }
+
+    @Section(title: "画面に映っているものを伝える") {
+        @ContentAndMedia {
+            Siriは画面上の文字は読めるが、それがアプリのどのデータなのかは分からない。
+            ビューにEntityの注釈を付けると、「3番目を完了にして」「このメモ」が通じるようになる。
+            注釈には、画面が表示しているデータだけを付ける。
+        }
+
+        @Steps {
+            @Step {
+                メモ一覧の画面を作る。選択状態を `selection` で持っておく。
+
+                @Code(name: "MemoListView.swift", file: "MemoListView-01.swift")
+            }
+
+            @Step {
+                `List` でメモを並べる。
+
+                @Code(name: "MemoListView.swift", file: "MemoListView-02.swift", previousFile: "MemoListView-01.swift")
+            }
+
+            @Step {
+                `List` に `appEntityIdentifier(forSelectionType:)` を付け、選択IDから
+                `EntityIdentifier` を作って返す。行ごとに注釈を付けるのではなく、システムが必要になったときに
+                IDから問い合わせる方式なので、行数が多くても負荷が小さい。選択したままスクロールして
+                画面外に出た行もSiriが見つけられる。
+
+                @Code(name: "MemoListView.swift", file: "MemoListView-03.swift", previousFile: "MemoListView-02.swift")
+            }
+
+            @Step {
+                画面全体で1件のメモを表示する詳細画面を作る。
+
+                @Code(name: "MemoDetailView.swift", file: "MemoDetailView-01.swift")
+            }
+
+            @Step {
+                本文としてタイトルを表示する。
+
+                @Code(name: "MemoDetailView.swift", file: "MemoDetailView-02.swift", previousFile: "MemoDetailView-01.swift")
+            }
+
+            @Step {
+                1件だけを表示する画面では、`userActivity` で `NSUserActivity` を作り、
+                `appEntityIdentifier` にそのメモを入れる。このactivityはHandoffで別のデバイスに引き継ぐときにも使われる。
+                画面に複数のEntityが並んでいて、その一部にだけ付けたいときは、
+                ビューに `appEntityIdentifier(_:)` を付ける方法もある。
+
+                @Code(name: "MemoDetailView.swift", file: "MemoDetailView-03.swift", previousFile: "MemoDetailView-02.swift")
+            }
+
+            @Step {
+                `MemoQuery` に `displayRepresentations(for:requestedComponents:)` を足す。
+                画面上のEntityが多いとき、Siriは全データではなく表示用のテキストだけを問い合わせられるので、
+                「3番目」がどれかを素早く判断できる。判断が遅いと、Siriが聞き返したり別のものを選んだりする。
+
+                @Code(name: "MemoQuery.swift", file: "MemoQuery-06.swift", previousFile: "MemoQuery-05.swift")
+            }
+        }
+    }
+
+    @Section(title: "画面の外にある文脈を伝える") {
+        @ContentAndMedia {
+            通知、Now Playing、アラームのように、アプリの画面以外にもアプリのデータは出てくる。
+            これらにもEntityの注釈を付けられる。
+        }
+
+        @Steps {
+            @Step {
+                期限の通知を作る関数を用意する。
+
+                @Code(name: "MemoNotification.swift", file: "MemoNotification-01.swift")
+            }
+
+            @Step {
+                `UNMutableNotificationContent` の `appEntityIdentifiers` にメモのIDを入れる。
+                AirPodsで通知が読み上げられたあとに「それ完了にして」と言えば、Siriはどのメモかが分かる。
+                Now Playingでは `MusicContent` などの `appEntityIdentifiers` に、
+                AlarmKitでは `AlarmConfiguration` に、同じようにEntityを渡す。
+                一時的な `TransientAppEntity` は永続的なIDを持たないので、この注釈には使えない。
+
+                @Code(name: "MemoNotification.swift", file: "MemoNotification-02.swift", previousFile: "MemoNotification-01.swift")
+            }
+        }
+    }
+
+    @Section(title: "UIでの操作をdonateする") {
+        @ContentAndMedia {
+            SiriやShortcutsから実行されたintentは、システムが自動で記録する。
+            アプリの画面で行った操作は、アプリがdonateしない限りApple Intelligenceには伝わらない。
+        }
+
+        @Steps {
+            @Step {
+                メモ一覧の画面のモデルを用意する。
+
+                @Code(name: "MemoListModel.swift", file: "MemoListModel-01.swift")
+            }
+
+            @Step {
+                画面の「追加」ボタンから呼ばれる `addMemoFromUI` を書く。ここまではdonationとは関係のない、
+                普通の追加処理。
+
+                @Code(name: "MemoListModel.swift", file: "MemoListModel-02.swift", previousFile: "MemoListModel-01.swift")
+            }
+
+            @Step {
+                同じ操作に当たる `CreateMemoIntent`（第5章のスキーマ対応intent）を組み立て、
+                結果と一緒に `IntentDonationManager.shared.donate(intent:result:)` に渡す。
+                システムはこのintentを実行しない。記録しておき、「いつもこのアプリでメモを取る」という傾向の学習や、
+                あいまいな依頼の解釈、ロック画面などでの提案に使う。
+
+                @Code(name: "MemoListModel.swift", file: "MemoListModel-03.swift", previousFile: "MemoListModel-02.swift")
+            }
+
+            @Step {
+                提案として表示されるときの文言は、`PredictableIntent` で指定できる。
+                `AddMemoIntent` に準拠を足し、`predictionConfiguration` で「「牛乳を買う」をメモに追加」のような
+                短い説明を返す。
+
+                @Code(name: "AddMemoIntent.swift", file: "AddMemoIntent-12.swift", previousFile: "AddMemoIntent-11.swift")
+            }
+
+            @Step {
+                donationには、実際に人が行った操作だけを入れ、パラメータはなるべく埋める。
+                ただしメッセージ本文のように予測に使ってほしくない値は入れない。
+                実際の行動より多くdonateすると、システムはそのアプリのdonationを無視するようになる。
+            }
+        }
+    }
+
+    @Section(title: "他のアプリへ渡す") {
+        @ContentAndMedia {
+            Siri AIは「このメモをメールで送って」のように、あるアプリのEntityを別のアプリに渡して操作を続けられる。
+            そのためにはEntityが `Transferable` に準拠している必要がある。
+        }
+
+        @Steps {
+            @Step {
+                `MemoEntity` を `Transferable` に準拠させる。
+
+                @Code(name: "MemoEntity+Transferable.swift", file: "MemoEntity+Transferable-01.swift")
+            }
+
+            @Step {
+                `transferRepresentation` で、メモをタイトルの文字列として書き出す。
+                メールやメッセージのアプリは、この文字列を本文として受け取れる。
+                連絡先や場所を表すEntityなら、`IntentValueRepresentation` で `IntentPerson` や
+                `PlaceDescriptor` に変換できるようにしておくと、受け取ったアプリがそのまま使える形で渡せる。
+
+                @Code(name: "MemoEntity+Transferable.swift", file: "MemoEntity+Transferable-02.swift", previousFile: "MemoEntity+Transferable-01.swift")
+            }
+        }
+    }
+
+    @Section(title: "カメラに映ったものからメモを探す") {
+        @ContentAndMedia {
+            ビジュアルインテリジェンスは、カメラやスクリーンショットに写ったものを手がかりに、
+            アプリの中の該当するデータを検索結果として並べる。
+        }
+
+        @Steps {
+            @Step {
+                `IntentValueQuery` に準拠するクエリを作る。アプリに置ける、
+                ビジュアルインテリジェンス用（`SemanticContentDescriptor` を受け取る）のクエリは1つだけ。
+
+                @Code(name: "MemoVisualSearchQuery.swift", file: "MemoVisualSearchQuery-01.swift")
+            }
+
+            @Step {
+                `values(for:)` で `SemanticContentDescriptor` を受け取る。`labels` には「milk」のような、
+                写ったものを表す英語のラベルが入るので、それに合うメモを返す。
+                牛乳パックにカメラを向けると「牛乳を買う」のメモが出る、という使い方になる。
+                ラベルは `en_US` の一般的な語で、翻訳も類義語の展開もされない。
+                画像そのもので探したいときは `pixelBuffer` を使う。
+
+                @Code(name: "MemoVisualSearchQuery.swift", file: "MemoVisualSearchQuery-02.swift", previousFile: "MemoVisualSearchQuery-01.swift")
+            }
+
+            @Step {
+                検索結果をタップしたときは、第5章の `OpenMemoIntent` でメモが開く。
+                結果が多いときは、Visual intelligenceドメインの `semanticContentSearch` スキーマに合わせたintentを作ると、
+                「さらに表示」からアプリ内の一覧へ移れる。
+            }
+        }
+    }
+
+    @Section(title: "次のステップ") {
+        @ContentAndMedia {
+            Memoのentityを、Spotlightから見つけられ、画面と通知の文脈が伝わり、
+            UIの操作がdonationされる状態にしてもらう。
+        }
+
+        @Steps {
+            @Step {
+                理解できたらこれをコピペする。
+
+                @Code(name: "prompt.txt", file: "06-prompt.txt")
+            }
+        }
+    }
+}

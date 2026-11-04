@@ -1,0 +1,15 @@
+#name FindMemosIntent.swift
+1|import AppIntents
+1|
+1|@AppIntent(.tool)
+1|struct FindMemosIntent: AppIntent {
+1|    static let title: LocalizedStringResource = "メモを探す"
+2|    static let description = IntentDescription("キーワードと優先度に合う未完了のメモを探す。")
+2|
+2|    @Parameter(title: "検索条件", description: "探したいメモの条件")
+2|    var search: MemoSearch
+3|
+3|    func perform() async throws -> some ReturnsValue<[MemoEntity]> {
+3|        .result(value: try await MemoStore.shared.memos(matching: search))
+3|    }
+1|}

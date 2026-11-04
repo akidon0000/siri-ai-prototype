@@ -1,0 +1,45 @@
+#name MemoEntity.swift
+1|import AppIntents
+1|
+7|@AppEntity(schema: .reminders.reminder)
+1-6|struct MemoEntity: AppEntity {
+7-10|struct MemoEntity {
+11|struct MemoEntity: IndexedEntity {
+1|    let id: UUID
+1|    var title: String
+1-7|    var isDone: Bool
+8|    var isCompleted: Bool
+5|    var sharedWith: [String]
+9|    var note: AttributedString?
+9|    var tags: Set<String>
+9|    var urls: [URL]
+9|    var dueDate: DateComponents?
+9|    var recurrence: Calendar.RecurrenceRule?
+10|    var isFlagged: Bool?
+10|    var creationDate: Date?
+10|    var completionDate: Date?
+10|    var list: MemoListEntity
+10|    var locationTrigger: MemoLocationTriggerEntity?
+12|
+12|    @Property(title: "鍵付きメモの本文", description: "ロックしたメモの本文",
+12|              authenticationPolicy: .requiresLocalDeviceAuthentication)
+12|    var lockedBody: String?
+13|
+13|    @Property(title: "同期リビジョン", visibility: .internal)
+13|    var revision: Int
+2-6|
+2-6|    static let typeDisplayRepresentation: TypeDisplayRepresentation = "メモ"
+3|
+3|    var displayRepresentation: DisplayRepresentation {
+3-5|        DisplayRepresentation(title: "\(title)")
+6|        DisplayRepresentation(
+6|            title: "\(title)",
+6-7|            subtitle: isDone ? "完了" : "未完了",
+6-7|            image: .init(systemName: isDone ? "checkmark.circle.fill" : "circle")
+8|            subtitle: isCompleted ? "完了" : "未完了",
+8|            image: .init(systemName: isCompleted ? "checkmark.circle.fill" : "circle")
+6|        )
+3|    }
+4|
+4|    static let defaultQuery = MemoQuery()
+1|}

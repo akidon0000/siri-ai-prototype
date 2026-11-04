@@ -1,0 +1,20 @@
+#name MemoSnippetIntent.swift
+1|import AppIntents
+1|import SwiftUI
+1|
+1|struct MemoSnippetIntent: SnippetIntent {
+1|    static let title: LocalizedStringResource = "メモのスニペット"
+2|
+2|    @Parameter var memo: MemoEntity
+3|
+3|    init() {}
+3|
+3|    init(memo: MemoEntity) {
+3|        self.memo = memo
+3|    }
+4|
+4|    func perform() async throws -> some IntentResult & ShowsSnippetView {
+4|        let latest = try await MemoStore.shared.memo(for: memo.id)
+4|        return .result(view: MemoSnippetView(memo: latest))
+4|    }
+1|}

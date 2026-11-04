@@ -1,0 +1,210 @@
+@Tutorial(time: 25) {
+    @Intro(title: "検証する") {
+        App Intentsの不具合は、エラーにならずに静かに壊れることが多い。Siriが別の操作を選ぶ、
+        ショートカットが失敗する、Spotlightに出てこない、といった形で現れる。
+        Appleは検証を4段階に分けている。コードで書く統合テスト、Shortcutsアプリでの確認、
+        Spotlightでの確認、Siriに実際に話しかける確認で、Siri AI Developer Previewでは
+        最後の段階をSiri Evaluationsで自動化できる。
+
+        教材: Apple Developer Documentation「Verifying your App Intents implementation」
+        「Testing your App Intents code」「Siri Evaluations」
+    }
+
+    @Section(title: "App Intents Testingで統合テストを書く") {
+        @ContentAndMedia {
+            App Intents Testingは、SiriやShortcutsと同じ経路でアプリのintentをプロセスの外から実行する。
+            テストはアプリの型をimportせず、intentやEntityを名前の文字列で探して使う。
+            そのため、ユニットテストではなくUIテストのターゲットに置く。
+        }
+
+        @Steps {
+            @Step {
+                テストの前提を揃えるためのテスト専用intentを、アプリ側に作る。
+                `#if DEBUG` で囲み、リリースビルドには入れない。
+
+                @Code(name: "ResetMemosIntent.swift", file: "ResetMemosIntent-01.swift")
+            }
+
+            @Step {
+                `isDiscoverable` を `false` にしてShortcutsやSiriに出ないようにし、
+                `perform()` で初期データに戻す。UIを操作して状態を作る必要が無くなり、画面の構成が変わってもテストが壊れない。
+
+                @Code(name: "ResetMemosIntent.swift", file: "ResetMemosIntent-02.swift", previousFile: "ResetMemosIntent-01.swift")
+            }
+
+            @Step {
+                UIテストのターゲットにテストクラスを作る。`XCUIApplication` と `IntentDefinitions` を持つ。
+                テストターゲットはアプリと同じ署名チームにする。
+
+                @Code(name: "MemoIntentsTests.swift", file: "MemoIntentsTests-01.swift")
+            }
+
+            @Step {
+                `setUp` でアプリを起動し、バンドルIDから `IntentDefinitions` を作る。
+                アプリが登録した全てのintent・Entity・Enum・クエリを、ここから名前で引ける。
+
+                @Code(name: "MemoIntentsTests.swift", file: "MemoIntentsTests-02.swift", previousFile: "MemoIntentsTests-01.swift")
+            }
+
+            @Step {
+                `intents["CreateMemoIntent"]` でintentを引き、`makeIntent(title:)` でパラメータを渡して `run()` する。
+                結果は動的メンバー参照で `result.value.title` のように読める。
+
+                @Code(name: "MemoIntentsTests.swift", file: "MemoIntentsTests-03.swift", previousFile: "MemoIntentsTests-02.swift")
+            }
+
+            @Step {
+                `entities["MemoEntity"].entities(matching:)` で、Siriが名前を聞き取ったときと同じ探し方を試す。
+                第2章の `entities(matching:)` が正しく動いているかの確認になる。
+
+                @Code(name: "MemoIntentsTests.swift", file: "MemoIntentsTests-04.swift", previousFile: "MemoIntentsTests-03.swift")
+            }
+
+            @Step {
+                `spotlightQuery(_:)` で、第6章のSpotlight索引にメモが載っているかを確かめる。
+                `nil` を渡すと、その型の索引済みEntityを全て取れる。
+
+                @Code(name: "MemoIntentsTests.swift", file: "MemoIntentsTests-05.swift", previousFile: "MemoIntentsTests-04.swift")
+            }
+
+            @Step {
+                `setUp` の最後で `ResetMemosIntent` を実行し、どのテストも同じ初期データから始める。
+                ほかに、`viewAnnotations()` で画面上の注釈を、`exported(as:)` と `resolved(from:)` で
+                `Transferable` の往復を確かめるAPIもある。
+
+                @Code(name: "MemoIntentsTests.swift", file: "MemoIntentsTests-06.swift", previousFile: "MemoIntentsTests-05.swift")
+            }
+        }
+    }
+
+    @Section(title: "ShortcutsとSpotlightで手で確かめる") {
+        @ContentAndMedia {
+            統合テストでは、表示の自然さや、システムがデータを見つけられるかまでは分からない。
+        }
+
+        @Steps {
+            @Step {
+                Shortcutsアプリで新規ショートカットを作り、アクションの一覧にアプリのintentが並ぶかを見る。
+                第2章の `parameterSummary` が自然な1文として読めるか、対応する全ての言語で確かめる。
+            }
+
+            @Step {
+                intentの結果を次のアクションにつなぎ、`MemoEntity` が正しい型のまま流れるかを確かめる。
+                `perform()` の先頭にブレークポイントを置いてShortcutsから実行すると、そこで止まる。
+            }
+
+            @Step {
+                実機のSpotlightでメモのタイトルを検索し、結果をタップしてアプリの該当画面が開くかを確かめる。
+                App Shortcutのフレーズが、入力途中の候補として出るかも見る。
+                索引をやり直したいときは、設定 > デベロッパのCoreSpotlight Testingから初期化できる。
+            }
+        }
+    }
+
+    @Section(title: "Siri Evaluationsで会話を自動テストする") {
+        @ContentAndMedia {
+            Siri Evaluationsは、Siriへの依頼を台本（シナリオ）として書いて実行し、
+            Siriがどのintentを呼んだか、どのEntityを見つけたかを期待と比べる。
+            EvaluationsフレームワークとSwift Testingの上で動き、実行後にXcodeが各ターンのレポートを出す。
+        }
+
+        @Steps {
+            @Step {
+                UIテストのターゲットに評価用のファイルを作り、`IntentDefinitions` を用意する。
+
+                @Code(name: "MemoSiriEvaluationTests.swift", file: "MemoSiriEvaluationTests-01.swift")
+            }
+
+            @Step {
+                `Evaluation` に準拠する型を作る。`name` がXcodeのレポートの題名、`dataset` が実行するシナリオの集まり。
+
+                @Code(name: "MemoSiriEvaluationTests.swift", file: "MemoSiriEvaluationTests-02.swift", previousFile: "MemoSiriEvaluationTests-01.swift")
+            }
+
+            @Step {
+                `subject(from:)` で、渡されたシナリオを `SiriService.run(scenario:)` に流す。
+                シナリオごとに1回呼ばれるので、実行前の状態作りや後片付けもここに書ける。
+
+                @Code(name: "MemoSiriEvaluationTests.swift", file: "MemoSiriEvaluationTests-03.swift", previousFile: "MemoSiriEvaluationTests-02.swift")
+            }
+
+            @Step {
+                採点に `SiriExpectationEvaluator` を使い、`computeSiriMetrics(into:)` で標準の指標をレポートに出す。
+
+                @Code(name: "MemoSiriEvaluationTests.swift", file: "MemoSiriEvaluationTests-04.swift", previousFile: "MemoSiriEvaluationTests-03.swift")
+            }
+
+            @Step {
+                シナリオを書く。`UserTurn` が人の1回の発話で、その中の `Calls` で
+                「`CreateMemoIntent` が、タイトルに牛乳を含めて呼ばれる」ことを期待する。
+
+                @Code(name: "MemoSiriEvaluationTests.swift", file: "MemoSiriEvaluationTests-05.swift", previousFile: "MemoSiriEvaluationTests-04.swift")
+            }
+
+            @Step {
+                `Calls(.disallowed)` で「削除は呼ばれない」ことも期待に加える。
+                通常の `Calls` は挙げた呼び出しが起きたかしか見ないので、間違った操作をしていないかは
+                `.disallowed` で明示しないと分からない。確認を求めた段階でも `.disallowed` は失敗になる。
+
+                @Code(name: "MemoSiriEvaluationTests.swift", file: "MemoSiriEvaluationTests-06.swift", previousFile: "MemoSiriEvaluationTests-05.swift")
+            }
+
+            @Step {
+                `@Test(.evaluates(...))` で評価をテストに付け、全てのintentの期待が満たされたかを `#expect` で確かめる。
+
+                @Code(name: "MemoSiriEvaluationTests.swift", file: "MemoSiriEvaluationTests-07.swift", previousFile: "MemoSiriEvaluationTests-06.swift")
+            }
+
+            @Step {
+                複数ターンのシナリオを書く。1ターン目でタイトルを言わず、2ターン目で答える。
+                ターンをまたぐ期待は、`SiriScenario` の `expectation:` 側に書く。
+                Siriが聞き返している途中の呼び出しは、完了するまで `Calls` を満たさない。
+
+                @Code(name: "MemoSiriEvaluationTests.swift", file: "MemoSiriEvaluationTests-08.swift", previousFile: "MemoSiriEvaluationTests-07.swift")
+            }
+
+            @Step {
+                このシナリオ用のテストも足す。Siriの応答は実行ごとに揺れるので、シナリオは何度か実行し、
+                遠回しな言い方や情報が足りない言い方も増やしていく。通るシナリオが増えるように、
+                intentやパラメータの名前・説明、app skillを直していく。
+                評価できるのはテストターゲットと同じ開発チームで署名したアプリだけで、
+                実機では設定 > デベロッパでUI Automationを有効にする。
+
+                @Code(name: "MemoSiriEvaluationTests.swift", file: "MemoSiriEvaluationTests-09.swift", previousFile: "MemoSiriEvaluationTests-08.swift")
+            }
+        }
+    }
+
+    @Section(title: "実機でSiriに話しかける") {
+        @ContentAndMedia {
+            最後は、人が実際に言いそうな言葉で試す。
+        }
+
+        @Steps {
+            @Step {
+                言い回しを変え、「えーと」のような言葉も混ぜる。メモを画面に出した状態と出していない状態で、
+                「これを完了にして」が通じるかを比べる。
+            }
+
+            @Step {
+                「牛乳のメモをメールで送って」のように、他のアプリにまたがる依頼も試す。
+                AirPodsのように画面が無い状態で、音声の応答だけで結果が伝わるかを確かめる。
+                アプリが対応する全ての言語で同じことをする。
+            }
+        }
+    }
+
+    @Section(title: "次のステップ") {
+        @ContentAndMedia {
+            App Intents Testingの統合テストと、Siri Evaluationsのシナリオを用意してもらう。
+        }
+
+        @Steps {
+            @Step {
+                理解できたらこれをコピペする。
+
+                @Code(name: "prompt.txt", file: "08-prompt.txt")
+            }
+        }
+    }
+}
