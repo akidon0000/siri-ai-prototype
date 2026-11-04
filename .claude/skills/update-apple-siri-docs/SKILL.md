@@ -1,11 +1,11 @@
 ---
 name: update-apple-siri-docs
-description: apple-siri-docs-watch リポジトリで、Apple Developer Documentation の Siri / SiriKit / App Intents / Apple Intelligence (Siri AI) / Shortcuts 関連ページを固定した手順で検索・取得し、本文をそのまま保存してgit管理し、変更をPRにする。「Siriのドキュメントを更新して」「Appleのドキュメント差分を取って」「apple-siri-docs-watchを更新して」等で使用する。
+description: siri-ai-prototype リポジトリで、Apple Developer Documentation の Siri / SiriKit / App Intents / Apple Intelligence (Siri AI) / Shortcuts 関連ページを固定した手順で検索・取得し、本文をそのまま保存してgit管理し、変更をPRにする。「Siriのドキュメントを更新して」「Appleのドキュメント差分を取って」「siri-ai-prototypeを更新して」等で使用する。
 ---
 
 # Apple Siri/Siri AI ドキュメント更新スキル
 
-このスキルは `apple-siri-docs-watch` リポジトリ専用。目的は Apple Developer Documentation の
+このスキルは `siri-ai-prototype` リポジトリ専用。目的は Apple Developer Documentation の
 Siri 関連ページを**毎回同じ手順**で見つけて本文をそのまま保存し、変更があった分だけ
 ブランチ→コミット→PRにすること。手順を固定することで、実行者やタイミングが違っても
 同じ対象・同じ形式で追跡できるようにする。
@@ -15,7 +15,7 @@ Siri 関連ページを**毎回同じ手順**で見つけて本文をそのま�
 
 ## 0. 前提
 
-- 対象リポジトリ: `~/ghq/github.com/akidon0000/apple-siri-docs-watch`（違う場所にいたら `change_directory` で移動する）
+- 対象リポジトリ: `~/ghq/github.com/akidon0000/siri-ai-prototype`（違う場所にいたら `change_directory` で移動する）
 - マニフェスト: `sources.yaml`（追跡中ページの一覧）
 - 保存先: `docs/<category>/<slug>.md`（category は `sirikit` / `app-intents` / `apple-intelligence` / `shortcuts`）
 

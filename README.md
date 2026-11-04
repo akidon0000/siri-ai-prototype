@@ -1,4 +1,4 @@
-# apple-siri-docs-watch
+# siri-ai-prototype
 
 Apple Developer Documentation のうち Siri / Siri AI (Apple Intelligence) 関連ページを
 そのまま git 管理し、改訂の差分を `git log` / `git diff` で追えるようにするための個人用アーカイブ。
