@@ -25,6 +25,21 @@ Created by Opus 5.5 with Dan Akiyama ([@akidon0000](https://github.com/akidon000
 
 ブラウザのほか、Xcode で `ios/Library` を開いて Build Documentation（⌃⇧⌘D）でも読める。
 
+## エージェント用の skill
+
+全8章の本文とコードを、自分のアプリで Siri 対応を進めるときにエージェントが参照できる skill `siri-ai` にしてある。
+
+```text
+/plugin marketplace add akidon0000/siri-ai-tutorials
+/plugin install siri-ai@siri-ai-tutorials
+```
+
+```bash
+apm install akidon0000/siri-ai-tutorials/plugins/siri-ai
+```
+
+中身と skills CLI での入れ方は [plugins/siri-ai/README.md](./plugins/siri-ai/README.md)。
+
 ## リポジトリの中身
 
 | パス | 中身 |
@@ -32,12 +47,13 @@ Created by Opus 5.5 with Dan Akiyama ([@akidon0000](https://github.com/akidon000
 | `ios/Library/Sources/AppFeature/AppFeature.docc/` | チュートリアル本体（`.tutorial`） |
 | `tools/tutorial-code/` | チュートリアルに載せるコードの元ファイル（`seq/*.seq`）と生成スクリプト |
 | `ios/App`、`ios/Library` | Memoアプリ（SwiftUI の殻と SPM パッケージ）。Siri 連携はまだ入っておらず、章末プロンプトで実装していく |
+| `plugins/siri-ai/` | チュートリアルを skill にした Claude Code プラグイン（APM・skills CLI でも入る）。`references/` は `tools/skill/generate.py` の生成物 |
 | `docs/apple-doc/` | 教材にした Apple Developer Documentation の原文。改訂を `git diff` で追う |
 | `docs/adr/` | 構成上の決定の記録 |
 
 ## チュートリアルを直すとき
 
-コードは `tools/tutorial-code/seq/` を編集して `python3 tools/tutorial-code/generate.py` で生成する。生成先の `TutorialArt/Code/` は直接触らない。`.seq` の書式、1ステップの行数制限、`.tutorial` の改名時のリダイレクト、PR 前の確認は [CONTRIBUTING.md](./CONTRIBUTING.md) にまとめてある。
+コードは `tools/tutorial-code/seq/` を編集して `python3 tools/tutorial-code/generate.py` で生成する。生成先の `TutorialArt/Code/` は直接触らない。本文かコードを変えたら `python3 tools/skill/generate.py` で skill も作り直す。`.seq` の書式、1ステップの行数制限、`.tutorial` の改名時のリダイレクト、PR 前の確認は [CONTRIBUTING.md](./CONTRIBUTING.md) にまとめてある。
 
 手元での確認は `xcrun docc convert` が警告0件で通ればよい（コマンドは [docc-pages.yml](./.github/workflows/docc-pages.yml) と同じ）。`main` に push すると GitHub Pages に自動で再公開される。
 
