@@ -37,6 +37,14 @@ intent の中身がチュートリアルのコードとほぼ同じ形になる�
 | 7 | ツール（`SetMemoPriorityIntent`、`FindMemosIntent`）と app skill |
 | 8 | `ResetMemosIntent`、App Intents Testing の UI テスト、Siri Evaluations の評価 |
 
+## チュートリアルと違うところ
+
+- **`MemoShortcuts` はアプリのターゲット（`App/App/MemoShortcuts.swift`）に置く。**
+  `AppShortcutsProvider` をパッケージに置くと、パッケージ側のメタデータには入るが、アプリの `Metadata.appintents` に
+  統合されるときに落ちて、App Shortcuts が1件も登録されない（Xcode 27.1 で確認）。
+  そのため、フレーズから参照する `AddMemoIntent`・`CompleteMemoIntent`・`MemoEntity`・`MemoPriority` は `public` にしてある。
+  `updateAppShortcutParameters()` は、アプリが `MemoStore.configure(client:onChange:)` に渡すクロージャから呼ぶ。
+
 ## 第1章で決めたこと
 
 Siri 連携は App Intents だけで書き、SiriKit（Intents / IntentsUI / `.intentdefinition`）は使わない。

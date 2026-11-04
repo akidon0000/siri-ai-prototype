@@ -13,12 +13,15 @@ public nonisolated final class MemoStore: Sendable {
     public static let didChangeNotification = Notification.Name("MemoStore.didChange")
 
     private let client = Mutex<(any MemoClient)?>(nil)
+    private let onChange = Mutex<(@Sendable () -> Void)?>(nil)
 
     init() {}
 
     /// アプリの起動時とテストの前に、使う `MemoClient` を渡す。
-    public func configure(client: any MemoClient) {
+    /// `onChange` はメモが増減・更新されるたびに呼ばれる。アプリはここで App Shortcuts のパラメータを更新する。
+    public func configure(client: any MemoClient, onChange: (@Sendable () -> Void)? = nil) {
         self.client.withLock { $0 = client }
+        self.onChange.withLock { $0 = onChange }
     }
 
     private var memoClient: any MemoClient {
@@ -56,6 +59,7 @@ public nonisolated final class MemoStore: Sendable {
     }
 
     func memosDidChange() {
+        onChange.withLock { $0 }?()
         NotificationCenter.default.post(name: Self.didChangeNotification, object: nil)
     }
 }

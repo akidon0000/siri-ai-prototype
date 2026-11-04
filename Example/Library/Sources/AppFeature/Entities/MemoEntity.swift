@@ -1,19 +1,19 @@
 import AppIntents
 import Clients
 
-struct MemoEntity: AppEntity {
+public struct MemoEntity: AppEntity {
     // システムがこのメモを指すときに使う、変わらないID
-    let id: UUID
+    public let id: UUID
     var title: String
     var isDone: Bool
 
-    static let typeDisplayRepresentation: TypeDisplayRepresentation = "メモ"
+    public static let typeDisplayRepresentation: TypeDisplayRepresentation = "メモ"
 
-    var displayRepresentation: DisplayRepresentation {
+    public var displayRepresentation: DisplayRepresentation {
         DisplayRepresentation(title: "\(title)")
     }
 
-    static let defaultQuery = MemoQuery()
+    public static let defaultQuery = MemoQuery()
 }
 
 extension MemoEntity {
