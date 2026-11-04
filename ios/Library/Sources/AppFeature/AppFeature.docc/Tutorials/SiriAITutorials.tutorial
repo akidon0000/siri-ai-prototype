@@ -1,0 +1,53 @@
+@Tutorials(name: "Siri AI PoC チュートリアル") {
+    @Intro(title: "SiriKitからSiri AIまで") {
+        SiriKitからApp Intents、Apple Intelligence (Siri AI) までの流れを、
+        Apple公式ドキュメント（`docs/` 配下に原文保存済み）を教材に理解する。
+        各チュートリアルの最後に「理解できたらコピペするプロンプト」があるので、
+        準備ができたものだけ実装を進めればよい。
+    }
+
+    @Chapter(name: "第1章: SiriKitの限界") {
+        @Image(source: "chapter1.svg", alt: "第1章のイメージ")
+
+        旧世代のIntents/IntentsUIフレームワークが何をしていたか、
+        なぜApp Intentsに置き換わったかを理解する。
+
+        @TutorialReference(tutorial: "doc:01-sirikit-limits")
+    }
+
+    @Chapter(name: "第2章: App Intentsの基礎") {
+        @Image(source: "chapter2.svg", alt: "第2章のイメージ")
+
+        App Intent / App Entity / App Enum の3つの型でアプリの機能とデータを
+        システムに公開する仕組みを理解する。
+
+        @TutorialReference(tutorial: "doc:02-app-intents-basics")
+    }
+
+    @Chapter(name: "第3章: App Shortcutsでフレーズを固定する") {
+        @Image(source: "chapter3.svg", alt: "第3章のイメージ")
+
+        AppShortcutsProviderとApp Shortcutで、決まったフレーズからApp Intentを
+        確実に呼び出す仕組みを理解する。
+
+        @TutorialReference(tutorial: "doc:03-app-shortcuts")
+    }
+
+    @Chapter(name: "第4章: Apple IntelligenceとSiri AIへの統合") {
+        @Image(source: "chapter4.svg", alt: "第4章のイメージ")
+
+        スキーマ・Transferable・オンスクリーンコンテキスト・donationという
+        5つの観点で、App IntentsをApple Intelligence/Siri AIに統合する流れを理解する。
+
+        @TutorialReference(tutorial: "doc:04-apple-intelligence-siri-ai")
+    }
+
+    @Chapter(name: "第5章: Siri AI Developer PreviewのToolIntent") {
+        @Image(source: "chapter5.svg", alt: "第5章のイメージ")
+
+        既存のApp Intentを `@AppIntent(AppIntentTraits)` でSiriが呼び出せる
+        「ツール」に変える、Siri AI Developer Preview固有の仕組みを理解する。
+
+        @TutorialReference(tutorial: "doc:05-siri-ai-tool-intent")
+    }
+}

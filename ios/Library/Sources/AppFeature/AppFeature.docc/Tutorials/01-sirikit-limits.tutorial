@@ -1,0 +1,49 @@
+@Tutorial(time: 10) {
+    @Intro(title: "SiriKitの限界") {
+        SiriKit / Intents / IntentsUI フレームワークが何をしていたか、
+        なぜApple IntelligenceやSiri AIへはこの枠組みのままでは対応できないかを理解する。
+
+        教材: `docs/sirikit/sirikit.md`（Apple Developer Documentation原文）
+    }
+
+    @Section(title: "SiriKitが解決していたこと") {
+        @ContentAndMedia {
+            SiriKitは、音楽再生やメッセージ送信のような「システムが用意した定型の意図（intent）」を
+            アプリが処理できるようにする仕組みだった。アプリ本体またはIntents app extensionで
+            intentを処理し、IntentsUI app extensionでSiriやMapsの中に独自のビューを表示できた。
+        }
+
+        @Steps {
+            @Step {
+                SiriKitは標準Intent（音楽再生・配車・ワークアウトなど）を処理するためのもので、
+                アプリ独自の操作を表現するには「カスタムintent」を自分で定義する必要があった。
+            }
+
+            @Step {
+                intentの処理は「resolve（パラメータ確認）→ confirm（最終確認）→ handle（実行）」の
+                3段階に分かれており、この一連の流れを自分で実装する必要があった。
+            }
+
+            @Step {
+                この枠組みはApple IntelligenceやSiri AIが前提とする「AppEntity」「スキーマ」
+                「donation」といった仕組みを持たない。公式ドキュメントも、新規実装では
+                SiriKitではなくApp Intentsフレームワークを使うよう明記している。
+            }
+        }
+    }
+
+    @Section(title: "次のステップ") {
+        @ContentAndMedia {
+            ここまでの内容に納得できたら、下のプロンプトをコピーしてClaude Codeに貼り付けてよい。
+            実装を依頼するものではなく、方針の確認と次章への準備だけを行う。
+        }
+
+        @Steps {
+            @Step {
+                理解できたらこれをコピペする。
+
+                @Code(file: "01-prompt.txt", name: "prompt.txt")
+            }
+        }
+    }
+}

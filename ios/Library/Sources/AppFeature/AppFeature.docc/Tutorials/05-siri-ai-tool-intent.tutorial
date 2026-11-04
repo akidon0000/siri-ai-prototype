@@ -1,0 +1,63 @@
+@Tutorial(time: 15) {
+    @Intro(title: "Siri AI Developer PreviewのToolIntent") {
+        App IntentをSiriが自律的に呼び出せる「ツール」として公開する、
+        Siri AI Developer Preview固有の仕組みを理解する。
+
+        教材: `docs/apple-intelligence/siri-ai-developer-preview.md`
+        （Apple Developer Documentation原文）
+    }
+
+    @Section(title: "Siri AI Developer Previewでできること") {
+        @ContentAndMedia {
+            通常のスキーマ対応だけでなく、アプリ独自のカスタムアクション・情報も
+            Siriが見つけて実行できるようになる。
+        }
+
+        @Steps {
+            @Step {
+                アプリがフォアグラウンドにある間、Live Activityが動いている間、
+                Siriアプリでの会話がアプリに言及している間は、アプリ名を言わずに
+                カスタムの内容・操作をSiriが見つけて実行できる。
+            }
+
+            @Step {
+                アプリがバックグラウンドでも、リクエストの中でアプリ名を言えば
+                Siriはそのアプリのカスタムコンテンツを見つけて答えられる。
+            }
+
+            @Step {
+                あるアプリのカスタムコンテンツを見つけて、別の指定したアプリに
+                渡して操作を実行することもできる（例: 好きな靴をメッセージアプリで
+                パートナーに送る）。
+            }
+
+            @Step {
+                既存のApp Intentに `@AppIntent(AppIntentTraits)` を付けると、
+                Siriから呼び出せる「ツール」(ToolIntent) になる。新しいentitlementや
+                別プログラムへの参加は不要。
+            }
+
+            @Step {
+                複雑な依頼には、複数のツールIntentをまとめて使うためのapp skillで
+                追加のガイダンスを与えられる。XcodeのSiri Integration Advisorと
+                Siri Evaluationsフレームワークで検証する。
+            }
+        }
+    }
+
+    @Section(title: "次のステップ") {
+        @ContentAndMedia {
+            Tutorial 2〜4で作ったMemoのIntentをToolIntent化し、app skillを
+            1つ用意してもらう。Siri AI Developer PreviewはApple Intelligence対応の
+            デバイス/シミュレータでのみ動作する点に注意。
+        }
+
+        @Steps {
+            @Step {
+                理解できたらこれをコピペする。
+
+                @Code(file: "05-prompt.txt", name: "prompt.txt")
+            }
+        }
+    }
+}

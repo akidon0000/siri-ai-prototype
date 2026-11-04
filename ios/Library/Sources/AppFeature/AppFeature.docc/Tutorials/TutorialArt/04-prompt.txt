@@ -1,0 +1,8 @@
+Tutorial 4 (Apple IntelligenceとSiri AIへの統合) を読んで理解した。
+Memo の AppEntity を Apple Intelligence から見つけられるようにして。
+
+- Memo を Transferable に準拠させる
+- Spotlightインデックス向けに IndexedEntity 対応を追加する（CSSearchableItemAttributeSet）
+- 新しいメモを追加したときに donation (donate) を呼ぶ
+
+参考: docs/apple-intelligence/apple-intelligence-and-siri-ai.md, docs/apple-intelligence/apple-intelligence.md

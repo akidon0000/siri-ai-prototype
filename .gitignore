@@ -1,1 +1,7 @@
 .DS_Store
+.serena/
+.build/
+.swiftpm/
+DerivedData/
+*.xcuserstate
+xcuserdata/

@@ -1,0 +1,9 @@
+Tutorial 3 (App Shortcutsでフレーズを固定する) を読んで理解した。
+Tutorial 2 で実装した AddMemoIntent / ListMemosIntent / CompleteMemoIntent に
+AppShortcutsProvider を追加して。
+
+- AppFeature に MemoShortcuts: AppShortcutsProvider を追加する
+- 各Intentに AppShortcutPhrase を設定する（例: 「<applicationName>でメモを追加」）
+- shortcutTileColor も設定する
+
+参考: docs/shortcuts/app-shortcuts.md

@@ -43,3 +43,18 @@ fetched_at: 2026-11-04T00:00:00Z
 
 スキルは「固定した検索方法」で対象ページを洗い出し、`sources.yaml` と差分がある
 ページだけを更新し、ブランチを切って commit → push → PR 作成まで行う。
+
+## Siri PoC（ios/）
+
+`docs/` のドキュメントを教材に、Siri/App Intents統合を学びながら実装するためのPoC。
+
+- `ios/App` — SwiftUIアプリの殻（Xcodeプロジェクト）
+- `ios/Library` — SPMパッケージ（Clients / ClientsLive / Components / AppFeature / TestSupport）。
+  pickle-app (akidon0000) のアーキテクチャを踏襲。Siri関連の実機能はまだ実装していない。
+- `ios/Library/Sources/AppFeature/AppFeature.docc` — DocC Tutorial形式のチュートリアル
+  （SiriKitの限界 → App Intentsの基礎 → App Shortcuts → Apple Intelligence/Siri AI統合 →
+  Siri AI Developer PreviewのToolIntent、の5章）。Xcodeの「Build Documentation」
+  （⌃⇧⌘D）で読める。各章末に、理解したあと実装を指示するためのコピペ用プロンプトがある。
+
+構成の決定理由は [docs/adr/](./docs/adr/) を参照。
+
