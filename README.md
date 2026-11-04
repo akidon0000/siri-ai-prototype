@@ -55,6 +55,9 @@ fetched_at: 2026-11-04T00:00:00Z
   （SiriKitの限界 → App Intentsの基礎 → App Shortcuts → Apple Intelligence/Siri AI統合 →
   Siri AI Developer PreviewのToolIntent、の5章）。Xcodeの「Build Documentation」
   （⌃⇧⌘D）で読める。各章末に、理解したあと実装を指示するためのコピペ用プロンプトがある。
+  GitHub Pagesでも公開していて、ブラウザから読める:
+  [akidon0000.github.io/siri-ai-prototype/tutorials/siriaitutorials](https://akidon0000.github.io/siri-ai-prototype/tutorials/siriaitutorials/)
+  （`ios/Library` 配下をmainにpushすると `.github/workflows/docc-pages.yml` が自動で再公開する）
 
 構成の決定理由は [docs/adr/](./docs/adr/) を参照。
 
