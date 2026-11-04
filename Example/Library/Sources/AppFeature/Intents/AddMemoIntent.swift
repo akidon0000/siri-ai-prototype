@@ -1,7 +1,8 @@
 import AppIntents
 
 // App Shortcuts はアプリのターゲットに置くので、そこから参照できるように public にする
-public struct AddMemoIntent: AppIntent {
+// PredictableIntent: 提案として表示されるときの文言を決められる
+public struct AddMemoIntent: AppIntent, PredictableIntent {
     public static let title: LocalizedStringResource = "メモを追加"
     // Shortcutsアプリでの説明。Siriもこれを読んでintentの役割を知る
     public static let description = IntentDescription("新しいメモを1件追加する。")
@@ -17,6 +18,12 @@ public struct AddMemoIntent: AppIntent {
 
     public static var parameterSummary: some ParameterSummary {
         Summary("\(\.$title)を優先度\(\.$priority)で追加")
+    }
+
+    public static var predictionConfiguration: some IntentPredictionConfiguration {
+        IntentPrediction(parameters: (\.$title)) { title in
+            DisplayRepresentation(title: "「\(title)」をメモに追加")
+        }
     }
 
     public func perform() async throws -> some IntentResult & ReturnsValue<MemoEntity> & ProvidesDialog & ShowsSnippetIntent {

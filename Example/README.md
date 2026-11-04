@@ -54,6 +54,12 @@ intent の中身がチュートリアルのコードとほぼ同じ形になる�
   | マクロが付いた Entity の `init` で `used before being initialized` | スキーマ外の保存プロパティ（`id`・`sharedWith`）を先に代入する |
 - **`ActivateConversationIntent`（`.assistant.activate`）は入れていない。** entitlement の申請が要り、ワークショップの作るものにも入っていないため。
 
+- **第6章のビジュアルインテリジェンス（`MemoVisualSearchQuery`・`ShowMemoSearchResultsIntent`）は `#if canImport(VisualIntelligence)` で囲む。**
+  VisualIntelligence は実機の SDK にだけあり、シミュレータの SDK には無い。実機向けビルド（`-destination 'generic/platform=iOS'`）でだけ入る。
+  `semanticContent` の型は、27.1 の SDK にある `SemanticContentDescriptor` にした。
+- **`MemoQuery.displayRepresentations(for:)` は `requestedComponents` を取らない。** 27.1 の SDK にはこの形しか無い。
+- **Spotlight の索引は `MemoStore` が追加・更新・削除のたびに更新する。** テストでは `MemoStore.configure(indexer:)` で記録用の実装に差し替える。
+
 ## 第1章で決めたこと
 
 Siri 連携は App Intents だけで書き、SiriKit（Intents / IntentsUI / `.intentdefinition`）は使わない。
@@ -81,6 +87,10 @@ cd Example/Library && xcodebuild test -scheme Library -destination 'platform=iOS
 
 ```bash
 cd Example/App && xcodebuild build -scheme SiriAIPrototype -destination 'platform=iOS Simulator,name=iPhone 18 Pro' -derivedDataPath build
+```
+
+```bash
+cd Example/App && xcodebuild build -scheme SiriAIPrototype -destination "generic/platform=iOS" -derivedDataPath build-device CODE_SIGNING_ALLOWED=NO
 ```
 
 バンドルIDとスキーム名は `ios/` と同じにしてある（第8章のテストがバンドルIDで intent を引くため）。

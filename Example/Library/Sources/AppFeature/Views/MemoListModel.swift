@@ -1,3 +1,4 @@
+import AppIntents
 import Foundation
 import Observation
 
@@ -33,8 +34,16 @@ final class MemoListModel {
         let title = draftTitle.trimmingCharacters(in: .whitespacesAndNewlines)
         guard !title.isEmpty else { return }
         do {
-            _ = try await store.add(title: title, priority: .normal)
+            let list = try await store.allLists().first
+            let memo = try await store.add(title: title, list: list)
             draftTitle = ""
+
+            // 実際に人が行った操作だけをdonateする。実際より多いと、システムはこのアプリのdonationを無視する
+            // 同じ操作に当たるintentを組み立てる。システムはこれを実行せず、記録して学習に使う
+            let intent = CreateMemoIntent()
+            intent.title = title
+            intent.list = list
+            try await IntentDonationManager.shared.donate(intent: intent, result: .result(value: memo))
         } catch {
             errorMessage = String(describing: error)
         }
