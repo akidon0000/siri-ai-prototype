@@ -11,6 +11,8 @@
   生成スクリプトは、全スナップショットがどこかのステップから参照されているか、`name` と `previousFile` が正しいかも検査する。
 - `.md` をDocCカタログに置くと記事として解釈されるので、Markdownを載せたいときは拡張子を `.txt` にする（例: `MemoTriageSkill.txt.seq`）。
 - 変更後は `xcrun docc convert` が警告0件で通ることを確かめる（コマンドは `.github/workflows/docc-pages.yml` と同じ）。
+- `.tutorial` のファイル名を変えると公開URLが変わり、旧URLは404になる。改名したら `tools/docc-redirects.sh` に
+  `redirect <旧名> <新名>` を足す（Pagesのデプロイ時に旧URLへ転送ページを置く）。
 
 ## 決定の記録
 
