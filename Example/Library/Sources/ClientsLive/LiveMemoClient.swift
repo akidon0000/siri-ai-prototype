@@ -11,8 +11,7 @@ public actor LiveMemoClient: MemoClient {
         storage = memos
     }
 
-    public func add(title: String, priority: Memo.Priority) -> Memo {
-        let memo = Memo(title: title, priority: priority)
+    public func add(_ memo: Memo) -> Memo {
         storage.append(memo)
         return memo
     }
@@ -22,7 +21,7 @@ public actor LiveMemoClient: MemoClient {
     }
 
     public func recentMemos() -> [Memo] {
-        storage.filter { !$0.isDone }.sorted { $0.creationDate > $1.creationDate }
+        storage.filter { !$0.isCompleted }.sorted { $0.creationDate > $1.creationDate }
     }
 
     public func memos(matching string: String) -> [Memo] {
@@ -41,14 +40,15 @@ public actor LiveMemoClient: MemoClient {
         storage.contains { $0.title.caseInsensitiveCompare(title) == .orderedSame }
     }
 
-    public func complete(_ id: UUID) throws {
-        try update(id) { $0.isDone = true }
-    }
-
-    private func update(_ id: UUID, _ change: (inout Memo) -> Void) throws {
+    public func update(_ id: UUID, _ change: MemoChange) throws -> Memo {
         guard let index = storage.firstIndex(where: { $0.id == id }) else {
             throw MemoClientError.notFound(id)
         }
-        change(&storage[index])
+        change.apply(to: &storage[index])
+        return storage[index]
+    }
+
+    public func allLists() -> [MemoList] {
+        [.default]
     }
 }

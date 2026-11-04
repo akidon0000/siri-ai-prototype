@@ -18,10 +18,17 @@ public actor TestMemoClient: MemoClient {
         storage = memos
     }
 
-    public func add(title: String, priority: Memo.Priority) -> Memo {
+    /// IDと作成日時は、テストで比べやすいように連番で振り直す。
+    public func add(_ memo: Memo) -> Memo {
         nextID += 1
-        let id = UUID(uuidString: String(format: "00000000-0000-0000-0000-%012d", nextID))!
-        let memo = Memo(id: id, title: title, priority: priority, creationDate: Date(timeIntervalSince1970: Double(nextID * 100)))
+        var memo = memo
+        memo = Memo(
+            id: UUID(uuidString: String(format: "00000000-0000-0000-0000-%012d", nextID))!,
+            title: memo.title, isCompleted: memo.isCompleted, priority: memo.priority,
+            creationDate: Date(timeIntervalSince1970: Double(nextID * 100)),
+            sharedWith: memo.sharedWith, note: memo.note, tags: memo.tags,
+            dueDate: memo.dueDate, isFlagged: memo.isFlagged, listID: memo.listID
+        )
         storage.append(memo)
         return memo
     }
@@ -31,7 +38,7 @@ public actor TestMemoClient: MemoClient {
     }
 
     public func recentMemos() -> [Memo] {
-        storage.filter { !$0.isDone }.sorted { $0.creationDate > $1.creationDate }
+        storage.filter { !$0.isCompleted }.sorted { $0.creationDate > $1.creationDate }
     }
 
     public func memos(matching string: String) -> [Memo] {
@@ -50,10 +57,15 @@ public actor TestMemoClient: MemoClient {
         storage.contains { $0.title.caseInsensitiveCompare(title) == .orderedSame }
     }
 
-    public func complete(_ id: UUID) throws {
+    public func update(_ id: UUID, _ change: MemoChange) throws -> Memo {
         guard let index = storage.firstIndex(where: { $0.id == id }) else {
             throw MemoClientError.notFound(id)
         }
-        storage[index].isDone = true
+        change.apply(to: &storage[index])
+        return storage[index]
+    }
+
+    public func allLists() -> [MemoList] {
+        [.default]
     }
 }

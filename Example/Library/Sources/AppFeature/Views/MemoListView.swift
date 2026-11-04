@@ -2,7 +2,13 @@ import Components
 import SwiftUI
 
 struct MemoListView: View {
+    @Binding var searchText: String
     @State private var model = MemoListModel()
+
+    private var visibleMemos: [MemoEntity] {
+        guard !searchText.isEmpty else { return model.memos }
+        return model.memos.filter { $0.title.localizedCaseInsensitiveContains(searchText) }
+    }
 
     var body: some View {
         List {
@@ -19,13 +25,15 @@ struct MemoListView: View {
             }
 
             Section {
-                ForEach(model.memos) { memo in
-                    MemoRow(memo: memo) {
-                        Task { await model.complete(memo) }
+                ForEach(visibleMemos) { memo in
+                    NavigationLink(value: memo.id) {
+                        MemoRow(memo: memo) {
+                            Task { await model.complete(memo) }
+                        }
                     }
                 }
                 .onDelete { offsets in
-                    let targets = offsets.map { model.memos[$0] }
+                    let targets = offsets.map { visibleMemos[$0] }
                     Task { await model.delete(targets) }
                 }
             } footer: {
@@ -35,11 +43,12 @@ struct MemoListView: View {
             }
         }
         .overlay {
-            if model.memos.isEmpty {
+            if visibleMemos.isEmpty && searchText.isEmpty {
                 PlaceholderView("メモはまだありません", systemImage: "note.text", description: "上の欄に入力して追加します")
             }
         }
         .navigationTitle("メモ")
+        .searchable(text: $searchText, prompt: "メモを検索")
         .alert("操作できませんでした", isPresented: .constant(model.errorMessage != nil)) {
             Button("OK") { model.errorMessage = nil }
         } message: {
@@ -56,12 +65,13 @@ private struct MemoRow: View {
 
     var body: some View {
         HStack {
-            Button(memo.isDone ? "完了済み" : "完了にする", systemImage: memo.isDone ? "checkmark.circle.fill" : "circle", action: complete)
+            Button(memo.isCompleted ? "完了済み" : "完了にする", systemImage: memo.isCompleted ? "checkmark.circle.fill" : "circle", action: complete)
+                .buttonStyle(.borderless)
                 .labelStyle(.iconOnly)
-                .disabled(memo.isDone)
+                .disabled(memo.isCompleted)
             Text(memo.title)
-                .strikethrough(memo.isDone)
-                .foregroundStyle(memo.isDone ? .secondary : .primary)
+                .strikethrough(memo.isCompleted)
+                .foregroundStyle(memo.isCompleted ? .secondary : .primary)
         }
     }
 }

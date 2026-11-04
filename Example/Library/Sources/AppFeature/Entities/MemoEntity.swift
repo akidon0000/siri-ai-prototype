@@ -1,21 +1,32 @@
 import AppIntents
 import Clients
 
-public struct MemoEntity: AppEntity {
+// Remindersドメインの reminder スキーマに合わせる。AppEntity への準拠はマクロが付ける
+@AppEntity(schema: .reminders.reminder)
+public struct MemoEntity {
     // システムがこのメモを指すときに使う、変わらないID
     public let id: UUID
     var title: String
-    var isDone: Bool
+    // スキーマでの完了状態の名前は isCompleted
+    var isCompleted: Bool
     var sharedWith: [String]
+    // ここからはスキーマが求めるプロパティ。対応していない機能は nil や空の値を返す
+    var note: AttributedString?
+    var tags: Set<String>
+    var urls: [URL]
+    var dueDate: DateComponents?
+    var recurrence: Calendar.RecurrenceRule?
+    var isFlagged: Bool?
+    var creationDate: Date?
+    var completionDate: Date?
+    var list: MemoListEntity
+    var locationTrigger: MemoLocationTriggerEntity?
 
-    public static let typeDisplayRepresentation: TypeDisplayRepresentation = "メモ"
-
-    // Siriの応答・候補の一覧・Spotlightでメモ1件を表示するときの見た目
     public var displayRepresentation: DisplayRepresentation {
         DisplayRepresentation(
             title: "\(title)",
-            subtitle: isDone ? "完了" : "未完了",
-            image: .init(systemName: isDone ? "checkmark.circle.fill" : "circle")
+            subtitle: isCompleted ? "完了" : "未完了",
+            image: .init(systemName: isCompleted ? "checkmark.circle.fill" : "circle")
         )
     }
 
@@ -23,10 +34,21 @@ public struct MemoEntity: AppEntity {
 }
 
 extension MemoEntity {
-    nonisolated init(_ memo: Memo) {
+    nonisolated init(_ memo: Memo, list: MemoList = .default) {
+        // マクロがスキーマのプロパティを @Property に変えるので、スキーマ外の保存プロパティを先に入れる
         id = memo.id
-        title = memo.title
-        isDone = memo.isDone
         sharedWith = memo.sharedWith
+        title = memo.title
+        isCompleted = memo.isCompleted
+        note = memo.note.map { AttributedString($0) }
+        tags = memo.tags
+        urls = []
+        dueDate = memo.dueDate
+        recurrence = nil
+        isFlagged = memo.isFlagged
+        creationDate = memo.creationDate
+        completionDate = memo.completionDate
+        self.list = MemoListEntity(list)
+        locationTrigger = nil
     }
 }
