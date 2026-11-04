@@ -1,0 +1,46 @@
+# このリポジトリで追跡している Apple Developer Documentation ページの一覧。
+# 各エントリは 1 ページに対応する。スキル(.claude/skills/update-apple-siri-docs)が
+# 追加・更新するマニフェスト。content_sha256 は本文(frontmatterを除いたMarkdown本体)のハッシュで、
+# 再取得時に内容が変わっていないかの差分検出に使う。
+
+- url: https://developer.apple.com/documentation/sirikit
+  category: sirikit
+  path: docs/sirikit/sirikit.md
+  title: SiriKit
+  first_fetched: "2026-11-04"
+  last_fetched: "2026-11-04"
+
+- url: https://developer.apple.com/documentation/appintents
+  category: app-intents
+  path: docs/app-intents/app-intents.md
+  title: App Intents
+  first_fetched: "2026-11-04"
+  last_fetched: "2026-11-04"
+
+- url: https://developer.apple.com/documentation/appintents/apple-intelligence-and-siri-ai
+  category: apple-intelligence
+  path: docs/apple-intelligence/apple-intelligence-and-siri-ai.md
+  title: Apple Intelligence and Siri AI
+  first_fetched: "2026-11-04"
+  last_fetched: "2026-11-04"
+
+- url: https://developer.apple.com/documentation/appintents/siri-ai-developer-preview
+  category: apple-intelligence
+  path: docs/apple-intelligence/siri-ai-developer-preview.md
+  title: Siri AI Developer Preview
+  first_fetched: "2026-11-04"
+  last_fetched: "2026-11-04"
+
+- url: https://developer.apple.com/design/human-interface-guidelines/siri
+  category: apple-intelligence
+  path: docs/apple-intelligence/siri-human-interface-guidelines.md
+  title: "Siri (Human Interface Guidelines)"
+  first_fetched: "2026-11-04"
+  last_fetched: "2026-11-04"
+
+- url: https://developer.apple.com/documentation/appintents/app-shortcuts
+  category: shortcuts
+  path: docs/shortcuts/app-shortcuts.md
+  title: App Shortcuts
+  first_fetched: "2026-11-04"
+  last_fetched: "2026-11-04"
