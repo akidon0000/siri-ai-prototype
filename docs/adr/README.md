@@ -16,6 +16,7 @@
 | 0005 | リポジトリを siri-ai-tutorials に改名し、Appleの原文を docs/apple-doc/ に分けて種類で分類する | Accepted | 原文を `docs/apple-doc/` に閉じ、`kind: article \| tool` で分類する。APIリファレンスも取得し、章末プロンプトは実装から動作確認までのワークショップ形式にする | [0005-rename-to-tutorials-and-separate-apple-doc.md](0005-rename-to-tutorials-and-separate-apple-doc.md) |
 | 0006 | 【iOS 27.3 beta】のタグを章名の末尾にだけ付ける | Accepted | セクションごとのタグをやめ、該当する章名の末尾に1つだけ付ける。0004・0005のタグの決定を置き換える | [0006-beta-tag-on-chapter-name-only.md](0006-beta-tag-on-chapter-name-only.md) |
 | 0007 | チュートリアルのコードのコメントを、コードから読み取れないことだけに絞る | Accepted | 各行にコメントを書く規則をやめ、コードを言い直すだけのコメント40行を削る。0004の決定事項1の一部を置き換える | [0007-keep-only-non-obvious-code-comments.md](0007-keep-only-non-obvious-code-comments.md) |
+| 0008 | ios/ を実装前の土台として残し、全章を実装したコードを Example/ に置く | Accepted | 完成形を `ios/` と同じ構成で `Example/` に章ごとの積み上げPRで置く。iOS 27.3 beta のAPIは `#if SIRI_AI_PREVIEW` で囲む | [0008-example-directory-with-chapter-implementations.md](0008-example-directory-with-chapter-implementations.md) |
 
 ### 状態
 

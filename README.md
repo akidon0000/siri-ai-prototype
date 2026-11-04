@@ -32,6 +32,7 @@ Created by Opus 5.5 with Dan Akiyama ([@akidon0000](https://github.com/akidon000
 | `ios/Library/Sources/AppFeature/AppFeature.docc/` | チュートリアル本体（`.tutorial`） |
 | `tools/tutorial-code/` | チュートリアルに載せるコードの元ファイル（`seq/*.seq`）と生成スクリプト |
 | `ios/App`、`ios/Library` | Memoアプリ（SwiftUI の殻と SPM パッケージ）。Siri 連携はまだ入っておらず、章末プロンプトで実装していく |
+| `Example/` | 第1章から第8章までを実装し終えた Memoアプリ。構成は `ios/` と同じ。答え合わせ用（[Example/README.md](./Example/README.md)） |
 | `docs/apple-doc/` | 教材にした Apple Developer Documentation の原文。改訂を `git diff` で追う |
 | `docs/adr/` | 構成上の決定の記録 |
 
