@@ -4,7 +4,7 @@
         `AppShortcutsProvider` で「この言い方ならこのintent」というフレーズを登録すると、
         アプリをインストールした直後からSiri・Spotlight・Shortcutsアプリで使えるようになる。
 
-        教材: `docs/shortcuts/app-shortcuts.md`、
+        教材: `docs/apple-doc/shortcuts/app-shortcuts.md`、
         [App Shortcuts](https://developer.apple.com/documentation/appintents/app-shortcuts)、
         [Human Interface Guidelines: App Shortcuts](https://developer.apple.com/design/human-interface-guidelines/app-shortcuts)
     }
@@ -123,7 +123,7 @@
 
         @Steps {
             @Step {
-                理解できたらこれをコピペする。
+                理解できたらこれをClaude Codeに貼る。実装から、ビルドと動作確認までを任せる。
 
                 @Code(name: "prompt.txt", file: "03-prompt.txt")
             }

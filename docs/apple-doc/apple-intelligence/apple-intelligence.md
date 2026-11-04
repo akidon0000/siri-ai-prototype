@@ -2,6 +2,7 @@
 source_url: https://developer.apple.com/documentation/TechnologyOverviews/apple-intelligence
 title: Apple Intelligence
 category: apple-intelligence
+kind: article
 fetched_at: 2026-11-04T00:00:00Z
 ---
 

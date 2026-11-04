@@ -2,6 +2,7 @@
 source_url: https://developer.apple.com/documentation/appintents/siri-ai-developer-preview
 title: Siri AI Developer Preview
 category: apple-intelligence
+kind: article
 fetched_at: 2026-11-04T00:00:00Z
 ---
 

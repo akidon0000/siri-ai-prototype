@@ -2,6 +2,7 @@
 source_url: https://developer.apple.com/documentation/appintents/apple-intelligence-and-siri-ai
 title: Apple Intelligence and Siri AI
 category: apple-intelligence
+kind: article
 fetched_at: 2026-11-04T00:00:00Z
 ---
 

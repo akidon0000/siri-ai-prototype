@@ -1,5 +1,17 @@
-Tutorial 8 (検証する) を読んで理解した。
-Memo の App Intents 実装を検証するテストを追加して。
+【ワークショップ】Siri AI Tutorials 第8章: 検証する
+
+チュートリアル: https://akidon0000.github.io/siri-ai-tutorials/tutorials/appfeature/08-verification
+リポジトリ: https://github.com/akidon0000/siri-ai-tutorials （clone済みのこのディレクトリで進める）
+
+先に上のチュートリアルを読んで、コードの組み立て順と「なぜそう書くか」を把握する。
+読めないときは ios/Library/Sources/AppFeature/AppFeature.docc/Tutorials/08-verification.tutorial を読む。
+合わせて読む原文:
+  - https://developer.apple.com/documentation/appintentstesting/testing-your-app-intents-code
+  - https://developer.apple.com/documentation/sirievaluations
+チュートリアルの MemoStore は、このリポジトリでは Clients の MemoClient と ClientsLive の LiveMemoClient に当たる。
+
+## 作る
+Memo の App Intents 実装を検証するテストを追加する。
 
 - AppFeature に #if DEBUG の ResetMemosIntent (isDiscoverable = false) を追加する
 - ios/App に UIテストのターゲットを追加し、App Intents Testing で
@@ -8,5 +20,20 @@ Memo の App Intents 実装を検証するテストを追加して。
   （1ターンの追加、Calls(.disallowed) で削除が呼ばれないこと、2ターンで聞き返しに答えるシナリオ、言いよどみを含む言い方のシナリオ）
 - Shortcuts アプリ・Spotlight・実機の Siri で手動確認する手順を ios/App の README にチェックリストとして残す
 
-参考: https://developer.apple.com/documentation/appintentstesting/testing-your-app-intents-code、
-https://developer.apple.com/documentation/sirievaluations
+## 動かして確かめる
+1. 単体テスト: `cd ios/Library && xcodebuild test -scheme Library -destination 'platform=iOS Simulator,name=iPhone 18 Pro'`
+   （シミュレータ名は `xcrun simctl list devices available` で今あるiPhoneに合わせてよい）
+2. アプリをビルドしてシミュレータで起動する:
+   `cd ios/App && xcodebuild build -scheme SiriAIPrototype -destination 'platform=iOS Simulator,name=iPhone 18 Pro' -derivedDataPath build`
+   `xcrun simctl boot 'iPhone 18 Pro' ; open -a Simulator ; xcrun simctl install booted ios/App/build/Build/Products/Debug-iphonesimulator/SiriAIPrototype.app ; xcrun simctl launch booted com.akidon0000.SiriAIPrototype`
+   起動後に `xcrun simctl io booted screenshot` で画面を撮って確認する。
+3. UIテストを流す: `cd ios/App && xcodebuild test -scheme SiriAIPrototype -destination 'platform=iOS Simulator,name=iPhone 18 Pro'`
+   App Intents Testing のテストが緑になるまで直す。落ちたテストは、テストの側を疑う前にアプリ側の実装を疑う。
+4. Siri Evaluations は Siri AI Developer Preview に対応した環境が要る。流せなかったら、流せない理由と必要な環境を報告に書く。
+   評価を書いたこと自体は「作ったもの」、流して確かめたことは「確認できたこと」に分けて書く。
+5. README のチェックリストをユーザーに渡し、実機でやってもらう。
+
+終わったら、次の3つに分けて報告する。
+- 作ったもの（追加・変更したファイル）
+- 動かして確認できたこと（実行したコマンドと結果、スクリーンショット）
+- 確認できなかったこと（理由つき）。確認していないことを「動いた」と書かない

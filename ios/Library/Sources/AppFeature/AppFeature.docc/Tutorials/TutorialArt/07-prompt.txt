@@ -1,5 +1,19 @@
-Tutorial 7 (Siri AI Developer Preview: ツールとapp skill) を読んで理解した。
-Siri AI Developer Preview 向けに、スキーマに無い Memo の操作をツールとして公開して。
+【ワークショップ】Siri AI Tutorials 第7章: Siri AI Developer Preview: ツールとapp skill
+
+チュートリアル: https://akidon0000.github.io/siri-ai-tutorials/tutorials/appfeature/07-siri-ai-tools
+リポジトリ: https://github.com/akidon0000/siri-ai-tutorials （clone済みのこのディレクトリで進める）
+
+先に上のチュートリアルを読んで、コードの組み立て順と「なぜそう書くか」を把握する。
+読めないときは ios/Library/Sources/AppFeature/AppFeature.docc/Tutorials/07-siri-ai-tools.tutorial を読む。
+合わせて読む原文:
+  - docs/apple-doc/apple-intelligence/siri-ai-developer-preview.md
+  - docs/apple-doc/apple-intelligence/bringing-custom-actions-and-content-to-siri.md
+  - docs/apple-doc/apple-intelligence/orchestrating-complex-actions-with-app-skills.md
+  - docs/apple-doc/apple-intelligence/toolintent.md, intentvisibility.md, generableentity.md ほか（kind: tool のAPIページ）
+チュートリアルの MemoStore は、このリポジトリでは Clients の MemoClient と ClientsLive の LiveMemoClient に当たる。
+
+## 作る
+Siri AI Developer Preview 向けに、スキーマに無い Memo の操作をツールとして公開する。
 
 - スキーマ対応済みの CreateMemoIntent / UpdateMemoIntent / DeleteMemoIntent には @AppIntent(.tool) を付けない
 - SetMemoPriorityIntent を追加して @AppIntent(.tool) を付け、title / description / 各@Parameterの description を埋める
@@ -12,9 +26,23 @@ Siri AI Developer Preview 向けに、スキーマに無い Memo の操作をツ
 - MemoListQuery を EnumerableEntityQuery にし、UIで優先度を変えたときに SetMemoPriorityIntent を donate する
 - ツールの型には @available(iOS 27.3, *) を付ける
 - アプリのターゲットに Skills.skillsbundle を追加し、Skills/memo-triage/SKILL.md を書く
-- Xcode の Siri Integration Advisor の指摘を確認して、直した内容をまとめる
+- internal の property に indexingKey / customIndexingKey を組み合わせない（IntentVisibility のページにある注意）
 
-参考: docs/apple-intelligence/siri-ai-developer-preview.md、
-https://developer.apple.com/documentation/appintents/bringing-custom-actions-and-content-to-siri
+## 動かして確かめる
+1. 単体テスト: `cd ios/Library && xcodebuild test -scheme Library -destination 'platform=iOS Simulator,name=iPhone 18 Pro'`
+   （シミュレータ名は `xcrun simctl list devices available` で今あるiPhoneに合わせてよい）
+2. アプリをビルドしてシミュレータで起動する:
+   `cd ios/App && xcodebuild build -scheme SiriAIPrototype -destination 'platform=iOS Simulator,name=iPhone 18 Pro' -derivedDataPath build`
+   `xcrun simctl boot 'iPhone 18 Pro' ; open -a Simulator ; xcrun simctl install booted ios/App/build/Build/Products/Debug-iphonesimulator/SiriAIPrototype.app ; xcrun simctl launch booted com.akidon0000.SiriAIPrototype`
+   起動後に `xcrun simctl io booted screenshot` で画面を撮って確認する。
+3. 実機向けにもコンパイルが通ることを確かめる:
+   `cd ios/App && xcodebuild build -scheme SiriAIPrototype -destination 'generic/platform=iOS' -derivedDataPath build-device CODE_SIGNING_ALLOWED=NO`
+   Skills.skillsbundle の検証はビルド時に走るので、エラーが出たら SKILL.md の frontmatter（name がディレクトリ名と一致、description が1行）を直す。
+4. Siri AI Developer Preview は Apple Intelligence 対応の実機（開発用署名）か TestFlight の内部テストでしか動かない。
+   実機での確認（「Hey Siri、メモの優先度を高にして」など）と、XcodeのSiri Integration Advisorの指摘の確認はユーザーに頼む。
+   頼む前に、確認してほしい発話と見てほしい画面を一覧にして渡す。
 
-注意: Siri AI Developer Preview は Apple Intelligence 対応の実機（開発用署名）か TestFlight の内部テストでのみ動作する。
+終わったら、次の3つに分けて報告する。
+- 作ったもの（追加・変更したファイル）
+- 動かして確認できたこと（実行したコマンドと結果、スクリーンショット）
+- 確認できなかったこと（理由つき）。確認していないことを「動いた」と書かない

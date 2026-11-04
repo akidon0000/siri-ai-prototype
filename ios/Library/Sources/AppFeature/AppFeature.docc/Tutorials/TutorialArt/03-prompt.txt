@@ -1,5 +1,16 @@
-Tutorial 3 (App Shortcutsでフレーズを固定する) を読んで理解した。
-Tutorial 2 で実装した AddMemoIntent / CompleteMemoIntent に App Shortcuts を追加して。
+【ワークショップ】Siri AI Tutorials 第3章: App Shortcutsでフレーズを固定する
+
+チュートリアル: https://akidon0000.github.io/siri-ai-tutorials/tutorials/appfeature/03-app-shortcuts
+リポジトリ: https://github.com/akidon0000/siri-ai-tutorials （clone済みのこのディレクトリで進める）
+
+先に上のチュートリアルを読んで、コードの組み立て順と「なぜそう書くか」を把握する。
+読めないときは ios/Library/Sources/AppFeature/AppFeature.docc/Tutorials/03-app-shortcuts.tutorial を読む。
+合わせて読む原文:
+  - docs/apple-doc/shortcuts/app-shortcuts.md
+チュートリアルの MemoStore は、このリポジトリでは Clients の MemoClient と ClientsLive の LiveMemoClient に当たる。
+
+## 作る
+第2章で作った AddMemoIntent / CompleteMemoIntent に App Shortcuts を追加する。
 
 - AppFeature に MemoShortcuts: AppShortcutsProvider を追加する
 - フレーズには必ず \(.applicationName) を入れ、埋め込むパラメータは AppEnum / AppEntity 型だけにする
@@ -8,4 +19,20 @@ Tutorial 2 で実装した AddMemoIntent / CompleteMemoIntent に App Shortcuts 
 - メモが増減したときに MemoShortcuts.updateAppShortcutParameters() を呼ぶ
 - メモ一覧の下に SiriTipView と ShortcutsLink を置く
 
-参考: docs/shortcuts/app-shortcuts.md
+## 動かして確かめる
+1. 単体テスト: `cd ios/Library && xcodebuild test -scheme Library -destination 'platform=iOS Simulator,name=iPhone 18 Pro'`
+   （シミュレータ名は `xcrun simctl list devices available` で今あるiPhoneに合わせてよい）
+2. アプリをビルドしてシミュレータで起動する:
+   `cd ios/App && xcodebuild build -scheme SiriAIPrototype -destination 'platform=iOS Simulator,name=iPhone 18 Pro' -derivedDataPath build`
+   `xcrun simctl boot 'iPhone 18 Pro' ; open -a Simulator ; xcrun simctl install booted ios/App/build/Build/Products/Debug-iphonesimulator/SiriAIPrototype.app ; xcrun simctl launch booted com.akidon0000.SiriAIPrototype`
+   起動後に `xcrun simctl io booted screenshot` で画面を撮って確認する。
+3. アプリ画面に SiriTipView と ShortcutsLink が出ていることをスクリーンショットで確かめる。
+4. ショートカットアプリを開き、「アプリのショートカット」にこのアプリのタイルが色とアイコンつきで出ることを確かめる。
+   タイルを実行して、メモが追加されることをアプリ画面で確かめる。
+   UIを操作できるツールが無ければ、この手順をユーザーに案内して結果を聞く。
+5. シミュレータのSiriは音声認識が当てにならないので、フレーズの実機確認はユーザーに頼む（確認できたかを報告に書く）。
+
+終わったら、次の3つに分けて報告する。
+- 作ったもの（追加・変更したファイル）
+- 動かして確認できたこと（実行したコマンドと結果、スクリーンショット）
+- 確認できなかったこと（理由つき）。確認していないことを「動いた」と書かない

@@ -108,7 +108,7 @@
         }
     }
 
-    @Section(title: "Siri Evaluationsで会話を自動テストする【iOS 27.3 beta】") {
+    @Section(title: "【iOS 27.3 beta】Siri Evaluationsで会話を自動テストする") {
         @ContentAndMedia {
             Siri Evaluationsは、Siriへの依頼を台本（シナリオ）として書いて実行し、
             Siriがどのintentを呼んだか、どのEntityを見つけたかを期待と比べる。
@@ -214,7 +214,7 @@
 
         @Steps {
             @Step {
-                理解できたらこれをコピペする。
+                理解できたらこれをClaude Codeに貼る。実装から、ビルドと動作確認までを任せる。
 
                 @Code(name: "prompt.txt", file: "08-prompt.txt")
             }

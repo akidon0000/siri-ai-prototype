@@ -2,6 +2,7 @@
 source_url: https://developer.apple.com/documentation/sirikit
 title: SiriKit
 category: sirikit
+kind: article
 fetched_at: 2026-11-04T00:00:00Z
 ---
 

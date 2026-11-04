@@ -1,5 +1,16 @@
-Tutorial 4 (Siriとの会話を設計する) を読んで理解した。
-Memo の Intent に、Siriとの会話まわりを実装して。
+【ワークショップ】Siri AI Tutorials 第4章: Siriとの会話を設計する
+
+チュートリアル: https://akidon0000.github.io/siri-ai-tutorials/tutorials/appfeature/04-siri-conversation
+リポジトリ: https://github.com/akidon0000/siri-ai-tutorials （clone済みのこのディレクトリで進める）
+
+先に上のチュートリアルを読んで、コードの組み立て順と「なぜそう書くか」を把握する。
+読めないときは ios/Library/Sources/AppFeature/AppFeature.docc/Tutorials/04-siri-conversation.tutorial を読む。
+合わせて読む原文:
+  - docs/apple-doc/apple-intelligence/siri-human-interface-guidelines.md
+チュートリアルの MemoStore は、このリポジトリでは Clients の MemoClient と ClientsLive の LiveMemoClient に当たる。
+
+## 作る
+Memo の Intent に、Siriとの会話まわりを実装する。
 
 - AddMemoIntent: ProvidesDialog で full / supporting の応答を返し、title に requestValueDialog を付ける
 - AddMemoIntent: 同じタイトルのメモがあるときだけ $title.requestValue で別の名前を聞く
@@ -8,8 +19,24 @@ Memo の Intent に、Siriとの会話まわりを実装して。
 - MemoEntity の displayRepresentation に subtitle（完了/未完了）と image を足す
 - MemoSnippetView と MemoSnippetIntent (SnippetIntent) を作り、完了ボタンで CompleteMemoIntent を実行する
 - AddMemoIntent の結果に ShowsSnippetIntent を加える（ReturnsValue<MemoEntity> は残す）
-- MemoEntity を SnippetRepresentableEntity に準拠させ、CardSnippet を返す
+- MemoEntity を SnippetRepresentableEntity に準拠させ、CardSnippet を返す（【iOS 27.3 beta】のAPIなので @available を付ける）
 - CompleteMemoIntent に ProvidesDialog の応答を足し、メモが無いときは MemoIntentError (CustomLocalizedStringResourceConvertible) を投げる
-- 応答文は docs/apple-intelligence/siri-human-interface-guidelines.md の指針に沿わせる（アプリ名を入れない、音声だけで伝わる）
+- 応答文は上のHIGの指針に沿わせる（アプリ名を入れない、音声だけで伝わる）
 
-参考: docs/apple-intelligence/siri-human-interface-guidelines.md
+## 動かして確かめる
+1. 単体テスト: `cd ios/Library && xcodebuild test -scheme Library -destination 'platform=iOS Simulator,name=iPhone 18 Pro'`
+   （シミュレータ名は `xcrun simctl list devices available` で今あるiPhoneに合わせてよい）
+2. アプリをビルドしてシミュレータで起動する:
+   `cd ios/App && xcodebuild build -scheme SiriAIPrototype -destination 'platform=iOS Simulator,name=iPhone 18 Pro' -derivedDataPath build`
+   `xcrun simctl boot 'iPhone 18 Pro' ; open -a Simulator ; xcrun simctl install booted ios/App/build/Build/Products/Debug-iphonesimulator/SiriAIPrototype.app ; xcrun simctl launch booted com.akidon0000.SiriAIPrototype`
+   起動後に `xcrun simctl io booted screenshot` で画面を撮って確認する。
+3. ショートカットアプリで「メモを追加」を実行し、応答ダイアログとスニペットが出ることを確かめる。
+   同じタイトルで2回実行して、2回目に別の名前を聞かれることも確かめる。
+4. 「メモを削除」を実行して、実行前に確認が出ることを確かめる。キャンセルしたらメモが残ることもアプリ画面で見る。
+   UIを操作できるツールが無ければ、この手順をユーザーに案内して結果を聞く。
+5. CardSnippet は Siri AI Developer Preview の実機でしか見えない。実機が無いなら、コンパイルが通ることまでを確認として報告する。
+
+終わったら、次の3つに分けて報告する。
+- 作ったもの（追加・変更したファイル）
+- 動かして確認できたこと（実行したコマンドと結果、スクリーンショット）
+- 確認できなかったこと（理由つき）。確認していないことを「動いた」と書かない

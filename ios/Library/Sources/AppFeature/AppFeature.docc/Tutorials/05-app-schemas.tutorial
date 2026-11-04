@@ -5,7 +5,7 @@
         「app toolbox」に入り、Siriはいろいろな言い回しをそのintentに結び付けられるようになる。
         この章では、Memoアプリを Reminders ドメインのスキーマに合わせる。
 
-        教材: `docs/apple-intelligence/apple-intelligence-and-siri-ai.md`、
+        教材: `docs/apple-doc/apple-intelligence/apple-intelligence-and-siri-ai.md`、
         [App schema domains](https://developer.apple.com/documentation/appintents/app-schema-domains)、
         [Making actions and content discoverable by Apple Intelligence](https://developer.apple.com/documentation/appintents/making-actions-and-content-discoverable-by-apple-intelligence)、
         [Reminders](https://developer.apple.com/documentation/appintents/app-schema-domain-reminders)
@@ -280,7 +280,7 @@
 
         @Steps {
             @Step {
-                理解できたらこれをコピペする。
+                理解できたらこれをClaude Codeに貼る。実装から、ビルドと動作確認までを任せる。
 
                 @Code(name: "prompt.txt", file: "05-prompt.txt")
             }
