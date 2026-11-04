@@ -11,7 +11,6 @@ struct MemoShortcuts: AppShortcutsProvider {
                 "\(.applicationName)にメモを追加して",
                 "\(.applicationName)に優先度\(\.$priority)のメモを追加",
             ],
-            // ShortcutsアプリやSpotlightのタイルに出る、短い名前とアイコン
             shortTitle: "メモを追加",
             systemImageName: "note.text.badge.plus"
         )

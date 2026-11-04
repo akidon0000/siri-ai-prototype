@@ -4,7 +4,6 @@
 1|// メモが共有されているかをSiriに伝える。共有メモの更新では確認が挟まる
 1|extension MemoEntity: OwnershipProvidingEntity {
 1|    var ownership: EntityOwnership {
-1|        // 共有相手がいなければ、持ち主は分からないとして .unknown を返す
 1|        sharedWith.isEmpty ? .unknown : .shared
 1|    }
 1|}

@@ -4,7 +4,6 @@
 1-11|struct AddMemoIntent: AppIntent {
 12|// PredictableIntent: 提案として表示されるときの文言を決められる
 12|struct AddMemoIntent: AppIntent, PredictableIntent {
-1|    // ShortcutsアプリやSpotlightに表示される操作名
 1|    static let title: LocalizedStringResource = "メモを追加"
 2|    // Shortcutsアプリでの説明。Siriもこれを読んでintentの役割を知る
 2|    static let description = IntentDescription("新しいメモを1件追加する。")
@@ -24,7 +23,6 @@
 6|        Summary("\(\.$title)を優先度\(\.$priority)で追加")
 6|    }
 12|
-12|    // 提案には「「牛乳を買う」をメモに追加」のような短い説明を出す
 12|    static var predictionConfiguration: some IntentPredictionConfiguration {
 12|        IntentPrediction(parameters: (\Self.$title)) { title in
 12|            DisplayRepresentation(title: "「\(title)」をメモに追加")

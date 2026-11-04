@@ -7,7 +7,6 @@
 1|// アプリのintentとEntityを名前で引くための定義
 1|let memoIntents = IntentDefinitions(bundleIdentifier: "com.akidon0000.SiriAIPrototype")
 5|
-5|// 1回の発話で、タイトルに「牛乳」を含めて CreateMemoIntent が呼ばれることを期待する
 5|let addMemoScenario = SiriScenario {
 5|    UserTurn("SiriAIPrototypeに牛乳を買うってメモして") {
 5|        Calls { memoIntents.intents["CreateMemoIntent"].expect(title: .contains("牛乳")) }
@@ -32,9 +31,7 @@
 10|}
 2|
 2|struct MemoEvaluation: Evaluation {
-2|    // Xcodeのレポートに出る題名
 2|    let name: String
-2|    // 実行するシナリオの集まり
 2|    let dataset: SiriScenarioLoader
 3|
 3|    // シナリオごとに1回呼ばれる。実行前の状態作りや後片付けもここに書ける
@@ -47,13 +44,11 @@
 4|        SiriExpectationEvaluator()
 4|    }
 4|
-4|    // 標準の指標をレポートに出す
 4|    func aggregateMetrics(using aggregator: inout MetricsAggregator) {
 4|        Self.computeSiriMetrics(into: &aggregator)
 4|    }
 2|}
 7|
-7|// 全てのintentの期待が満たされたかを確かめる
 7|@Test(.evaluates(MemoEvaluation(name: "メモの追加", dataset: SiriScenarioLoader { addMemoScenario })))
 7|func addsMemo() async throws {
 7|    #expect(EvaluationContext.current.result.aggregateValue(.mean(of: .intentsAllPass)) == 1)

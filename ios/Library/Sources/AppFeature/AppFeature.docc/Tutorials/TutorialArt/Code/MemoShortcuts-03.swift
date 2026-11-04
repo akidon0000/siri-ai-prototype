@@ -7,7 +7,6 @@ struct MemoShortcuts: AppShortcutsProvider {
             intent: AddMemoIntent(),
             // フレーズには必ず \(.applicationName) を入れる
             phrases: ["\(.applicationName)にメモを追加して"],
-            // ShortcutsアプリやSpotlightのタイルに出る、短い名前とアイコン
             shortTitle: "メモを追加",
             systemImageName: "note.text.badge.plus"
         )

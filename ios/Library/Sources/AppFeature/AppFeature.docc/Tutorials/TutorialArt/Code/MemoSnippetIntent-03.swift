@@ -5,7 +5,6 @@ import SwiftUI
 struct MemoSnippetIntent: SnippetIntent {
     static let title: LocalizedStringResource = "メモのスニペット"
 
-    // 表示するメモ
     @Parameter var memo: MemoEntity
 
     init() {}

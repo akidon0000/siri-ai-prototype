@@ -6,6 +6,5 @@ struct MemoEntity: AppEntity {
     var title: String
     var isDone: Bool
 
-    // ShortcutsアプリなどでのEntityの型名
     static let typeDisplayRepresentation: TypeDisplayRepresentation = "メモ"
 }

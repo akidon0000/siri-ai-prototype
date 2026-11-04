@@ -4,7 +4,6 @@
 1|// 完了・期限・タイトルなどの変更を、この1つのintentで受ける
 1|@AppIntent(schema: .reminders.updateReminder)
 1|struct UpdateMemoIntent {
-1|    // 変更するメモ
 1|    var target: MemoEntity
 1|    // 更新のスキーマなので全てオプショナル。nil は「変更しない」
 1|    var isCompleted: Bool?

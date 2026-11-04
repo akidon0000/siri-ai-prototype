@@ -25,7 +25,6 @@ final class MemoIntentsTests: XCTestCase {
         XCTAssertFalse(memos.isEmpty)
     }
 
-    // Spotlightの索引にメモが載っているか
     func testMemoIsIndexedInSpotlight() async throws {
         let indexed = try await definitions.entities["MemoEntity"].spotlightQuery("牛乳")
         XCTAssertFalse(indexed.isEmpty)

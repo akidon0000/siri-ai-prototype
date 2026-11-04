@@ -10,7 +10,6 @@ struct MemoEntity: IndexedEntity {
     var title: String
     // スキーマでの完了状態の名前は isCompleted
     var isCompleted: Bool
-    // 共有相手の一覧
     var sharedWith: [String]
     // ここからはスキーマが求めるプロパティ。対応していない機能は nil や空の値を返す
     var note: AttributedString?

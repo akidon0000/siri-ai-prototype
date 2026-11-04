@@ -4,7 +4,9 @@ Memoアプリを1ステップ数行ずつ組み立てながら、SiriKit から 
 
 **読む:** [akidon0000.github.io/siri-ai-tutorials/tutorials/](https://akidon0000.github.io/siri-ai-tutorials/tutorials/)
 
-Created by Dan Akiyama ([@akidon0000](https://github.com/akidon0000))。Claude Opus 5.5 で書いたので誤りが残っている可能性がある。見つけたら Issue か PR で教えてほしい。
+Created by Opus 5.5 with Dan Akiyama ([@akidon0000](https://github.com/akidon0000))
+
+誤りや不足を見つけたら 気軽に [akidon0000/siri-ai-tutorials](https://github.com/akidon0000/siri-ai-tutorials) にPRを。
 
 ## 章立て
 
@@ -16,7 +18,7 @@ Created by Dan Akiyama ([@akidon0000](https://github.com/akidon0000))。Claude O
 | 4 | Siri との会話を設計する |
 | 5 | スキーマで Apple Intelligence に載せる |
 | 6 | Apple Intelligence に文脈を渡す |
-| 7 | 【iOS 27.3 beta】Siri AI Developer Preview: ツールと app skill |
+| 7 | Siri AI Developer Preview【iOS 27.3 beta】 |
 | 8 | 検証する |
 
 各ステップでは、そのステップで足した行がハイライトされる。章末には Claude Code に渡すワークショップ用プロンプトがあり、章の内容を実際に実装してビルド・テスト・シミュレータで確かめるところまでを任せられる。
@@ -35,7 +37,7 @@ Created by Dan Akiyama ([@akidon0000](https://github.com/akidon0000))。Claude O
 
 ## チュートリアルを直すとき
 
-コードは `tools/tutorial-code/seq/` を編集して `python3 tools/tutorial-code/generate.py` で生成する。生成先の `TutorialArt/Code/` は直接触らない。`.seq` の書式、1ステップの行数制限、`.tutorial` の改名時のリダイレクトなどは [CLAUDE.md](./CLAUDE.md) にまとめてある。
+コードは `tools/tutorial-code/seq/` を編集して `python3 tools/tutorial-code/generate.py` で生成する。生成先の `TutorialArt/Code/` は直接触らない。`.seq` の書式、1ステップの行数制限、`.tutorial` の改名時のリダイレクト、PR 前の確認は [CONTRIBUTING.md](./CONTRIBUTING.md) にまとめてある。
 
 手元での確認は `xcrun docc convert` が警告0件で通ればよい（コマンドは [docc-pages.yml](./.github/workflows/docc-pages.yml) と同じ）。`main` に push すると GitHub Pages に自動で再公開される。
 

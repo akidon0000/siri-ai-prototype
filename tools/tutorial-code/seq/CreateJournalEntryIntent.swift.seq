@@ -9,12 +9,10 @@
 1|    // スキーマのプロパティは @Parameter を書かずに宣言する
 1|    var message: AttributedString
 1|    var title: String?
-2|    // スキーマが定める残りのプロパティ
 2|    var location: GeoToolbox.PlaceDescriptor?
 2|    var mediaItems: [IntentFile]
 2|    var entryDate: Date?
 3|
-3|    // 作った日記のEntityを返す
 3|    func perform() async throws -> some ReturnsValue<JournalEntryEntity> {
 3|        .result(value: try await JournalStore.shared.add(message: message, title: title))
 3|    }

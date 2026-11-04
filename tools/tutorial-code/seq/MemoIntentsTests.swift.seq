@@ -28,7 +28,6 @@
 4|        XCTAssertFalse(memos.isEmpty)
 4|    }
 5|
-5|    // Spotlightの索引にメモが載っているか
 5|    func testMemoIsIndexedInSpotlight() async throws {
 5|        let indexed = try await definitions.entities["MemoEntity"].spotlightQuery("牛乳")
 5|        XCTAssertFalse(indexed.isEmpty)
