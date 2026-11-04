@@ -187,3 +187,107 @@
   title: ToolIntent
   first_fetched: "2026-11-04"
   last_fetched: "2026-11-04"
+
+- url: https://developer.apple.com/documentation/sirievaluations
+  category: apple-intelligence
+  kind: article
+  path: docs/apple-doc/apple-intelligence/sirievaluations.md
+  title: Siri Evaluations
+  first_fetched: "2026-11-04"
+  last_fetched: "2026-11-04"
+
+- url: https://developer.apple.com/documentation/sirievaluations/siriservice
+  category: apple-intelligence
+  kind: tool
+  path: docs/apple-doc/apple-intelligence/siriservice.md
+  title: SiriService
+  first_fetched: "2026-11-04"
+  last_fetched: "2026-11-04"
+
+- url: https://developer.apple.com/documentation/sirievaluations/siriexpectationevaluator
+  category: apple-intelligence
+  kind: tool
+  path: docs/apple-doc/apple-intelligence/siriexpectationevaluator.md
+  title: SiriExpectationEvaluator
+  first_fetched: "2026-11-04"
+  last_fetched: "2026-11-04"
+
+- url: https://developer.apple.com/documentation/sirievaluations/siriscenarioloader
+  category: apple-intelligence
+  kind: tool
+  path: docs/apple-doc/apple-intelligence/siriscenarioloader.md
+  title: SiriScenarioLoader
+  first_fetched: "2026-11-04"
+  last_fetched: "2026-11-04"
+
+- url: https://developer.apple.com/documentation/sirievaluations/siriscenario
+  category: apple-intelligence
+  kind: tool
+  path: docs/apple-doc/apple-intelligence/siriscenario.md
+  title: SiriScenario
+  first_fetched: "2026-11-04"
+  last_fetched: "2026-11-04"
+
+- url: https://developer.apple.com/documentation/sirievaluations/userturn
+  category: apple-intelligence
+  kind: tool
+  path: docs/apple-doc/apple-intelligence/userturn.md
+  title: UserTurn
+  first_fetched: "2026-11-04"
+  last_fetched: "2026-11-04"
+
+- url: https://developer.apple.com/documentation/sirievaluations/calls
+  category: apple-intelligence
+  kind: tool
+  path: docs/apple-doc/apple-intelligence/calls.md
+  title: Calls
+  first_fetched: "2026-11-04"
+  last_fetched: "2026-11-04"
+
+- url: https://developer.apple.com/documentation/sirievaluations/finds
+  category: apple-intelligence
+  kind: tool
+  path: docs/apple-doc/apple-intelligence/finds.md
+  title: Finds
+  first_fetched: "2026-11-04"
+  last_fetched: "2026-11-04"
+
+- url: https://developer.apple.com/documentation/sirievaluations/loads
+  category: apple-intelligence
+  kind: tool
+  path: docs/apple-doc/apple-intelligence/loads.md
+  title: Loads
+  first_fetched: "2026-11-04"
+  last_fetched: "2026-11-04"
+
+- url: https://developer.apple.com/documentation/sirievaluations/onscreen
+  category: apple-intelligence
+  kind: tool
+  path: docs/apple-doc/apple-intelligence/onscreen.md
+  title: OnScreen
+  first_fetched: "2026-11-04"
+  last_fetched: "2026-11-04"
+
+- url: https://developer.apple.com/documentation/sirievaluations/siriresponse
+  category: apple-intelligence
+  kind: tool
+  path: docs/apple-doc/apple-intelligence/siriresponse.md
+  title: SiriResponse
+  first_fetched: "2026-11-04"
+  last_fetched: "2026-11-04"
+
+- url: https://developer.apple.com/documentation/sirievaluations/siriscenariosubject
+  category: apple-intelligence
+  kind: tool
+  path: docs/apple-doc/apple-intelligence/siriscenariosubject.md
+  title: SiriScenarioSubject
+  first_fetched: "2026-11-04"
+  last_fetched: "2026-11-04"
+
+- url: https://developer.apple.com/documentation/sirievaluations/siritranscript
+  category: apple-intelligence
+  kind: tool
+  path: docs/apple-doc/apple-intelligence/siritranscript.md
+  title: SiriTranscript
+  first_fetched: "2026-11-04"
+  last_fetched: "2026-11-04"
