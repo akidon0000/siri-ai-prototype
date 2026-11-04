@@ -1,0 +1,50 @@
+name: Deploy DocC to GitHub Pages
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - "ios/Library/**"
+      - ".github/workflows/docc-pages.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: true
+
+jobs:
+  build:
+    runs-on: macos-15
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Build DocC site
+        run: |
+          xcrun docc convert ios/Library/Sources/AppFeature/AppFeature.docc \
+            --output-path _site \
+            --fallback-display-name AppFeature \
+            --fallback-bundle-identifier com.akidon0000.siri-ai-prototype.AppFeature \
+            --fallback-bundle-version 1.0 \
+            --transform-for-static-hosting \
+            --hosting-base-path siri-ai-prototype
+
+      - name: Upload Pages artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: _site
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
