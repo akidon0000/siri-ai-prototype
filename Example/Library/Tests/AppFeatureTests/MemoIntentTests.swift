@@ -26,6 +26,23 @@ struct MemoIntentTests {
         #expect(stored?.priority == .high)
     }
 
+    @Test func completeMemoIntentThrowsWhenMemoWasDeleted() async throws {
+        await client.delete([TestMemoClient.milkID])
+        let intent = CompleteMemoIntent()
+        intent.memo = MemoEntity(TestMemoClient.seed[0])
+
+        await #expect(throws: MemoIntentError.memoDeleted) {
+            _ = try await intent.perform()
+        }
+    }
+
+    @Test func sharedMemoReportsSharedOwnership() {
+        var memo = MemoEntity(TestMemoClient.seed[0])
+        #expect(memo.ownership == .unknown)
+        memo.sharedWith = ["friend"]
+        #expect(memo.ownership == .shared)
+    }
+
     @Test func completeMemoIntentMarksMemoDone() async throws {
         let intent = CompleteMemoIntent()
         intent.memo = MemoEntity(TestMemoClient.seed[0])

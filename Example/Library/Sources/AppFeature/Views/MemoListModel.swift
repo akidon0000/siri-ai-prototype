@@ -40,6 +40,14 @@ final class MemoListModel {
         }
     }
 
+    func delete(_ memos: [MemoEntity]) async {
+        do {
+            try await store.delete(memos.map(\.id))
+        } catch {
+            errorMessage = String(describing: error)
+        }
+    }
+
     func complete(_ memo: MemoEntity) async {
         do {
             try await store.complete(memo.id)

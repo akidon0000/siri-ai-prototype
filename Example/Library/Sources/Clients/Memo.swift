@@ -11,19 +11,23 @@ public struct Memo: Sendable, Equatable, Identifiable {
     public var isDone: Bool
     public var priority: Priority
     public var creationDate: Date
+    /// 共有している相手のID。空なら自分だけのメモ。
+    public var sharedWith: [String]
 
     public init(
         id: UUID = UUID(),
         title: String,
         isDone: Bool = false,
         priority: Priority = .normal,
-        creationDate: Date = .now
+        creationDate: Date = .now,
+        sharedWith: [String] = []
     ) {
         self.id = id
         self.title = title
         self.isDone = isDone
         self.priority = priority
         self.creationDate = creationDate
+        self.sharedWith = sharedWith
     }
 }
 

@@ -42,6 +42,14 @@ public actor TestMemoClient: MemoClient {
         storage
     }
 
+    public func delete(_ ids: [UUID]) {
+        storage.removeAll { ids.contains($0.id) }
+    }
+
+    public func contains(title: String) -> Bool {
+        storage.contains { $0.title.caseInsensitiveCompare(title) == .orderedSame }
+    }
+
     public func complete(_ id: UUID) throws {
         guard let index = storage.firstIndex(where: { $0.id == id }) else {
             throw MemoClientError.notFound(id)

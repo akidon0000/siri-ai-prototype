@@ -22,6 +22,16 @@ import Testing
     #expect(try await client.allMemos().first?.isDone == true)
 }
 
+@Test func deletedMemoIsGoneAndTitleCheckIgnoresCase() async throws {
+    let client: any MemoClient = LiveMemoClient()
+    let memo = try await client.add(title: "Milk", priority: .normal)
+
+    #expect(try await client.contains(title: "milk"))
+    try await client.delete([memo.id])
+    #expect(try await client.allMemos().isEmpty)
+    #expect(try await !client.contains(title: "milk"))
+}
+
 @Test func completingUnknownMemoThrows() async {
     let client: any MemoClient = LiveMemoClient()
     let id = UUID()
