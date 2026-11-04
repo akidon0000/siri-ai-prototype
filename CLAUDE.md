@@ -14,7 +14,7 @@
   - 1ステップで足す行は、空行・閉じ括弧だけの行・`//` コメントだけの行を除いて5行以内、空行とコメント以外で6行以内。超えるとエラーになるので、ステップを分ける。
   - コードの各行には、何のための行かを `//` コメントで書く。説明文だけのステップは作らず、前のステップのコードにコメントを足すステップにする。
   - 途中にステップを挟むときは `python3 tools/tutorial-code/shift.py <名前>.<拡張子> <N>` で、N以降のステップ番号と `.tutorial` の参照をずらしてから、`N|` の行を足す。
-- Siri AI Developer Preview（iOS 27.3 beta）で入ったAPIを扱うセクションは、タイトルの末尾に `【iOS 27.3 beta】` を付ける。
+- Siri AI Developer Preview（iOS 27.3 beta）で入ったAPIを扱うセクションは、タイトルの先頭に `【iOS 27.3 beta】` を付ける（例: `【iOS 27.3 beta】Siriに値を組み立ててもらう`）。
 - `.tutorial` からは `@Code(name: "<#nameの値>", file: "<名前>-NN.<拡張子>", previousFile: "<名前>-(NN-1).<拡張子>")` で参照する。
   生成スクリプトは、全スナップショットがどこかのステップから参照されているか、`name` と `previousFile` が正しいかも検査する。
 - `.md` をDocCカタログに置くと記事として解釈されるので、Markdownを載せたいときは拡張子を `.txt` にする（例: `MemoTriageSkill.txt.seq`）。

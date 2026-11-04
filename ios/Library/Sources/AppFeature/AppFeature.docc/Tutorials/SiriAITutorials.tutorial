@@ -68,7 +68,7 @@
         @TutorialReference(tutorial: "doc:06-apple-intelligence-context")
     }
 
-    @Chapter(name: "第7章: Siri AI Developer Preview【iOS 27.3 beta】") {
+    @Chapter(name: "第7章: 【iOS 27.3 beta】Siri AI Developer Preview") {
         @Image(source: "chapter7.svg", alt: "第7章のイメージ")
 
         スキーマに無い操作を `@AppIntent(.tool)` でツールにし、GenerableEntityと

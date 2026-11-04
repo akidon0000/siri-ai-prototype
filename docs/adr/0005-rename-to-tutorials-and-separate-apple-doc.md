@@ -22,6 +22,8 @@ issue:
    `@AppIntent`、`@ComputedProperty` など、シンボル単位のページ）。更新スキルは両方を取得する。
 4. 各章末の `prompt.txt` は、章のURLを含み、実装・ビルド・テスト・シミュレータでの確認・報告までを
    Claude Codeに任せるワークショップ形式にする（0002の「プロンプトで段階的に実装を依頼する」の中身を具体化する）。
+5. 【iOS 27.3 beta】のタグは、セクションと章のタイトルの**先頭**に付ける（例: `【iOS 27.3 beta】Siriに値を組み立ててもらう`）。
+   0004は末尾に付けると決めていたが、目次で一目で分かるように先頭へ改める。
 
 ### 比較・検討内容の要約
 
@@ -78,6 +80,6 @@ issue:
 
 ## References（参照）
 
-- 関連 ADR: [0002](0002-docc-tutorial-defers-siri-implementation.md)、[0003](0003-generate-tutorial-code-snapshots-from-tagged-sources.md)
+- 関連 ADR: [0004](0004-tutorial-code-comments-and-beta-tags.md)（タグの位置だけ改める）、[0002](0002-docc-tutorial-defers-siri-implementation.md)、[0003](0003-generate-tutorial-code-snapshots-from-tagged-sources.md)
 - 外部: [Siri AI Developer Preview](https://developer.apple.com/documentation/appintents/siri-ai-developer-preview)、
   [Bringing custom actions and content to Siri](https://developer.apple.com/documentation/appintents/bringing-custom-actions-and-content-to-siri)

@@ -13,7 +13,7 @@
         [Orchestrating complex actions with app skills](https://developer.apple.com/documentation/appintents/orchestrating-complex-actions-with-app-skills)
     }
 
-    @Section(title: "ツールにするintentを選ぶ【iOS 27.3 beta】") {
+    @Section(title: "【iOS 27.3 beta】ツールにするintentを選ぶ") {
         @ContentAndMedia {
             どのintentをツールにするかはアプリが決める。全てをツールにすればよいわけではない。
             判断の基準は [ToolIntent](https://developer.apple.com/documentation/appintents/toolintent) にまとまっている。
@@ -56,7 +56,7 @@
         }
     }
 
-    @Section(title: "ツールを作る【iOS 27.3 beta】") {
+    @Section(title: "【iOS 27.3 beta】ツールを作る") {
         @ContentAndMedia {
             優先度を変える `SetMemoPriorityIntent` を、普通のApp Intentとして作ってからツールにする。
         }
@@ -110,7 +110,7 @@
         }
     }
 
-    @Section(title: "Siriがツールを呼べる場面【iOS 27.3 beta】") {
+    @Section(title: "【iOS 27.3 beta】Siriがツールを呼べる場面") {
         @ContentAndMedia {
             作ったツールがいつでも呼ばれるわけではない。Siriがアプリのツールを使うのは、
             そのアプリが会話に関係していると判断できるときに限られる。
@@ -146,7 +146,7 @@
         }
     }
 
-    @Section(title: "参考: Shortcuts専用スキーマをツールにする【iOS 27.3 beta】") {
+    @Section(title: "【iOS 27.3 beta】参考: Shortcuts専用スキーマをツールにする") {
         @ContentAndMedia {
             Shortcutsアプリでだけ使えるドメイン（Journaling・Booksなど）のスキーマは、Siriには公開されない。
             これらのスキーマに合わせたintentは、
@@ -185,7 +185,7 @@
         }
     }
 
-    @Section(title: "Siriに値を組み立ててもらう【iOS 27.3 beta】") {
+    @Section(title: "【iOS 27.3 beta】Siriに値を組み立ててもらう") {
         @ContentAndMedia {
             「優先度が高い買い物のメモを探して」のような依頼では、検索条件そのものは
             アプリのデータベースに存在しない。こうした値は、Siriが依頼の文から直接組み立てられるようにする
@@ -252,7 +252,7 @@
         }
     }
 
-    @Section(title: "見せてよい範囲を決める【iOS 27.3 beta】") {
+    @Section(title: "【iOS 27.3 beta】見せてよい範囲を決める") {
         @ContentAndMedia {
             Entityの情報は、既定では認証なしでSiriやShortcutsに表示される。
             見られたくない値はプロパティごとに制限する
@@ -282,7 +282,7 @@
         }
     }
 
-    @Section(title: "Siriに見せるプロパティを増やす: ComputedPropertyとDeferredProperty【iOS 27.3 beta】") {
+    @Section(title: "【iOS 27.3 beta】Siriに見せるプロパティを増やす: ComputedPropertyとDeferredProperty") {
         @ContentAndMedia {
             保存しているプロパティだけでは、Siriが答えられる質問は限られる。
             「期限切れのメモは？」に答えるには、保存していない値も見せる必要がある。
@@ -339,7 +339,7 @@
         }
     }
 
-    @Section(title: "Siriにカスタムの内容を見つけてもらう【iOS 27.3 beta】") {
+    @Section(title: "【iOS 27.3 beta】Siriにカスタムの内容を見つけてもらう") {
         @ContentAndMedia {
             ツールを作っても、Siriがパラメータに入れるEntityを見つけられなければ使われない。
             [Bringing custom actions and content to Siri](https://developer.apple.com/documentation/appintents/bringing-custom-actions-and-content-to-siri)
@@ -394,7 +394,7 @@
         }
     }
 
-    @Section(title: "複数のツールを使う手順を教える: app skill【iOS 27.3 beta】") {
+    @Section(title: "【iOS 27.3 beta】複数のツールを使う手順を教える: app skill") {
         @ContentAndMedia {
             1つのツールは1つの操作しかしない。「溜まったメモを整理して」のような依頼では、
             探す・完了にする・優先度を変えるを組み合わせる必要があるが、個々のツールの説明だけでは
@@ -440,7 +440,7 @@
         }
     }
 
-    @Section(title: "Siri Integration Advisor【iOS 27.3 beta】") {
+    @Section(title: "【iOS 27.3 beta】Siri Integration Advisor") {
         @ContentAndMedia {
             Developer PreviewのXcodeには、App Intentsの実装を読んでSiri向けの改善点を示す
             Siri Integration Advisorが入っている
