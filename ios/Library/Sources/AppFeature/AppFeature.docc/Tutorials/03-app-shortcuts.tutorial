@@ -1,0 +1,48 @@
+@Tutorial(time: 10) {
+    @Intro(title: "App Shortcutsでフレーズを固定する") {
+        AppShortcutsProvider と AppShortcut で、決まった言い方からApp Intentを
+        確実に呼び出せるようにする仕組みを理解する。
+
+        教材: `docs/shortcuts/app-shortcuts.md`（Apple Developer Documentation原文）
+    }
+
+    @Section(title: "App Shortcutsの役割") {
+        @ContentAndMedia {
+            App Shortcutは、App Intentに「タイトル・画像・話しかける言葉（フレーズ）」を
+            組み合わせ、Shortcutsアプリや他のシステム機能で使いやすくする。
+        }
+
+        @Steps {
+            @Step {
+                AppShortcutsProviderプロトコルに準拠した型を1つ作り、その中で
+                AppShortcutを並べることで、アプリをインストールした時点で
+                ShortcutsアプリやSiriがそれらを自動的に見つけられるようになる。
+            }
+
+            @Step {
+                あらかじめパラメータを決めておける（例: お気に入りのトレイルでハイキングを
+                開始する）ので、毎回パラメータを聞き直さずに実行できる。
+            }
+
+            @Step {
+                SiriTipView / SiriTipUIView を使うと、アプリ内でも「この言い方で呼び出せます」
+                というヒントを表示できる。
+            }
+        }
+    }
+
+    @Section(title: "次のステップ") {
+        @ContentAndMedia {
+            Tutorial 2 で作ったMemoの3つのIntentに、具体的な話しかけるフレーズを
+            設定してもらう。
+        }
+
+        @Steps {
+            @Step {
+                理解できたらこれをコピペする。
+
+                @Code(file: "03-prompt.txt", name: "prompt.txt")
+            }
+        }
+    }
+}

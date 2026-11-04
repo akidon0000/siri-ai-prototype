@@ -1,0 +1,47 @@
+@Tutorial(time: 15) {
+    @Intro(title: "App Intentsの基礎") {
+        App Intent / App Entity / App Enum という3つの型で、アプリの操作とデータを
+        システム（Siri・Spotlight・Shortcutsなど）に公開する仕組みを理解する。
+
+        教材: `docs/app-intents/app-intents.md`（Apple Developer Documentation原文）
+    }
+
+    @Section(title: "3つの型の役割") {
+        @ContentAndMedia {
+            App Intentsフレームワークは、アプリの「できること」と「データ」を構造化して表現する。
+        }
+
+        @Steps {
+            @Step {
+                App Intent はアプリの1つの操作をカプセル化した型。たとえば音楽アプリなら
+                「曲を再生する」intentを定義する。パラメータと実行結果を持てる。
+            }
+
+            @Step {
+                App Entity はアプリのデータのうち、Siriなど外部から参照され得る部分を表す型。
+                音楽アプリなら曲・アルバム・プレイリストがEntityになる。
+                データベース全体ではなく、人が言及しそうな範囲だけを軽量に表現する。
+            }
+
+            @Step {
+                App Enum はアプリ独自の列挙値をシステムに公開する型。
+                コンパイル時にコンパイラがApple IntelligenceやSiriが必要とする情報を生成する。
+            }
+        }
+    }
+
+    @Section(title: "次のステップ") {
+        @ContentAndMedia {
+            Memo (id, title, isDone) を題材に、AppEntityと3つのAppIntent
+            （追加・一覧・完了）を実装してもらう。
+        }
+
+        @Steps {
+            @Step {
+                理解できたらこれをコピペする。
+
+                @Code(file: "02-prompt.txt", name: "prompt.txt")
+            }
+        }
+    }
+}

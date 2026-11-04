@@ -31,6 +31,13 @@
   first_fetched: "2026-11-04"
   last_fetched: "2026-11-04"
 
+- url: https://developer.apple.com/documentation/TechnologyOverviews/apple-intelligence
+  category: apple-intelligence
+  path: docs/apple-intelligence/apple-intelligence.md
+  title: Apple Intelligence
+  first_fetched: "2026-11-04"
+  last_fetched: "2026-11-04"
+
 - url: https://developer.apple.com/design/human-interface-guidelines/siri
   category: apple-intelligence
   path: docs/apple-intelligence/siri-human-interface-guidelines.md

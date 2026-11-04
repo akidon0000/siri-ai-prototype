@@ -1,0 +1,58 @@
+@Tutorial(time: 15) {
+    @Intro(title: "Apple IntelligenceとSiri AIへの統合") {
+        App Intentsで公開したアクションとデータを、Apple Intelligence/Siri AIが
+        実際に見つけて使えるようにするための5つの観点を理解する。
+
+        教材: `docs/apple-intelligence/apple-intelligence-and-siri-ai.md`,
+        `docs/apple-intelligence/apple-intelligence.md`（Apple Developer Documentation原文）
+    }
+
+    @Section(title: "5つの観点") {
+        @ContentAndMedia {
+            Apple Intelligence/Siri AIにアプリの機能とデータを統合するには、
+            次の5つを行う。
+        }
+
+        @Steps {
+            @Step {
+                Entityをインデックスする。SpotlightのセマンティックサーチをApple Intelligenceが
+                使うので、人があいまいに説明したものでも見つけられるようになる。
+            }
+
+            @Step {
+                Transferableな型を選ぶ。AppEntityをTransferableに準拠させると、
+                Siri AIが「このアプリの内容を別のアプリに渡して実行する」操作ができる。
+            }
+
+            @Step {
+                スキーマを採用する。スキーマはApp Intent/Entity/Enumの構造についての
+                「アプリとシステムの間の契約」で、Siri AIが日常会話の言い回しと
+                アクション・データを対応づけるために使う。
+            }
+
+            @Step {
+                オンスクリーンコンテキストを共有する。画面に表示中のEntityにビューを
+                関連づけておくと、「この写真」のような指示語をSiriが理解できる。
+            }
+
+            @Step {
+                アクションとコンテンツをdonateする。利用の振る舞いをdonateしておくと、
+                Apple Intelligenceが傾向を把握し、次の行動を予測・提案できるようになる。
+            }
+        }
+    }
+
+    @Section(title: "次のステップ") {
+        @ContentAndMedia {
+            Memoのentityを、Spotlightから見つけられ、donationされる状態にしてもらう。
+        }
+
+        @Steps {
+            @Step {
+                理解できたらこれをコピペする。
+
+                @Code(file: "04-prompt.txt", name: "prompt.txt")
+            }
+        }
+    }
+}
