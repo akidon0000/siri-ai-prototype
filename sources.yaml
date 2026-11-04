@@ -1,53 +1,189 @@
 # このリポジトリで追跡している Apple Developer Documentation ページの一覧。
+# kind: article = 記事・概要・HIG・APIコレクション / tool = Siri AI のツール関連のAPIリファレンス（シンボル単位のページ）。
 # 各エントリは 1 ページに対応する。スキル(.claude/skills/update-apple-siri-docs)が
 # 追加・更新するマニフェスト。content_sha256 は本文(frontmatterを除いたMarkdown本体)のハッシュで、
 # 再取得時に内容が変わっていないかの差分検出に使う。
 
 - url: https://developer.apple.com/documentation/sirikit
   category: sirikit
-  path: docs/sirikit/sirikit.md
+  kind: article
+  path: docs/apple-doc/sirikit/sirikit.md
   title: SiriKit
   first_fetched: "2026-11-04"
   last_fetched: "2026-11-04"
 
 - url: https://developer.apple.com/documentation/appintents
   category: app-intents
-  path: docs/app-intents/app-intents.md
+  kind: article
+  path: docs/apple-doc/app-intents/app-intents.md
   title: App Intents
   first_fetched: "2026-11-04"
   last_fetched: "2026-11-04"
 
 - url: https://developer.apple.com/documentation/appintents/apple-intelligence-and-siri-ai
   category: apple-intelligence
-  path: docs/apple-intelligence/apple-intelligence-and-siri-ai.md
+  kind: article
+  path: docs/apple-doc/apple-intelligence/apple-intelligence-and-siri-ai.md
   title: Apple Intelligence and Siri AI
   first_fetched: "2026-11-04"
   last_fetched: "2026-11-04"
 
 - url: https://developer.apple.com/documentation/appintents/siri-ai-developer-preview
   category: apple-intelligence
-  path: docs/apple-intelligence/siri-ai-developer-preview.md
+  kind: article
+  path: docs/apple-doc/apple-intelligence/siri-ai-developer-preview.md
   title: Siri AI Developer Preview
   first_fetched: "2026-11-04"
   last_fetched: "2026-11-04"
 
 - url: https://developer.apple.com/documentation/TechnologyOverviews/apple-intelligence
   category: apple-intelligence
-  path: docs/apple-intelligence/apple-intelligence.md
+  kind: article
+  path: docs/apple-doc/apple-intelligence/apple-intelligence.md
   title: Apple Intelligence
   first_fetched: "2026-11-04"
   last_fetched: "2026-11-04"
 
 - url: https://developer.apple.com/design/human-interface-guidelines/siri
   category: apple-intelligence
-  path: docs/apple-intelligence/siri-human-interface-guidelines.md
+  kind: article
+  path: docs/apple-doc/apple-intelligence/siri-human-interface-guidelines.md
   title: "Siri (Human Interface Guidelines)"
   first_fetched: "2026-11-04"
   last_fetched: "2026-11-04"
 
 - url: https://developer.apple.com/documentation/appintents/app-shortcuts
   category: shortcuts
-  path: docs/shortcuts/app-shortcuts.md
+  kind: article
+  path: docs/apple-doc/shortcuts/app-shortcuts.md
   title: App Shortcuts
+  first_fetched: "2026-11-04"
+  last_fetched: "2026-11-04"
+
+- url: https://developer.apple.com/documentation/appintents/appentity(_:schema:)
+  category: apple-intelligence
+  kind: tool
+  path: docs/apple-doc/apple-intelligence/appentity-schema.md
+  title: "AppEntity(_:schema:)"
+  first_fetched: "2026-11-04"
+  last_fetched: "2026-11-04"
+
+- url: https://developer.apple.com/documentation/appintents/appentity(_:)
+  category: apple-intelligence
+  kind: tool
+  path: docs/apple-doc/apple-intelligence/appentity.md
+  title: "AppEntity(_:)"
+  first_fetched: "2026-11-04"
+  last_fetched: "2026-11-04"
+
+- url: https://developer.apple.com/documentation/appintents/appentitytraits
+  category: apple-intelligence
+  kind: tool
+  path: docs/apple-doc/apple-intelligence/appentitytraits.md
+  title: AppEntityTraits
+  first_fetched: "2026-11-04"
+  last_fetched: "2026-11-04"
+
+- url: https://developer.apple.com/documentation/appintents/appintent(_:schema:)
+  category: apple-intelligence
+  kind: tool
+  path: docs/apple-doc/apple-intelligence/appintent-schema.md
+  title: "AppIntent(_:schema:)"
+  first_fetched: "2026-11-04"
+  last_fetched: "2026-11-04"
+
+- url: https://developer.apple.com/documentation/appintents/appintent(_:)
+  category: apple-intelligence
+  kind: tool
+  path: docs/apple-doc/apple-intelligence/appintent.md
+  title: "AppIntent(_:)"
+  first_fetched: "2026-11-04"
+  last_fetched: "2026-11-04"
+
+- url: https://developer.apple.com/documentation/appintents/appintenttraits
+  category: apple-intelligence
+  kind: tool
+  path: docs/apple-doc/apple-intelligence/appintenttraits.md
+  title: AppIntentTraits
+  first_fetched: "2026-11-04"
+  last_fetched: "2026-11-04"
+
+- url: https://developer.apple.com/documentation/appintents/bringing-custom-actions-and-content-to-siri
+  category: apple-intelligence
+  kind: article
+  path: docs/apple-doc/apple-intelligence/bringing-custom-actions-and-content-to-siri.md
+  title: Bringing custom actions and content to Siri
+  first_fetched: "2026-11-04"
+  last_fetched: "2026-11-04"
+
+- url: https://developer.apple.com/documentation/appintents/computedproperty(title:description:authenticationpolicy:visibility:customindexingkey:)
+  category: apple-intelligence
+  kind: tool
+  path: docs/apple-doc/apple-intelligence/computedproperty-customindexingkey.md
+  title: "ComputedProperty(title:description:authenticationPolicy:visibility:customIndexingKey:)"
+  first_fetched: "2026-11-04"
+  last_fetched: "2026-11-04"
+
+- url: https://developer.apple.com/documentation/appintents/computedproperty(title:description:authenticationpolicy:visibility:indexingkey:)
+  category: apple-intelligence
+  kind: tool
+  path: docs/apple-doc/apple-intelligence/computedproperty-indexingkey.md
+  title: "ComputedProperty(title:description:authenticationPolicy:visibility:indexingKey:)"
+  first_fetched: "2026-11-04"
+  last_fetched: "2026-11-04"
+
+- url: https://developer.apple.com/documentation/appintents/computedproperty(title:description:authenticationpolicy:visibility:)
+  category: apple-intelligence
+  kind: tool
+  path: docs/apple-doc/apple-intelligence/computedproperty.md
+  title: "ComputedProperty(title:description:authenticationPolicy:visibility:)"
+  first_fetched: "2026-11-04"
+  last_fetched: "2026-11-04"
+
+- url: https://developer.apple.com/documentation/appintents/deferredproperty(title:description:authenticationpolicy:visibility:indexingkey:)
+  category: apple-intelligence
+  kind: tool
+  path: docs/apple-doc/apple-intelligence/deferredproperty-indexingkey.md
+  title: "DeferredProperty(title:description:authenticationPolicy:visibility:indexingKey:)"
+  first_fetched: "2026-11-04"
+  last_fetched: "2026-11-04"
+
+- url: https://developer.apple.com/documentation/appintents/deferredproperty(title:description:authenticationpolicy:visibility:)
+  category: apple-intelligence
+  kind: tool
+  path: docs/apple-doc/apple-intelligence/deferredproperty.md
+  title: "DeferredProperty(title:description:authenticationPolicy:visibility:)"
+  first_fetched: "2026-11-04"
+  last_fetched: "2026-11-04"
+
+- url: https://developer.apple.com/documentation/appintents/generableentity
+  category: apple-intelligence
+  kind: tool
+  path: docs/apple-doc/apple-intelligence/generableentity.md
+  title: GenerableEntity
+  first_fetched: "2026-11-04"
+  last_fetched: "2026-11-04"
+
+- url: https://developer.apple.com/documentation/appintents/intentvisibility
+  category: apple-intelligence
+  kind: tool
+  path: docs/apple-doc/apple-intelligence/intentvisibility.md
+  title: IntentVisibility
+  first_fetched: "2026-11-04"
+  last_fetched: "2026-11-04"
+
+- url: https://developer.apple.com/documentation/appintents/orchestrating-complex-actions-with-app-skills
+  category: apple-intelligence
+  kind: article
+  path: docs/apple-doc/apple-intelligence/orchestrating-complex-actions-with-app-skills.md
+  title: Orchestrating complex actions with app skills
+  first_fetched: "2026-11-04"
+  last_fetched: "2026-11-04"
+
+- url: https://developer.apple.com/documentation/appintents/toolintent
+  category: apple-intelligence
+  kind: tool
+  path: docs/apple-doc/apple-intelligence/toolintent.md
+  title: ToolIntent
   first_fetched: "2026-11-04"
   last_fetched: "2026-11-04"

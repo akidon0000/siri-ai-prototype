@@ -2,6 +2,7 @@
 source_url: https://developer.apple.com/documentation/appintents
 title: App Intents
 category: app-intents
+kind: article
 fetched_at: 2026-11-04T00:00:00Z
 ---
 

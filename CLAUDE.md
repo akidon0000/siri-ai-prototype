@@ -1,4 +1,9 @@
-# siri-ai-prototype
+# siri-ai-tutorials
+
+## Appleの原文
+
+- Apple Developer Documentation の原文は `docs/apple-doc/<category>/` に置く（`docs/adr/` `docs/superpowers/` と混ぜない）。
+  各ページの frontmatter と `sources.yaml` に `kind: article | tool` を付ける。取得は `update-apple-siri-docs` スキルで行う。
 
 ## DocCチュートリアルのコード
 

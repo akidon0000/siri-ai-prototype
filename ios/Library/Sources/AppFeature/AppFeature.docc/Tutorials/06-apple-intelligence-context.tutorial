@@ -4,7 +4,7 @@
         この章では、Spotlightの索引、画面に映っているもの、通知、UIで行った操作、他のアプリへの受け渡し、
         カメラ（ビジュアルインテリジェンス）という6つの経路で、Apple Intelligenceにアプリの文脈を渡す。
 
-        教材: `docs/apple-intelligence/apple-intelligence-and-siri-ai.md`、
+        教材: `docs/apple-doc/apple-intelligence/apple-intelligence-and-siri-ai.md`、
         [Making app entities available in Spotlight](https://developer.apple.com/documentation/appintents/making-app-entities-available-in-spotlight)、
         [Providing contextual cues to Apple Intelligence and Siri](https://developer.apple.com/documentation/appintents/providing-contextual-cues-to-apple-intelligence-and-siri)、
         [Donating your app's data and actions to the system](https://developer.apple.com/documentation/appintents/donating-your-apps-data-and-actions-to-the-system)、
@@ -287,7 +287,7 @@
 
         @Steps {
             @Step {
-                理解できたらこれをコピペする。
+                理解できたらこれをClaude Codeに貼る。実装から、ビルドと動作確認までを任せる。
 
                 @Code(name: "prompt.txt", file: "06-prompt.txt")
             }

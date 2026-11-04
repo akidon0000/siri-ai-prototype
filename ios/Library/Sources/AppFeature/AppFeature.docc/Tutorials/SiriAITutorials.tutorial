@@ -1,10 +1,15 @@
-@Tutorials(name: "Siri AI PoC チュートリアル") {
+@Tutorials(name: "Siri AI Tutorials") {
     @Intro(title: "SiriKitからSiri AIまで") {
         SiriKitからApp Intents、スキーマ、Apple Intelligence、Siri AI Developer Previewまでを、
         Memoアプリのコードを1ステップ数行ずつ組み立てながら理解する。
-        教材はApple公式ドキュメント（一部は `docs/` 配下に原文を保存済み）とWWDC26のセッション。
-        各チュートリアルの最後に「理解できたらコピペするプロンプト」があるので、
-        準備ができたものだけ実装を進めればよい。
+        教材はApple公式ドキュメント（一部は `docs/apple-doc/` 配下に原文を保存済み）とWWDC26のセッション。
+        各チュートリアルの最後に、Claude Codeに実装させて動かして確かめるためのプロンプトがある。
+        読み終えた章から順に、貼って実装まで進めればよい。
+
+        Created by Dan Akiyama ([@akidon0000](https://github.com/akidon0000))
+
+        Claude Opus 5.5で作ったため、誤りを含むことがある。見つけたら
+        [akidon0000/siri-ai-tutorials](https://github.com/akidon0000/siri-ai-tutorials) にPRを送ってほしい。
 
         【iOS 27.3 beta】の付いたセクションは、Siri AI Developer Preview（iOS 27.3 beta）で入ったAPIと機能を扱う。
         正式版までに変わることがある。

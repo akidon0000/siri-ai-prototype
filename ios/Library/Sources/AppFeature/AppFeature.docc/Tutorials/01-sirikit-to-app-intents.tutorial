@@ -4,7 +4,7 @@
         同じ操作をApp Intentsで書き直す。最後に、SiriKitのカスタムintentを使っていたアプリが
         既存ユーザーのショートカットを壊さずにApp Intentsへ移行する方法を押さえる。
 
-        教材: `docs/sirikit/sirikit.md`、
+        教材: `docs/apple-doc/sirikit/sirikit.md`、
         [SiriKit](https://developer.apple.com/documentation/sirikit)、
         [CustomIntentMigratedAppIntent](https://developer.apple.com/documentation/appintents/customintentmigratedappintent)
     }
@@ -60,7 +60,7 @@
     @Section(title: "App Intentsで書き直す") {
         @ContentAndMedia {
             同じ「メモを完了にする」をApp Intentsで書く。スキーマ定義のファイルもextensionも作らず、
-            アプリ本体（このPoCなら `ios/Library` のパッケージ）に構造体を1つ置くだけでよい。
+            アプリ本体（このリポジトリなら `ios/Library` のパッケージ）に構造体を1つ置くだけでよい。
         }
 
         @Steps {
@@ -115,7 +115,7 @@
             }
 
             @Step {
-                このPoCはSiriKitを一度も使っていないので、実装時にはこの移行は不要。
+                このリポジトリはSiriKitを一度も使っていないので、実装時にはこの移行は不要。
                 新規アプリはApp Intentsだけで始めればよい。そのことをコメントに残しておく。
 
                 @Code(name: "CompleteMemoIntent.swift", file: "CompleteMemoIntent-06.swift", previousFile: "CompleteMemoIntent-05.swift")
@@ -126,12 +126,12 @@
     @Section(title: "次のステップ") {
         @ContentAndMedia {
             ここまでの内容に納得できたら、下のプロンプトをコピーしてClaude Codeに貼り付けてよい。
-            実装を依頼するものではなく、方針の確認と次章への準備だけを行う。
+            機能は作らず、SiriKitを使わない方針の確認と、次章から実装を動かせる土台の確認だけを行う。
         }
 
         @Steps {
             @Step {
-                理解できたらこれをコピペする。
+                理解できたらこれをClaude Codeに貼る。方針の確認と、ビルド・テスト・起動が通る土台づくりまでを任せる。
 
                 @Code(name: "prompt.txt", file: "01-prompt.txt")
             }

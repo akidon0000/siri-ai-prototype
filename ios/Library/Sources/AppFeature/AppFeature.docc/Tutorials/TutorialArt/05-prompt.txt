@@ -1,5 +1,17 @@
-Tutorial 5 (スキーマでApple Intelligenceに載せる) を読んで理解した。
-Memo を App Intents の Reminders ドメインのスキーマに対応させて。
+【ワークショップ】Siri AI Tutorials 第5章: スキーマでApple Intelligenceに載せる
+
+チュートリアル: https://akidon0000.github.io/siri-ai-tutorials/tutorials/appfeature/05-app-schemas
+リポジトリ: https://github.com/akidon0000/siri-ai-tutorials （clone済みのこのディレクトリで進める）
+
+先に上のチュートリアルを読んで、コードの組み立て順と「なぜそう書くか」を把握する。
+読めないときは ios/Library/Sources/AppFeature/AppFeature.docc/Tutorials/05-app-schemas.tutorial を読む。
+合わせて読む原文:
+  - docs/apple-doc/apple-intelligence/apple-intelligence-and-siri-ai.md
+  - https://developer.apple.com/documentation/appintents/app-schema-domain-reminders
+チュートリアルの MemoStore は、このリポジトリでは Clients の MemoClient と ClientsLive の LiveMemoClient に当たる。
+
+## 作る
+Memo を App Intents の Reminders ドメインのスキーマに対応させる。
 
 - MemoListType (@AppEnum(schema: .reminders.listType)) と MemoListEntity (@AppEntity(schema: .reminders.list)) を追加する
 - MemoEntity に @AppEntity(schema: .reminders.reminder) を付け、isDone を isCompleted に改名し、スキーマの必須プロパティを揃える
@@ -11,5 +23,19 @@ Memo を App Intents の Reminders ドメインのスキーマに対応させて
 - 各スキーマのテンプレートは Xcode の補完（reminders_ / system_）で展開したものと突き合わせる
 - 既存のテストと TestMemoClient を新しいプロパティに合わせて直す
 
-参考: docs/apple-intelligence/apple-intelligence-and-siri-ai.md、
-https://developer.apple.com/documentation/appintents/app-schema-domain-reminders
+## 動かして確かめる
+1. 単体テスト: `cd ios/Library && xcodebuild test -scheme Library -destination 'platform=iOS Simulator,name=iPhone 18 Pro'`
+   （シミュレータ名は `xcrun simctl list devices available` で今あるiPhoneに合わせてよい）
+2. アプリをビルドしてシミュレータで起動する:
+   `cd ios/App && xcodebuild build -scheme SiriAIPrototype -destination 'platform=iOS Simulator,name=iPhone 18 Pro' -derivedDataPath build`
+   `xcrun simctl boot 'iPhone 18 Pro' ; open -a Simulator ; xcrun simctl install booted ios/App/build/Build/Products/Debug-iphonesimulator/SiriAIPrototype.app ; xcrun simctl launch booted com.akidon0000.SiriAIPrototype`
+   起動後に `xcrun simctl io booted screenshot` で画面を撮って確認する。
+3. スキーマに必須のプロパティや型が足りないとビルドで落ちる。エラーが出たら、メッセージの指示どおりに直して通す。
+   直した内容（どのスキーマの何が足りなかったか）を報告に書く。
+4. ショートカットアプリのアクション一覧に、追加したIntent（CreateMemoIntent は assistantOnly なので出ない）が期待どおりに出る・出ないことを確かめる。
+   UIを操作できるツールが無ければ、この手順をユーザーに案内して結果を聞く。
+
+終わったら、次の3つに分けて報告する。
+- 作ったもの（追加・変更したファイル）
+- 動かして確認できたこと（実行したコマンドと結果、スクリーンショット）
+- 確認できなかったこと（理由つき）。確認していないことを「動いた」と書かない

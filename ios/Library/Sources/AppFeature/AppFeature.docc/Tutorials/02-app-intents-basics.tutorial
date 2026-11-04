@@ -4,7 +4,7 @@
         App Intent（操作）の4つを、Memoアプリを題材に1行ずつ組み立てる。
         ここで作る `MemoEntity` と `AddMemoIntent` は、第4章以降でも同じファイルを育てていく。
 
-        教材: `docs/app-intents/app-intents.md`、
+        教材: `docs/apple-doc/app-intents/app-intents.md`、
         [App Intents](https://developer.apple.com/documentation/appintents)、
         [Defining app entities for your custom data types](https://developer.apple.com/documentation/appintents/defining-app-entities-for-your-custom-data-types)
     }
@@ -167,7 +167,7 @@
 
         @Steps {
             @Step {
-                理解できたらこれをコピペする。
+                理解できたらこれをClaude Codeに貼る。実装から、ビルドと動作確認までを任せる。
 
                 @Code(name: "prompt.txt", file: "02-prompt.txt")
             }

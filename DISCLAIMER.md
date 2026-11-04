@@ -1,6 +1,6 @@
 # 著作権について
 
-`docs/` 配下の各ページは [developer.apple.com/documentation](https://developer.apple.com/documentation/) から
+`docs/apple-doc/` 配下の各ページは [developer.apple.com/documentation](https://developer.apple.com/documentation/) から
 本文をそのままコピーして保存したものであり、著作権は Apple Inc. に帰属する。
 
 - 目的は個人の技術調査・学習と、Apple 側のドキュメント改訂の差分追跡（git diff）に限定する。再配布・商用利用を目的としない。

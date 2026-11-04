@@ -214,7 +214,7 @@
 
         @Steps {
             @Step {
-                理解できたらこれをコピペする。
+                理解できたらこれをClaude Codeに貼る。実装から、ビルドと動作確認までを任せる。
 
                 @Code(name: "prompt.txt", file: "08-prompt.txt")
             }

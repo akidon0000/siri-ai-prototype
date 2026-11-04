@@ -1,4 +1,32 @@
-Tutorial 1 (SiriKitからApp Intentsへ) を読んで理解した。
-このPoCではSiriKit/Intents/IntentsUIは使わず、App Intentsフレームワークだけで実装する方針で進めてよいか確認して。
-SiriKitからの移行（CustomIntentMigratedAppIntent）はこのPoCでは不要という理解で合っているかも見て。
-問題なければ Tutorial 2 に進む準備として ios/Library/Sources/Clients/MemoClient.swift の TODO 一覧を出して。
+【ワークショップ】Siri AI Tutorials 第1章: SiriKitからApp Intentsへ
+
+チュートリアル: https://akidon0000.github.io/siri-ai-tutorials/tutorials/appfeature/01-sirikit-to-app-intents
+リポジトリ: https://github.com/akidon0000/siri-ai-tutorials （clone済みのこのディレクトリで進める）
+
+先に上のチュートリアルを読んで、コードの組み立て順と「なぜそう書くか」を把握する。
+読めないときは ios/Library/Sources/AppFeature/AppFeature.docc/Tutorials/01-sirikit-to-app-intents.tutorial を読む。
+合わせて読む原文:
+チュートリアルの MemoStore は、このリポジトリでは Clients の MemoClient と ClientsLive の LiveMemoClient に当たる。
+
+この章では機能は実装しない。SiriKitを使わない方針を確かめ、第2章からの実装を動かせる土台を作る。
+
+## 確かめる方針
+- Siri関連はApp Intentsフレームワークだけで実装する。SiriKit（Intents / IntentsUI / .intentdefinition）は使わない
+- SiriKitからの移行（CustomIntentMigratedAppIntent）は、このリポジトリがSiriKitを一度も使っていないので不要
+- 上の2点がチュートリアルの内容と合っているか、読んだ上で自分の言葉で説明する
+
+## 動かして確かめる
+1. `grep -rn "import Intents\|\.intentdefinition" ios/` で、SiriKit関連が1件も無いことを確かめる
+2. 単体テスト: `cd ios/Library && xcodebuild test -scheme Library -destination 'platform=iOS Simulator,name=iPhone 18 Pro'`
+3. アプリをビルドしてシミュレータで起動し、画面を撮る:
+   `cd ios/App && xcodebuild build -scheme SiriAIPrototype -destination 'platform=iOS Simulator,name=iPhone 18 Pro' -derivedDataPath build`
+   `xcrun simctl boot 'iPhone 18 Pro' ; open -a Simulator ; xcrun simctl install booted ios/App/build/Build/Products/Debug-iphonesimulator/SiriAIPrototype.app ; xcrun simctl launch booted com.akidon0000.SiriAIPrototype`
+   （シミュレータ名は `xcrun simctl list devices available` で今あるiPhoneに合わせてよい）
+4. ios/Library/Sources/Clients/MemoClient.swift の TODO を一覧にして、第2章で実装するものを整理する
+
+ビルドかテストが通らないときは、原因を直してからもう一度流す。直せないなら、エラーをそのまま報告する。
+
+終わったら、次の3つに分けて報告する。
+- 作ったもの（追加・変更したファイル）
+- 動かして確認できたこと（実行したコマンドと結果、スクリーンショット）
+- 確認できなかったこと（理由つき）。確認していないことを「動いた」と書かない

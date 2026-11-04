@@ -4,7 +4,7 @@
         この章では、応答の言葉、聞き返し、実行前の確認、結果の見せ方（スニペット）を順に足し、
         最後にHuman Interface Guidelinesの応答文の指針を確認する。
 
-        教材: `docs/apple-intelligence/siri-human-interface-guidelines.md`、
+        教材: `docs/apple-doc/apple-intelligence/siri-human-interface-guidelines.md`、
         [Human Interface Guidelines: Siri](https://developer.apple.com/design/human-interface-guidelines/siri)、
         [WWDC26: Explore advanced App Intents features for Siri and Apple Intelligence](https://developer.apple.com/videos/play/wwdc2026/343/)、
         [Displaying static and interactive snippets](https://developer.apple.com/documentation/appintents/displaying-static-and-interactive-snippets)
@@ -268,7 +268,7 @@
 
         @Steps {
             @Step {
-                理解できたらこれをコピペする。
+                理解できたらこれをClaude Codeに貼る。実装から、ビルドと動作確認までを任せる。
 
                 @Code(name: "prompt.txt", file: "04-prompt.txt")
             }

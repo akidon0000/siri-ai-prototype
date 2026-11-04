@@ -2,6 +2,7 @@
 source_url: https://developer.apple.com/design/human-interface-guidelines/siri
 title: "Siri (Human Interface Guidelines)"
 category: apple-intelligence
+kind: article
 fetched_at: 2026-11-04T00:00:00Z
 ---
 

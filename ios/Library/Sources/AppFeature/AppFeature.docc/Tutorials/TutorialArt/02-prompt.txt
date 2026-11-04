@@ -1,13 +1,39 @@
-Tutorial 2 (App Intentsの基礎) を読んで理解した。
-ios/Library に Memo の App Intents実装を追加して。
+【ワークショップ】Siri AI Tutorials 第2章: App Intentsの基礎
+
+チュートリアル: https://akidon0000.github.io/siri-ai-tutorials/tutorials/appfeature/02-app-intents-basics
+リポジトリ: https://github.com/akidon0000/siri-ai-tutorials （clone済みのこのディレクトリで進める）
+
+先に上のチュートリアルを読んで、コードの組み立て順と「なぜそう書くか」を把握する。
+読めないときは ios/Library/Sources/AppFeature/AppFeature.docc/Tutorials/02-app-intents-basics.tutorial を読む。
+合わせて読む原文:
+  - docs/apple-doc/app-intents/app-intents.md
 チュートリアルの MemoStore は、このリポジトリでは Clients の MemoClient と ClientsLive の LiveMemoClient に当たる。
+
+## 作る
+ios/Library に Memo の App Intents実装を追加する。
 
 - Clients/MemoClient.swift: MemoClient プロトコルに add / memos(for:) / recentMemos / memos(matching:) / complete を定義する
 - ClientsLive/LiveMemoClient.swift: メモリ内配列で保持する実装
 - AppFeature に MemoEntity (id, title, isDone) と MemoQuery (EntityStringQuery) を追加する
 - AppFeature に MemoPriority (AppEnum: 低・通常・高) を追加する
 - AppFeature に AddMemoIntent（parameterSummary 付き）と CompleteMemoIntent を追加する
+- AppFeature に最小のメモ一覧画面（MemoListView）を作り、アプリ上でメモの追加と完了ができるようにする
+  （第3章以降で結果を目で確かめるための画面。凝らなくてよい）
 - TestSupport に固定データを返す TestMemoClient を用意する
 - AppFeatureTests に2つのIntentと MemoQuery の単体テストを書く
 
-参考: docs/app-intents/app-intents.md
+## 動かして確かめる
+1. 単体テスト: `cd ios/Library && xcodebuild test -scheme Library -destination 'platform=iOS Simulator,name=iPhone 18 Pro'`
+   （シミュレータ名は `xcrun simctl list devices available` で今あるiPhoneに合わせてよい）
+2. アプリをビルドしてシミュレータで起動する:
+   `cd ios/App && xcodebuild build -scheme SiriAIPrototype -destination 'platform=iOS Simulator,name=iPhone 18 Pro' -derivedDataPath build`
+   `xcrun simctl boot 'iPhone 18 Pro' ; open -a Simulator ; xcrun simctl install booted ios/App/build/Build/Products/Debug-iphonesimulator/SiriAIPrototype.app ; xcrun simctl launch booted com.akidon0000.SiriAIPrototype`
+   起動後に `xcrun simctl io booted screenshot` で画面を撮って確認する。
+3. ショートカットアプリ（シミュレータにある）を開き、新規ショートカットのアクション検索で「Siri AI Prototype」を探す。
+   追加したAppIntent（メモを追加 / メモを完了にする）が出ること、「メモを追加」を実行するとダイアログが返ることを確かめる。
+   UIを操作できるツール（iOS Simulator MCPなど）が無ければ、この手順をユーザーに案内して結果を聞く。
+
+終わったら、次の3つに分けて報告する。
+- 作ったもの（追加・変更したファイル）
+- 動かして確認できたこと（実行したコマンドと結果、スクリーンショット）
+- 確認できなかったこと（理由つき）。確認していないことを「動いた」と書かない
