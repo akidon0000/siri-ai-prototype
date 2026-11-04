@@ -51,4 +51,13 @@ public actor LiveMemoClient: MemoClient {
     public func allLists() -> [MemoList] {
         [.default]
     }
+
+    // このアプリにはアカウントも添付も無いので、IDをそのまま名前にし、読み取った文字は空にする
+    public func displayNames(for userIDs: [String]) -> [String] {
+        userIDs
+    }
+
+    public func recognizedText(for id: UUID) -> String {
+        ""
+    }
 }

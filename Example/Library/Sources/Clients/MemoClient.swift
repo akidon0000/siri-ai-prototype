@@ -21,6 +21,11 @@ public protocol MemoClient: Sendable {
     func contains(title: String) async throws -> Bool
 
     func allLists() async throws -> [MemoList]
+
+    /// 共有相手のIDから表示名を引く。サーバーへの問い合わせを想定した、時間のかかる処理。
+    func displayNames(for userIDs: [String]) async throws -> [String]
+    /// 添付画像から読み取った文字。
+    func recognizedText(for id: UUID) async throws -> String
 }
 
 extension MemoClient {

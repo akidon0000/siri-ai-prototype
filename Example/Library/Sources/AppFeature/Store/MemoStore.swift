@@ -95,6 +95,27 @@ public nonisolated final class MemoStore: Sendable {
         try await memoIndexer.index(memos(for: ids))
     }
 
+    func displayNames(for userIDs: [String]) async throws -> [String] {
+        try await memoClient.displayNames(for: userIDs)
+    }
+
+    func recognizedText(for id: MemoEntity.ID) async throws -> String {
+        try await memoClient.recognizedText(for: id)
+    }
+
+    func setPriority(_ priority: MemoPriority, for id: MemoEntity.ID) async throws {
+        _ = try await update(id, MemoChange(priority: priority.clientValue))
+    }
+
+    /// 未完了で、キーワードをタイトルに含み、優先度が `priorities` のどれかのメモ。`priorities` が空なら優先度で絞らない。
+    func memos(matching keyword: String, priorities: [MemoPriority]) async throws -> [MemoEntity] {
+        try await allMemos().filter { memo in
+            !memo.isCompleted
+                && (keyword.isEmpty || memo.title.localizedCaseInsensitiveContains(keyword))
+                && (priorities.isEmpty || priorities.contains(memo.priority))
+        }
+    }
+
     func allLists() async throws -> [MemoListEntity] {
         try await memoClient.allLists().map(MemoListEntity.init)
     }

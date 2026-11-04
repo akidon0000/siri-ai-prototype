@@ -118,6 +118,37 @@ struct MemoIntentTests {
         #expect(byTag.map(\.title) == ["Buy milk"])
     }
 
+    @Test func setMemoPriorityIntentChangesPriority() async throws {
+        let intent = SetMemoPriorityIntent()
+        intent.memo = MemoEntity(TestMemoClient.seed[1])
+        intent.priority = .high
+
+        _ = try await intent.perform()
+
+        let stored = await client.storage.first { $0.id == TestMemoClient.breadID }
+        #expect(stored?.priority == .high)
+    }
+
+    @Test func searchFiltersOpenMemosByKeywordAndPriority() async throws {
+        let high = try await MemoStore.shared.memos(matching: "買う", priorities: [.high])
+        let any = try await MemoStore.shared.memos(matching: "買う", priorities: [])
+        #expect(high.map(\.id) == [TestMemoClient.milkID])
+        #expect(Set(any.map(\.id)) == [TestMemoClient.milkID, TestMemoClient.breadID])
+    }
+
+    @Test func overdueOnlyWhenPastDueAndOpen() {
+        let memo = MemoEntity(TestMemoClient.seed[0])
+        memo.dueDate = Calendar.current.dateComponents([.year, .month, .day, .hour], from: .now.addingTimeInterval(-86_400))
+        #expect(memo.isOverdue)
+        memo.isCompleted = true
+        #expect(!memo.isOverdue)
+    }
+
+    @Test func memoListQueryEnumeratesAllLists() async throws {
+        let lists = try await MemoListQuery().allEntities()
+        #expect(lists.map(\.id) == [MemoList.defaultID])
+    }
+
     @Test func memoListQueryFindsListByName() async throws {
         let lists = try await MemoListQuery().entities(matching: "メモ")
         #expect(lists.map(\.id) == [MemoList.defaultID])

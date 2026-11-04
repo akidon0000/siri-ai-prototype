@@ -60,6 +60,16 @@ intent の中身がチュートリアルのコードとほぼ同じ形になる�
 - **`MemoQuery.displayRepresentations(for:)` は `requestedComponents` を取らない。** 27.1 の SDK にはこの形しか無い。
 - **Spotlight の索引は `MemoStore` が追加・更新・削除のたびに更新する。** テストでは `MemoStore.configure(indexer:)` で記録用の実装に差し替える。
 
+- **第7章は、27.1 にある API と 27.3 beta にしか無い API を分けた。**
+  `@ComputedProperty(title:)`・`@DeferredProperty(title:indexingKey:)`・`EnumerableEntityQuery` は 27.1 にあるのでそのまま使う。
+  `description:`・`authenticationPolicy:`・`visibility:` を取る形と `@AppIntent(.tool)`・`@AppEntity(.generable)` は 27.3 beta にしか無いので、
+  属性だけを `#if SIRI_AI_PREVIEW` で切り替える。27.1 では `SetMemoPriorityIntent` は普通の AppIntent として Shortcuts に出る。
+  認証を求められない 27.1 では、`lockedBody` と `collaboratorNames` を Siri に見せない。
+- **`attachmentText` に `\.textContent` を付けると、スキーマの `note` と索引のキーが重なるという警告が出る。**
+  チュートリアルの指示どおりに書いた結果なので、警告は残している。チュートリアル側で別のキーにするか検討が要る。
+- **Xcode 27.1 は `.skillsbundle` を知らないので、`Skills.skillsbundle/Skills/memo-triage/SKILL.md` がアプリ直下に平らにコピーされる。**
+  27.1 では Siri AI が動かないので実害は無い。27.3 beta の Xcode でバンドルのままコピーされるかは未確認。
+
 ## 第1章で決めたこと
 
 Siri 連携は App Intents だけで書き、SiriKit（Intents / IntentsUI / `.intentdefinition`）は使わない。

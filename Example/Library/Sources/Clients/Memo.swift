@@ -19,6 +19,10 @@ public struct Memo: Sendable, Equatable, Identifiable {
     public var dueDate: DateComponents?
     public var isFlagged: Bool
     public var listID: UUID
+    /// ロックしたメモの本文。読むには端末の認証が要る。
+    public var lockedBody: String?
+    /// 同期のたびに増える番号。アプリの中だけで使う。
+    public var revision: Int
 
     public init(
         id: UUID = UUID(),
@@ -32,7 +36,9 @@ public struct Memo: Sendable, Equatable, Identifiable {
         tags: Set<String> = [],
         dueDate: DateComponents? = nil,
         isFlagged: Bool = false,
-        listID: UUID = MemoList.defaultID
+        listID: UUID = MemoList.defaultID,
+        lockedBody: String? = nil,
+        revision: Int = 0
     ) {
         self.id = id
         self.title = title
@@ -46,6 +52,8 @@ public struct Memo: Sendable, Equatable, Identifiable {
         self.dueDate = dueDate
         self.isFlagged = isFlagged
         self.listID = listID
+        self.lockedBody = lockedBody
+        self.revision = revision
     }
 }
 
@@ -72,6 +80,7 @@ public struct MemoChange: Sendable, Equatable {
     public var dueDate: DateComponents?
     public var isFlagged: Bool?
     public var listID: UUID?
+    public var priority: Memo.Priority?
 
     public init(
         title: String? = nil,
@@ -80,7 +89,8 @@ public struct MemoChange: Sendable, Equatable {
         tags: Set<String>? = nil,
         dueDate: DateComponents? = nil,
         isFlagged: Bool? = nil,
-        listID: UUID? = nil
+        listID: UUID? = nil,
+        priority: Memo.Priority? = nil
     ) {
         self.title = title
         self.isCompleted = isCompleted
@@ -89,6 +99,7 @@ public struct MemoChange: Sendable, Equatable {
         self.dueDate = dueDate
         self.isFlagged = isFlagged
         self.listID = listID
+        self.priority = priority
     }
 
     /// 変更を `memo` に当てる。完了にしたときは完了日時も入れる。
@@ -103,6 +114,8 @@ public struct MemoChange: Sendable, Equatable {
         if let dueDate { memo.dueDate = dueDate }
         if let isFlagged { memo.isFlagged = isFlagged }
         if let listID { memo.listID = listID }
+        if let priority { memo.priority = priority }
+        memo.revision += 1
     }
 }
 
