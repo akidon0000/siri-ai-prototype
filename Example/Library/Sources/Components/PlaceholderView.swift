@@ -1,10 +1,18 @@
 import SwiftUI
 
-/// 共通UIコンポーネントを置くモジュール。現時点ではプレースホルダのみ。
+/// 一覧が空のときに出す表示。
 public struct PlaceholderView: View {
-    public init() {}
+    let title: LocalizedStringKey
+    let systemImage: String
+    let description: LocalizedStringKey
+
+    public init(_ title: LocalizedStringKey, systemImage: String, description: LocalizedStringKey) {
+        self.title = title
+        self.systemImage = systemImage
+        self.description = description
+    }
 
     public var body: some View {
-        Text("Components")
+        ContentUnavailableView(title, systemImage: systemImage, description: Text(description))
     }
 }
