@@ -8,6 +8,7 @@
 |---|---|---|
 | 本文の文章・ステップの説明 | `ios/Library/Sources/AppFeature/AppFeature.docc/Tutorials/*.tutorial` | — |
 | ステップに載っているコード | `tools/tutorial-code/seq/<名前>.<拡張子>.seq` | `TutorialArt/Code/`（生成物） |
+| skill の判断ガイド | `plugins/siri-ai/skills/siri-ai/SKILL.md` | `plugins/siri-ai/skills/siri-ai/references/`（生成物） |
 | Memo アプリ本体 | `ios/App`、`ios/Library` | — |
 | Apple ドキュメントの原文 | `update-apple-siri-docs` スキル経由で再取得 | `docs/apple-doc/` の手編集 |
 | 構成上の判断 | `docs/adr/` に新番号で追加 | 既存 ADR の書き換え |
@@ -59,7 +60,8 @@ python3 tools/tutorial-code/shift.py <名前>.<拡張子> <N>
 ## PR を出す前に確かめること
 
 1. `python3 tools/tutorial-code/generate.py` がエラーなしで終わる
-2. `xcrun docc convert` が警告0件で通る
+2. `python3 tools/skill/generate.py` で skill の `references/` を作り直し、差分もコミットする（CI の `skill-check.yml` が `--check` で古いままでないかを見る）
+3. `xcrun docc convert` が警告0件で通る
 
 ```bash
 xcrun docc convert ios/Library/Sources/AppFeature/AppFeature.docc \
@@ -72,6 +74,13 @@ xcrun docc convert ios/Library/Sources/AppFeature/AppFeature.docc \
 CI（`docc-pages.yml`）は同じ変換に GitHub Pages 用のオプションを足して実行している。見た目を確かめたいなら、Xcode で `ios/Library` を開いて Build Documentation（⌃⇧⌘D）を使うのが早い。
 
 `main` にマージされると GitHub Pages へ自動で再公開される。
+
+## skill を直す
+
+`plugins/siri-ai/` は、チュートリアルを Claude Code・APM・skills CLI から入れられる skill にしたもの。
+`references/` は `.tutorial` と `.seq` から生成するので、本文やコードの誤りはチュートリアル側で直して生成し直す。
+手で書くのは `SKILL.md`（章の見取り図・判断の分岐・間違えやすい点）だけで、章を足したり API が変わったりしたらここも揃える。
+中身を変えたら `plugins/siri-ai/.claude-plugin/plugin.json`・`plugins/siri-ai/apm.yml`・`.claude-plugin/marketplace.json` の `version` を同じ値で上げる。
 
 ## Apple ドキュメントの原文
 
