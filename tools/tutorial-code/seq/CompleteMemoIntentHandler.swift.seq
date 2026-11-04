@@ -1,18 +1,22 @@
 #name CompleteMemoIntentHandler.swift
 1|import Intents
 1|
+1|// SiriKitのカスタムintentのハンドラ。Xcodeが生成したプロトコルに準拠する
 1|class CompleteMemoIntentHandler: NSObject, CompleteMemoIntentHandling {
+2|    // resolve: パラメータが揃っているかを確かめる。無ければ needsValue で聞き返す
 2|    func resolveMemo(for intent: CompleteMemoIntent,
 2|                     with completion: @escaping (MemoResolutionResult) -> Void) {
 2|        guard let memo = intent.memo else { return completion(.needsValue()) }
 2|        completion(.success(with: memo))
 2|    }
 3|
+3|    // confirm: 実行できる状態かを確かめる
 3|    func confirm(intent: CompleteMemoIntent,
 3|                 completion: @escaping (CompleteMemoIntentResponse) -> Void) {
 3|        completion(CompleteMemoIntentResponse(code: .ready, userActivity: nil))
 3|    }
 4|
+4|    // handle: 実際に処理して、結果をレスポンスのコードで返す
 4|    func handle(intent: CompleteMemoIntent,
 4|                completion: @escaping (CompleteMemoIntentResponse) -> Void) {
 4|        if let id = intent.memo?.identifier { MemoStore.shared.complete(id) }

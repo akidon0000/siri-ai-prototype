@@ -8,6 +8,9 @@ Siri AI Developer Preview 向けに、スキーマに無い Memo の操作をツ
   内部用リビジョン (visibility: .internal) を足す
 - MemoEntity に @ComputedProperty の isOverdue / noteText (indexingKey: \.contentDescription) /
   listName (customIndexingKey) と、@DeferredProperty の collaboratorNames を足す
+- MemoEntity に indexingKey 付きの @DeferredProperty (attachmentText, \.textContent) を足す
+- MemoListQuery を EnumerableEntityQuery にし、UIで優先度を変えたときに SetMemoPriorityIntent を donate する
+- ツールの型には @available(iOS 27.3, *) を付ける
 - アプリのターゲットに Skills.skillsbundle を追加し、Skills/memo-triage/SKILL.md を書く
 - Xcode の Siri Integration Advisor の指摘を確認して、直した内容をまとめる
 

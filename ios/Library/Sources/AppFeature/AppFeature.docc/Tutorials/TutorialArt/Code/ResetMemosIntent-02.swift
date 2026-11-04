@@ -1,8 +1,10 @@
+// テスト専用のintent。リリースビルドには入れない
 #if DEBUG
 import AppIntents
 
 struct ResetMemosIntent: AppIntent {
     static let title: LocalizedStringResource = "メモを初期データに戻す"
+    // ShortcutsやSiriには出さない
     static let isDiscoverable = false
 
     func perform() async throws -> some IntentResult {

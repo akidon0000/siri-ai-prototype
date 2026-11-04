@@ -3,12 +3,27 @@
 1|
 1|@MainActor
 1|final class MemoListModel {
+2|    // 画面の「追加」ボタンから呼ぶ
 2|    func addMemoFromUI(title: String, list: MemoListEntity) async throws {
 2|        let memo = try await MemoStore.shared.add(title: title, list: list, dueDate: nil)
 3|
+4|        // 実際に人が行った操作だけをdonateする。実際より多いと、システムはこのアプリのdonationを無視する
+4|        // パラメータはなるべく埋める。ただし予測に使ってほしくない値（本文など）は入れない
+3|        // 同じ操作に当たるintentを組み立てる。システムはこれを実行せず、記録して学習に使う
 3|        var intent = CreateMemoIntent()
 3|        intent.title = title
 3|        intent.list = list
 3|        try await IntentDonationManager.shared.donate(intent: intent, result: .result(value: memo))
 2|    }
+5|
+5|    // 画面の優先度メニューから呼ぶ
+5|    func setPriorityFromUI(_ memo: MemoEntity, to priority: MemoPriority) async throws {
+5|        try await MemoStore.shared.setPriority(priority, for: memo.id)
+6|
+6|        // スキーマに合わせていないツールのintentも、同じようにdonateできる
+6|        var intent = SetMemoPriorityIntent()
+6|        intent.memo = memo
+6|        intent.priority = priority
+6|        try await IntentDonationManager.shared.donate(intent: intent)
+5|    }
 1|}

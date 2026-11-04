@@ -5,6 +5,9 @@
         教材はApple公式ドキュメント（一部は `docs/` 配下に原文を保存済み）とWWDC26のセッション。
         各チュートリアルの最後に「理解できたらコピペするプロンプト」があるので、
         準備ができたものだけ実装を進めればよい。
+
+        【iOS 27.3 beta】の付いたセクションは、Siri AI Developer Preview（iOS 27.3 beta）で入ったAPIと機能を扱う。
+        正式版までに変わることがある。
     }
 
     @Chapter(name: "第1章: SiriKitからApp Intentsへ") {
@@ -37,7 +40,7 @@
         @Image(source: "chapter4.svg", alt: "第4章のイメージ")
 
         応答の言葉、聞き返し、実行前の確認と所有権、静的・インタラクティブなスニペット、
-        Siri AIのカード、HIGの応答文の指針を扱う。
+        Siri AIのカード（【iOS 27.3 beta】）、HIGの応答文の指針を扱う。
 
         @TutorialReference(tutorial: "doc:04-siri-conversation")
     }
@@ -60,7 +63,7 @@
         @TutorialReference(tutorial: "doc:06-apple-intelligence-context")
     }
 
-    @Chapter(name: "第7章: Siri AI Developer Preview") {
+    @Chapter(name: "第7章: Siri AI Developer Preview【iOS 27.3 beta】") {
         @Image(source: "chapter7.svg", alt: "第7章のイメージ")
 
         スキーマに無い操作を `@AppIntent(.tool)` でツールにし、GenerableEntityと
@@ -73,7 +76,7 @@
         @Image(source: "chapter8.svg", alt: "第8章のイメージ")
 
         App Intents Testingの統合テスト、ShortcutsとSpotlightでの手動確認、
-        Siri Evaluationsでの会話の自動テストまでを書く。
+        Siri Evaluationsでの会話の自動テスト（【iOS 27.3 beta】）までを書く。
 
         @TutorialReference(tutorial: "doc:08-verification")
     }

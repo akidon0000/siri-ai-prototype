@@ -2,8 +2,11 @@
 1|import AppIntents
 1|import CoreTransferable
 1|
+1|// Transferable にすると、Siriが他のアプリへメモを渡せる
+3|// 「このメモをメールで送って」は、この変換でメモがメールアプリに渡って初めて成り立つ
 1|extension MemoEntity: Transferable {
 2|    static var transferRepresentation: some TransferRepresentation {
+2|        // 文字列として渡す。受け取る側のアプリが読める形を選ぶ
 2|        ProxyRepresentation(exporting: \.title)
 2|    }
 1|}

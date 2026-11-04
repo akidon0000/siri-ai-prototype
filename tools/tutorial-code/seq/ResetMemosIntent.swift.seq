@@ -1,9 +1,11 @@
 #name ResetMemosIntent.swift
+1|// テスト専用のintent。リリースビルドには入れない
 1|#if DEBUG
 1|import AppIntents
 1|
 1|struct ResetMemosIntent: AppIntent {
 1|    static let title: LocalizedStringResource = "メモを初期データに戻す"
+2|    // ShortcutsやSiriには出さない
 2|    static let isDiscoverable = false
 2|
 2|    func perform() async throws -> some IntentResult {

@@ -136,7 +136,7 @@
                 スニペットのボタンから呼ぶために、第1章の `CompleteMemoIntent` に
                 メモを受け取るイニシャライザを足す。
 
-                @Code(name: "CompleteMemoIntent.swift", file: "CompleteMemoIntent-05.swift", previousFile: "CompleteMemoIntent-04.swift")
+                @Code(name: "CompleteMemoIntent.swift", file: "CompleteMemoIntent-07.swift", previousFile: "CompleteMemoIntent-06.swift")
             }
 
             @Step {
@@ -182,7 +182,7 @@
         }
     }
 
-    @Section(title: "Siri AIのカードに出す") {
+    @Section(title: "Siri AIのカードに出す【iOS 27.3 beta】") {
         @ContentAndMedia {
             Siri AI経由でintentが実行されたとき、システムは `IntentDialog` や `ShowsSnippetView` を
             表示しないことがある。Siri AIがアプリのデータを見せるときに使うのは、Entity側に用意したカード。
@@ -209,29 +209,54 @@
     @Section(title: "応答文の指針（HIG）") {
         @ContentAndMedia {
             SiriのHIGは、アプリが独自の応答を返すときの書き方を定めている。
-            ここまでのダイアログを、次の観点で見直す。
+            ここまでのダイアログを次の観点で見直しながら、まだ応答を返していない第1章の `CompleteMemoIntent` に応答を足す。
         }
 
         @Steps {
             @Step {
                 独自の応答は、Siriの組み込みの応答で足りないときだけ用意する。
                 Siriは追加の設定なしでも多くの依頼に応答できる。
+                `CompleteMemoIntent` は今のところ何も返していないので、Siriが結果から応答を組み立てている。
+
+                @Code(name: "CompleteMemoIntent.swift", file: "CompleteMemoIntent-08.swift", previousFile: "CompleteMemoIntent-07.swift")
             }
 
             @Step {
                 短く、何が起きたかが分かる文にする。同じ応答を何度も聞くことになるので、
                 冗談や余計な言葉は入れない。応答にアプリ名も入れない。
                 どのアプリの応答かはシステムが表示・読み上げる。
+                `ProvidesDialog` を足し、完了にしたメモの名前だけを伝える。
+
+                @Code(name: "CompleteMemoIntent.swift", file: "CompleteMemoIntent-09.swift", previousFile: "CompleteMemoIntent-08.swift")
             }
 
             @Step {
                 音声だけでも画面だけでも伝わるようにする。特定のデバイスに依存した言い方
                 （「この画面で」など）は避ける。依頼したデバイスと実行されるデバイスが違うことがある。
+                `full` を音声だけで伝わる文にし、画面と一緒に出す短い文を `supporting` に分ける。
+
+                @Code(name: "CompleteMemoIntent.swift", file: "CompleteMemoIntent-10.swift", previousFile: "CompleteMemoIntent-09.swift")
             }
 
             @Step {
                 エラーは状況に即して伝える。「完了できませんでした」より
-                「そのメモはもう削除されています」の方が分かる。広告や課金の勧誘は応答に入れない。
+                「そのメモはもう削除されています」の方が分かる。
+                まず、intentが投げるエラーの型を作る。`CustomLocalizedStringResourceConvertible` に準拠させると、
+                Siriはその文を読み上げる。
+
+                @Code(name: "MemoIntentError.swift", file: "MemoIntentError-01.swift")
+            }
+
+            @Step {
+                `localizedStringResource` で、それぞれの場合の文を返す。広告や課金の勧誘は応答に入れない。
+
+                @Code(name: "MemoIntentError.swift", file: "MemoIntentError-02.swift", previousFile: "MemoIntentError-01.swift")
+            }
+
+            @Step {
+                `perform()` の先頭で、メモがもう無ければこのエラーを投げる。
+
+                @Code(name: "CompleteMemoIntent.swift", file: "CompleteMemoIntent-11.swift", previousFile: "CompleteMemoIntent-10.swift")
             }
         }
     }

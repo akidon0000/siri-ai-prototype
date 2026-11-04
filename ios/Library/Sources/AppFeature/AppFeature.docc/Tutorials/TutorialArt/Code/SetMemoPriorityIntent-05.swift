@@ -1,14 +1,14 @@
 import AppIntents
 
+// .tool は AppIntentTraits の値。[.tool] と配列でも書ける。変数や計算した値は渡せない
 @AppIntent(.tool)
 struct SetMemoPriorityIntent: AppIntent {
     static let title: LocalizedStringResource = "メモの優先度を変える"
-    static let description = IntentDescription("メモ1件の優先度を、低・通常・高のいずれかに変更する。")
 
-    @Parameter(title: "メモ", description: "優先度を変えたいメモ")
+    @Parameter(title: "メモ")
     var memo: MemoEntity
 
-    @Parameter(title: "優先度", description: "変更後の優先度。低・通常・高のいずれか")
+    @Parameter(title: "優先度")
     var priority: MemoPriority
 
     func perform() async throws -> some IntentResult {

@@ -4,39 +4,56 @@
 1|import SiriEvaluations
 1|import Testing
 1|
+1|// アプリのintentとEntityを名前で引くための定義
 1|let memoIntents = IntentDefinitions(bundleIdentifier: "com.akidon0000.SiriAIPrototype")
 5|
+5|// 1回の発話で、タイトルに「牛乳」を含めて CreateMemoIntent が呼ばれることを期待する
 5|let addMemoScenario = SiriScenario {
 5|    UserTurn("SiriAIPrototypeに牛乳を買うってメモして") {
 5|        Calls { memoIntents.intents["CreateMemoIntent"].expect(title: .contains("牛乳")) }
+6|        // 削除が呼ばれたら失敗にする。確認を求めた段階でも失敗になる
 6|        Calls(.disallowed) { memoIntents.intents["DeleteMemoIntent"] }
 5|    }
 5|}
 8|
+8|// 2ターンの会話。ターンをまたぐ期待は expectation 側に書く
 8|let addMemoWithFollowUp = SiriScenario {
 8|    UserTurn("SiriAIPrototypeにメモを追加して")
 8|    UserTurn("牛乳を買う")
 8|} expectation: {
 8|    Calls { memoIntents.intents["CreateMemoIntent"].expect(title: .contains("牛乳")) }
 8|}
+10|
+10|// 実機で話しかけて通じた言い方も、シナリオにして毎回確かめる
+10|let addMemoWithFiller = SiriScenario {
+10|    UserTurn("えーと、SiriAIPrototypeに、牛乳を買うってメモしといて") {
+10|        Calls { memoIntents.intents["CreateMemoIntent"].expect(title: .contains("牛乳")) }
+10|    }
+10|}
 2|
 2|struct MemoEvaluation: Evaluation {
+2|    // Xcodeのレポートに出る題名
 2|    let name: String
+2|    // 実行するシナリオの集まり
 2|    let dataset: SiriScenarioLoader
 3|
+3|    // シナリオごとに1回呼ばれる。実行前の状態作りや後片付けもここに書ける
 3|    func subject(from sample: SiriScenario) async throws -> SiriScenarioSubject {
 3|        try await SiriService.run(scenario: sample)
 3|    }
 4|
+4|    // シナリオに書いた期待と、実際の呼び出しを比べて採点する
 4|    var evaluators: Evaluators {
 4|        SiriExpectationEvaluator()
 4|    }
 4|
+4|    // 標準の指標をレポートに出す
 4|    func aggregateMetrics(using aggregator: inout MetricsAggregator) {
 4|        Self.computeSiriMetrics(into: &aggregator)
 4|    }
 2|}
 7|
+7|// 全てのintentの期待が満たされたかを確かめる
 7|@Test(.evaluates(MemoEvaluation(name: "メモの追加", dataset: SiriScenarioLoader { addMemoScenario })))
 7|func addsMemo() async throws {
 7|    #expect(EvaluationContext.current.result.aggregateValue(.mean(of: .intentsAllPass)) == 1)
@@ -46,3 +63,9 @@
 9|func addsMemoAfterFollowUp() async throws {
 9|    #expect(EvaluationContext.current.result.aggregateValue(.mean(of: .intentsAllPass)) == 1)
 9|}
+11|
+11|// 通じなかった言い方も残し、intentの説明やapp skillを直したら通るようになるかを見る
+11|@Test(.evaluates(MemoEvaluation(name: "言いよどみ", dataset: SiriScenarioLoader { addMemoWithFiller })))
+11|func addsMemoWithFiller() async throws {
+11|    #expect(EvaluationContext.current.result.aggregateValue(.mean(of: .intentsAllPass)) == 1)
+11|}

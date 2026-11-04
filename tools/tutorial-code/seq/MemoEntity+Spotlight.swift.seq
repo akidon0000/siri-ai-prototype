@@ -3,9 +3,11 @@
 1|import CoreSpotlight
 1|
 1|extension MemoEntity {
+2|    // 索引に入れる属性。タイトルなどの既定の属性に、足したい値を加える
 2|    var attributeSet: CSSearchableItemAttributeSet {
 2-2|        CSSearchableItemAttributeSet()
 3|        let attributes = CSSearchableItemAttributeSet()
+3|        // タグをキーワードにして、タグの語でも見つかるようにする
 3|        attributes.keywords = Array(tags)
 3|        return attributes
 2|    }

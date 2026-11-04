@@ -1,17 +1,25 @@
 #name SetMemoPriorityIntent.swift
 1|import AppIntents
 1|
+9|// Developer Preview（iOS 27.3 beta）のAPIを使うので、型にavailabilityを付ける。マクロもこれを引き継ぐ
+9|@available(iOS 27.3, *)
+5|// .tool は AppIntentTraits の値。[.tool] と配列でも書ける。変数や計算した値は渡せない
 4|@AppIntent(.tool)
+7|// アプリが前面にある・Live Activityを表示中・Siriアプリの会話に出てきた、のどれかならアプリ名なしで呼ばれる
+8|// アプリが後ろにあるときは、依頼にアプリ名があるか、MemoEntityが検索結果に出たときに呼ばれる
 1|struct SetMemoPriorityIntent: AppIntent {
 1|    static let title: LocalizedStringResource = "メモの優先度を変える"
-5|    static let description = IntentDescription("メモ1件の優先度を、低・通常・高のいずれかに変更する。")
+6|    // Siriのモデルはこの説明を読んで、いつこのツールを使うかを決める。アプリを知らない人に向けて書く
+6|    static let description = IntentDescription("メモ1件の優先度を、低・通常・高のいずれかに変更する。")
 2|
-2-4|    @Parameter(title: "メモ")
-5|    @Parameter(title: "メモ", description: "優先度を変えたいメモ")
+2-5|    @Parameter(title: "メモ")
+6|    // 何を渡せばよいかを書く
+6|    @Parameter(title: "メモ", description: "優先度を変えたいメモ")
 2|    var memo: MemoEntity
 2|
-2-4|    @Parameter(title: "優先度")
-5|    @Parameter(title: "優先度", description: "変更後の優先度。低・通常・高のいずれか")
+2-5|    @Parameter(title: "優先度")
+6|    // 取りうる値があれば書いておく
+6|    @Parameter(title: "優先度", description: "変更後の優先度。低・通常・高のいずれか")
 2|    var priority: MemoPriority
 3|
 3|    func perform() async throws -> some IntentResult {

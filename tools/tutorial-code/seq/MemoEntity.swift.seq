@@ -2,15 +2,21 @@
 1|import AppIntents
 15|import CoreSpotlight
 1|
+7|// Remindersドメインの reminder スキーマに合わせる。AppEntity への準拠はマクロが付ける
 7|@AppEntity(schema: .reminders.reminder)
 1-6|struct MemoEntity: AppEntity {
 7-10|struct MemoEntity {
+11|// IndexedEntity にすると、Spotlightの索引に入れられる
 11|struct MemoEntity: IndexedEntity {
+1|    // システムがこのメモを指すときに使う、変わらないID
 1|    let id: UUID
 1|    var title: String
 1-7|    var isDone: Bool
+8|    // スキーマでの完了状態の名前は isCompleted
 8|    var isCompleted: Bool
+5|    // 共有相手の一覧
 5|    var sharedWith: [String]
+9|    // ここからはスキーマが求めるプロパティ。対応していない機能は nil や空の値を返す
 9|    var note: AttributedString?
 9|    var tags: Set<String>
 9|    var urls: [URL]
@@ -22,38 +28,55 @@
 10|    var list: MemoListEntity
 10|    var locationTrigger: MemoLocationTriggerEntity?
 12|
+12|    // 本文を含む応答の前に、端末の認証（Face IDなど）を求める
 12|    @Property(title: "鍵付きメモの本文", description: "ロックしたメモの本文",
 12|              authenticationPolicy: .requiresLocalDeviceAuthentication)
 12|    var lockedBody: String?
 13|
+13|    // アプリとそのextensionの中だけで使う値。Siri・Shortcutsには見せない
 13|    @Property(title: "同期リビジョン", visibility: .internal)
 13|    var revision: Int
 14|
+14|    // 保存していない値を、計算してSiriに見せる
 14|    @ComputedProperty(title: "期限切れ", description: "期限を過ぎていて、まだ完了していなければtrue")
 14|    var isOverdue: Bool {
 14|        !isCompleted && (dueDate?.date.map { $0 < .now } ?? false)
 14|    }
 15|
+15|    // 本文をSpotlightの contentDescription として索引に入れる
 15|    @ComputedProperty(title: "本文", description: "メモの本文のテキスト", indexingKey: \.contentDescription)
 15|    var noteText: String {
 15|        note.map { String($0.characters) } ?? ""
 15|    }
 16|
+16|    // Spotlightに当てはまる属性が無いので、アプリ独自のキーで索引に入れる
 16|    @ComputedProperty(title: "リスト名", description: "メモが入っているリストの名前",
 16|                      customIndexingKey: CSCustomAttributeKey(keyName: "com_akidon0000_SiriAIPrototype_MemoEntity_listName")!)
 16|    var listName: String {
 16|        list.name
 16|    }
 17|
+17|    // サーバーへの問い合わせが要る値。Siriが必要としたときだけ取りに来る
+18|    // indexingKey が無いので、Spotlightの索引には入らない
 17|    @DeferredProperty(title: "共有相手", description: "このメモを共有している人の名前", authenticationPolicy: .requiresAuthentication)
 17|    var collaboratorNames: [String] {
 17|        get async {
 17|            await MemoStore.shared.displayNames(for: sharedWith)
 17|        }
 17|    }
+18|
+18|    // indexingKey を付けると索引に入る。索引を作るたびに取りに来るので、すぐ返せる値にする
+18|    @DeferredProperty(title: "添付の文字", description: "添付した画像から読み取った文字", indexingKey: \.textContent)
+18|    var attachmentText: String {
+18|        get async {
+18|            await MemoStore.shared.recognizedText(for: id)
+18|        }
+18|    }
 2-6|
+2-6|    // ShortcutsアプリなどでのEntityの型名
 2-6|    static let typeDisplayRepresentation: TypeDisplayRepresentation = "メモ"
 3|
+3|    // Siriの応答・候補の一覧・Spotlightでメモ1件を表示するときの見た目
 3|    var displayRepresentation: DisplayRepresentation {
 3-5|        DisplayRepresentation(title: "\(title)")
 6|        DisplayRepresentation(
@@ -65,5 +88,6 @@
 6|        )
 3|    }
 4|
+4|    // Siriが名前やIDからメモを探すときに使うクエリ
 4|    static let defaultQuery = MemoQuery()
 1|}

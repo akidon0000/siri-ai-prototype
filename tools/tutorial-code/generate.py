@@ -21,15 +21,21 @@ ROOT = pathlib.Path(__file__).resolve().parents[2]
 SRC = pathlib.Path(__file__).resolve().parent / "seq"
 CATALOG = ROOT / "ios/Library/Sources/AppFeature/AppFeature.docc"
 OUT = CATALOG / "Tutorials/TutorialArt/Code"
-# Lines added per step: at most 5 excluding blank and bracket-only lines,
-# and at most 6 non-blank lines counting brackets.
+# Lines added per step: at most 5 excluding blank, bracket-only and
+# comment-only lines, and at most 6 non-blank lines counting brackets.
+# Comments explain the code, so they never count toward the limits.
 MAX_ADDED = 5
 TAG = re.compile(r"^(\d+)(?:-(\d+))?\|(.*)$")
 
 
+def is_comment(line):
+    return line.strip().startswith("//")
+
+
 def counts_as_code(line):
     stripped = line.strip()
-    return bool(stripped) and not re.fullmatch(r"[\}\)\]]+[,;]?", stripped)
+    return (bool(stripped) and not is_comment(line)
+            and not re.fullmatch(r"[\}\)\]]+[,;]?", stripped))
 
 
 def parse(path):
@@ -71,7 +77,7 @@ def main():
             added = [t for s, _, t in lines if s == step and counts_as_code(t)]
             if len(added) > MAX_ADDED:
                 errors.append(f"{path.name} step {step}: {len(added)} lines added")
-            nonblank = [t for s, _, t in lines if s == step and t.strip()]
+            nonblank = [t for s, _, t in lines if s == step and t.strip() and not is_comment(t)]
             if len(nonblank) > MAX_ADDED + 1:
                 errors.append(f"{path.name} step {step}: {len(nonblank)} non-blank lines added")
             if step > 1 and current == previous:

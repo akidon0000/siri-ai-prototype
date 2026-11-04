@@ -1,14 +1,18 @@
 #name FindMemosIntent.swift
 1|import AppIntents
 1|
+1|// 条件でメモを探すツール。スキーマに無い操作なので .tool でSiriに公開する
 1|@AppIntent(.tool)
 1|struct FindMemosIntent: AppIntent {
 1|    static let title: LocalizedStringResource = "メモを探す"
+2|    // Siriのモデルはこの説明を読んで、このツールをいつ使うかを決める
 2|    static let description = IntentDescription("キーワードと優先度に合う未完了のメモを探す。")
 2|
+2|    // MemoSearch はGenerableなので、Siriが依頼の文から値を組み立てて渡す
 2|    @Parameter(title: "検索条件", description: "探したいメモの条件")
 2|    var search: MemoSearch
 3|
+3|    // 返したメモは、次に呼ぶツールのパラメータにそのまま渡される
 3|    func perform() async throws -> some ReturnsValue<[MemoEntity]> {
 3|        .result(value: try await MemoStore.shared.memos(matching: search))
 3|    }

@@ -22,6 +22,9 @@
                 Notes・Phone・Photos・Reminders・System and in-app search・Video。
                 Books・Browser・Files・Journaling・Presentation・Reader・Spreadsheet・Whiteboard・
                 Word processorは、Shortcutsアプリでだけ使えるドメイン。
+                この章で合わせるスキーマを、見取り図として先に並べておく。
+
+                @Code(name: "MemoSchemaMap.swift", file: "MemoSchemaMap-01.swift")
             }
 
             @Step {
@@ -29,17 +32,24 @@
                 完了・未完了を扱うRemindersが合う。Remindersには `createReminder`・`updateReminder`・
                 `deleteReminders` などのintentスキーマと、`reminder`・`list` などのEntityスキーマがある。
                 ドメインの本来の目的に合わない機能には、スキーマを当てはめない。
+
+                @Code(name: "MemoSchemaMap.swift", file: "MemoSchemaMap-02.swift", previousFile: "MemoSchemaMap-01.swift")
             }
 
             @Step {
                 Audio・Clock・Mail・Maps・Messagesには「use-case group」という、
                 同じ目的のスキーマの組がある。Siri AIで使うには組の全てを採用する必要があり、
                 一部だけを採用するとXcodeが欠けているスキーマごとにビルド警告を出す。
+                Remindersにはこの組が無いので、Memoアプリでは気にしなくてよい。
+
+                @Code(name: "MemoSchemaMap.swift", file: "MemoSchemaMap-03.swift", previousFile: "MemoSchemaMap-02.swift")
             }
 
             @Step {
                 Xcodeで `reminders_` と入力すると、スキーマを選ぶ補完候補が出て、
                 必要なプロパティが全て入ったテンプレートを展開できる。以降のコードはこのテンプレートから作る。
+
+                @Code(name: "MemoSchemaMap.swift", file: "MemoSchemaMap-04.swift", previousFile: "MemoSchemaMap-03.swift")
             }
         }
     }

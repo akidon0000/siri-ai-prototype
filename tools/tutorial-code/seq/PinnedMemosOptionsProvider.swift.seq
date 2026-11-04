@@ -1,0 +1,10 @@
+#name PinnedMemosOptionsProvider.swift
+1|import AppIntents
+1|
+1|// パラメータに選択肢を出す。索引に入れていないEntityも、Siriはこの選択肢から見つけられる
+1|// 使う側: @Parameter(title: "メモ", optionsProvider: PinnedMemosOptionsProvider()) var memo: MemoEntity
+1|struct PinnedMemosOptionsProvider: DynamicOptionsProvider {
+1|    func results() async throws -> [MemoEntity] {
+1|        try await MemoStore.shared.pinnedMemos()
+1|    }
+1|}

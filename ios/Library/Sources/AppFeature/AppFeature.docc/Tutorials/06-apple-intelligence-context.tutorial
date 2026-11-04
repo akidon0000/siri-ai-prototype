@@ -209,6 +209,8 @@
                 donationには、実際に人が行った操作だけを入れ、パラメータはなるべく埋める。
                 ただしメッセージ本文のように予測に使ってほしくない値は入れない。
                 実際の行動より多くdonateすると、システムはそのアプリのdonationを無視するようになる。
+
+                @Code(name: "MemoListModel.swift", file: "MemoListModel-04.swift", previousFile: "MemoListModel-03.swift")
             }
         }
     }
@@ -264,7 +266,15 @@
             @Step {
                 検索結果をタップしたときは、第5章の `OpenMemoIntent` でメモが開く。
                 結果が多いときは、Visual intelligenceドメインの `semanticContentSearch` スキーマに合わせたintentを作ると、
-                「さらに表示」からアプリ内の一覧へ移れる。
+                「さらに表示」からアプリ内の一覧へ移れる。読み取った内容は `semanticContent` に入る。
+
+                @Code(name: "ShowMemoSearchResultsIntent.swift", file: "ShowMemoSearchResultsIntent-01.swift")
+            }
+
+            @Step {
+                `perform()` で、受け取った内容に合うメモの一覧をアプリの画面に出す。
+
+                @Code(name: "ShowMemoSearchResultsIntent.swift", file: "ShowMemoSearchResultsIntent-02.swift", previousFile: "ShowMemoSearchResultsIntent-01.swift")
             }
         }
     }

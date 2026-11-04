@@ -1,22 +1,40 @@
 #name CompleteMemoIntent.swift
 1|import AppIntents
 1|
-1-3|struct CompleteMemoIntent: AppIntent {
-4|struct CompleteMemoIntent: AppIntent, CustomIntentMigratedAppIntent {
-4|    static let intentClassName = "CompleteMemoIntent"
+4|// ビルド時に、この型からSiri・Shortcuts・Spotlight用のメタデータが生成される
+4|// インストールした時点でShortcutsアプリに「メモを完了にする」が並ぶ
+1-4|struct CompleteMemoIntent: AppIntent {
+5|// SiriKitの CompleteMemoIntent を置き換える。旧intentのショートカットとdonationが引き継がれる
+6|// 新規アプリでは要らない。SiriKitから移行するときだけ準拠させる
+5|struct CompleteMemoIntent: AppIntent, CustomIntentMigratedAppIntent {
+5|    static let intentClassName = "CompleteMemoIntent"
+1|    // ShortcutsアプリやSpotlightに表示される操作名
 1|    static let title: LocalizedStringResource = "メモを完了にする"
 2|
+2|    // 値が無ければ、システムが MemoEntity の候補を出して聞き返す
 2|    @Parameter(title: "メモ")
 2|    var memo: MemoEntity
-5|
-5|    init() {}
-5|
-5|    init(memo: MemoEntity) {
-5|        self.memo = memo
-5|    }
+7|
+7|    // システムがintentを作るときに使う
+7|    init() {}
+7|
+7|    // スニペットのボタンから、対象のメモを渡して作るときに使う
+7|    init(memo: MemoEntity) {
+7|        self.memo = memo
+7|    }
 3|
-3|    func perform() async throws -> some IntentResult {
+8|    // 独自の応答は、Siriが結果から組み立てる応答で足りないときだけ返す
+3-8|    func perform() async throws -> some IntentResult {
+9|    func perform() async throws -> some IntentResult & ProvidesDialog {
+11|        // 状況が分かるエラーを投げる。「完了できませんでした」では何が起きたか分からない
+11|        guard try await MemoStore.shared.exists(memo.id) else {
+11|            throw MemoIntentError.memoDeleted
+11|        }
 3|        try await MemoStore.shared.complete(memo.id)
-3|        return .result()
+3-8|        return .result()
+9|        // 短く、何が起きたかだけを書く。アプリ名はシステムが伝えるので入れない
+9-9|        return .result(dialog: "「\(memo.title)」を完了にしました")
+10|        // 「この画面で」のような端末に依存する言い方はしない。full は音声だけで伝わる文にする
+10|        return .result(dialog: IntentDialog(full: "「\(memo.title)」を完了にしました", supporting: "完了にしました"))
 3|    }
 1|}

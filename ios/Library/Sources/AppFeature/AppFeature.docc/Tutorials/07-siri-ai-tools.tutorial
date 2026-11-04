@@ -1,8 +1,11 @@
-@Tutorial(time: 40) {
+@Tutorial(time: 50) {
     @Intro(title: "Siri AI Developer Preview: ツールとapp skill") {
         Siri AI Developer Previewでは、スキーマに当てはまらないアプリ独自の操作とデータも、
         Siriが見つけて実行できるようになる。その入口が、App Intentを「ツール」にする `@AppIntent(.tool)` と、
         複数のツールの使い方を教える「app skill」。
+
+        【iOS 27.3 beta】この章のAPIと機能は、全てSiri AI Developer Preview（iOS 27.3 beta）で入ったもの。
+        正式版までに名前や挙動が変わることがある。
 
         教材: `docs/apple-intelligence/siri-ai-developer-preview.md`、
         [Siri AI Developer Preview](https://developer.apple.com/documentation/appintents/siri-ai-developer-preview)、
@@ -10,49 +13,29 @@
         [Orchestrating complex actions with app skills](https://developer.apple.com/documentation/appintents/orchestrating-complex-actions-with-app-skills)
     }
 
-    @Section(title: "Siriがツールを呼べる場面") {
-        @ContentAndMedia {
-            Siriがアプリのツールを使うのは、そのアプリが会話に関係していると判断できるときに限られる。
-        }
-
-        @Steps {
-            @Step {
-                アプリが前面にあるとき、Live Activityが動いているとき、Siriアプリでの会話にアプリが出てきたときは、
-                アプリ名を言わなくてもツールが使われる。例: 配車アプリのLive Activityを見ながら
-                「迎えの場所を変えて」と言う
-                （[Siri AI Developer Preview](https://developer.apple.com/documentation/appintents/siri-ai-developer-preview)）。
-            }
-
-            @Step {
-                アプリが後ろにあるときは、依頼にアプリ名が入っていればツールが使われる。
-                また、そのアプリのEntityが検索結果に出てきたときにも使われる
-                （[ToolIntent](https://developer.apple.com/documentation/appintents/toolintent)）。
-            }
-
-            @Step {
-                Developer Previewは、Apple Intelligence対応デバイスのiOS・iPadOS・macOS・visionOSで動く。
-                試せるのは、開発用プロファイルで署名して実機で動かす場合と、TestFlightの内部テスターだけ。
-                外部テスターやApp Store版では動かない。新しいentitlementの追加や別プログラムへの参加は要らない。
-            }
-        }
-    }
-
-    @Section(title: "ツールにするintentを選ぶ") {
+    @Section(title: "ツールにするintentを選ぶ【iOS 27.3 beta】") {
         @ContentAndMedia {
             どのintentをツールにするかはアプリが決める。全てをツールにすればよいわけではない。
             判断の基準は [ToolIntent](https://developer.apple.com/documentation/appintents/toolintent) にまとまっている。
+            ここでは、この章で扱うintentを「ツールにする（○）」「しない（×）」に分けて並べる。
+            中身は後のセクションで書く。
         }
 
         @Steps {
             @Step {
                 向いているのは、1文で頼めて、その文からパラメータを埋められる操作。
                 「牛乳のメモを優先度高にして」なら、メモと優先度の両方が1文に入っている。
+                この「優先度を変える」をツールにする。
+
+                @Code(name: "ToolCandidates.swift", file: "ToolCandidates-01.swift")
             }
 
             @Step {
                 第5章でSiriが使えるスキーマ（`createReminder` など）に合わせたintentには、ツールの指定を付けない。
                 スキーマに合わせた時点でSiriに公開されていて、付けるとビルドエラーになる。
-                例外はShortcuts専用ドメインのスキーマで、これは次のセクションで扱う。
+                例外はShortcuts専用ドメインのスキーマで、これは後の参考セクションで扱う。
+
+                @Code(name: "ToolCandidates.swift", file: "ToolCandidates-02.swift", previousFile: "ToolCandidates-01.swift")
             }
 
             @Step {
@@ -60,16 +43,20 @@
                 ショートカットの途中の1手順としてしか意味を持たないもの、
                 注文と支払いのように人が明示的に始めるべき副作用を持つものも、ツールにしない。
                 `WidgetConfigurationIntent` でも、`perform()` で独自の操作をしているならツールにできる。
+
+                @Code(name: "ToolCandidates.swift", file: "ToolCandidates-03.swift", previousFile: "ToolCandidates-02.swift")
             }
 
             @Step {
                 Memoアプリでは、作成・更新・削除は第5章のスキーマで公開済み。
-                スキーマに無い「優先度を変える」と「条件でメモを探す」をツールにする。
+                スキーマに無い「優先度を変える」に加えて、「条件でメモを探す」もツールにする。
+
+                @Code(name: "ToolCandidates.swift", file: "ToolCandidates-04.swift", previousFile: "ToolCandidates-03.swift")
             }
         }
     }
 
-    @Section(title: "ツールを作る") {
+    @Section(title: "ツールを作る【iOS 27.3 beta】") {
         @ContentAndMedia {
             優先度を変える `SetMemoPriorityIntent` を、普通のApp Intentとして作ってからツールにする。
         }
@@ -107,6 +94,8 @@
                 [AppIntentTraits](https://developer.apple.com/documentation/appintents/appintenttraits) の値で、
                 intentが担う役割を表す。`.tool` のように1つでも、`[.tool]` のように配列でも書ける。
                 マクロは書かれたままの値を読むので、変数や計算した値は渡せない。
+
+                @Code(name: "SetMemoPriorityIntent.swift", file: "SetMemoPriorityIntent-05.swift", previousFile: "SetMemoPriorityIntent-04.swift")
             }
 
             @Step {
@@ -116,12 +105,48 @@
                 （[ToolIntent](https://developer.apple.com/documentation/appintents/toolintent)、
                 [Bringing custom actions and content to Siri](https://developer.apple.com/documentation/appintents/bringing-custom-actions-and-content-to-siri)）。
 
-                @Code(name: "SetMemoPriorityIntent.swift", file: "SetMemoPriorityIntent-05.swift", previousFile: "SetMemoPriorityIntent-04.swift")
+                @Code(name: "SetMemoPriorityIntent.swift", file: "SetMemoPriorityIntent-06.swift", previousFile: "SetMemoPriorityIntent-05.swift")
             }
         }
     }
 
-    @Section(title: "参考: Shortcuts専用スキーマをツールにする") {
+    @Section(title: "Siriがツールを呼べる場面【iOS 27.3 beta】") {
+        @ContentAndMedia {
+            作ったツールがいつでも呼ばれるわけではない。Siriがアプリのツールを使うのは、
+            そのアプリが会話に関係していると判断できるときに限られる。
+        }
+
+        @Steps {
+            @Step {
+                アプリが前面にあるとき、Live Activityが動いているとき、Siriアプリでの会話にアプリが出てきたときは、
+                アプリ名を言わなくてもツールが使われる。例: 配車アプリのLive Activityを見ながら
+                「迎えの場所を変えて」と言う
+                （[Siri AI Developer Preview](https://developer.apple.com/documentation/appintents/siri-ai-developer-preview)）。
+
+                @Code(name: "SetMemoPriorityIntent.swift", file: "SetMemoPriorityIntent-07.swift", previousFile: "SetMemoPriorityIntent-06.swift")
+            }
+
+            @Step {
+                アプリが後ろにあるときは、依頼にアプリ名が入っていればツールが使われる。
+                また、そのアプリのEntityが検索結果に出てきたときにも使われる
+                （[ToolIntent](https://developer.apple.com/documentation/appintents/toolintent)）。
+                `MemoEntity` を第6章でSpotlight索引に入れておいたことが、ここで効く。
+
+                @Code(name: "SetMemoPriorityIntent.swift", file: "SetMemoPriorityIntent-08.swift", previousFile: "SetMemoPriorityIntent-07.swift")
+            }
+
+            @Step {
+                Developer Previewは、Apple Intelligence対応デバイスのiOS・iPadOS・macOS・visionOSで動く。
+                試せるのは、開発用プロファイルで署名して実機で動かす場合と、TestFlightの内部テスターだけ。
+                外部テスターやApp Store版では動かない。新しいentitlementの追加や別プログラムへの参加は要らない。
+                配布中のアプリに足すときは、型に `@available(iOS 27.3, *)` を付けて、古いOSでは使わないようにする。
+
+                @Code(name: "SetMemoPriorityIntent.swift", file: "SetMemoPriorityIntent-09.swift", previousFile: "SetMemoPriorityIntent-08.swift")
+            }
+        }
+    }
+
+    @Section(title: "参考: Shortcuts専用スキーマをツールにする【iOS 27.3 beta】") {
         @ContentAndMedia {
             Shortcutsアプリでだけ使えるドメイン（Journaling・Booksなど）のスキーマは、Siriには公開されない。
             これらのスキーマに合わせたintentは、
@@ -160,7 +185,7 @@
         }
     }
 
-    @Section(title: "Siriに値を組み立ててもらう") {
+    @Section(title: "Siriに値を組み立ててもらう【iOS 27.3 beta】") {
         @ContentAndMedia {
             「優先度が高い買い物のメモを探して」のような依頼では、検索条件そのものは
             アプリのデータベースに存在しない。こうした値は、Siriが依頼の文から直接組み立てられるようにする
@@ -184,6 +209,8 @@
                 スキーマに合わせた一時的なEntityをGenerableにしたいときは、`@AppEntity(schema:)` の代わりに
                 [AppEntity(_:schema:)](https://developer.apple.com/documentation/appintents/appentity(_:schema:))
                 を使い、`@AppEntity(.generable, schema: ...)` と書く。
+
+                @Code(name: "MemoSearch.swift", file: "MemoSearch-02.swift", previousFile: "MemoSearch-01.swift")
             }
 
             @Step {
@@ -193,13 +220,13 @@
                 別のGenerableなエンティティ・それらの配列だけで、それ以外の型はコンパイルエラーになる。
                 優先度を配列にしているのはこのため。
 
-                @Code(name: "MemoSearch.swift", file: "MemoSearch-02.swift", previousFile: "MemoSearch-01.swift")
+                @Code(name: "MemoSearch.swift", file: "MemoSearch-03.swift", previousFile: "MemoSearch-02.swift")
             }
 
             @Step {
                 `displayRepresentation` と、システムが値を作るための `init()` を足す。
 
-                @Code(name: "MemoSearch.swift", file: "MemoSearch-03.swift", previousFile: "MemoSearch-02.swift")
+                @Code(name: "MemoSearch.swift", file: "MemoSearch-04.swift", previousFile: "MemoSearch-03.swift")
             }
 
             @Step {
@@ -225,7 +252,7 @@
         }
     }
 
-    @Section(title: "見せてよい範囲を決める") {
+    @Section(title: "見せてよい範囲を決める【iOS 27.3 beta】") {
         @ContentAndMedia {
             Entityの情報は、既定では認証なしでSiriやShortcutsに表示される。
             見られたくない値はプロパティごとに制限する
@@ -255,7 +282,7 @@
         }
     }
 
-    @Section(title: "Siriに見せるプロパティを増やす: ComputedPropertyとDeferredProperty") {
+    @Section(title: "Siriに見せるプロパティを増やす: ComputedPropertyとDeferredProperty【iOS 27.3 beta】") {
         @ContentAndMedia {
             保存しているプロパティだけでは、Siriが答えられる質問は限られる。
             「期限切れのメモは？」に答えるには、保存していない値も見せる必要がある。
@@ -301,41 +328,73 @@
 
             @Step {
                 `indexingKey` を付けない `@DeferredProperty` は、`IndexedEntity` を索引に入れるときに含まれない。
-                索引に入れたいときは
+                さっきの `collaboratorNames` も索引には入らない。索引に入れたいときは
                 [DeferredProperty(…, indexingKey:)](https://developer.apple.com/documentation/appintents/deferredproperty(title:description:authenticationpolicy:visibility:indexingkey:))
-                を使う。その場合、Spotlightは索引を作るたびに値を取りに来るので、取得が重いと索引作成も遅くなる
+                を使う。ここでは添付画像から読み取った文字を `textContent` として索引に入れる。
+                Spotlightは索引を作るたびに値を取りに来るので、取得が重いと索引作成も遅くなる
                 （[Making app entities available in Spotlight](https://developer.apple.com/documentation/appintents/making-app-entities-available-in-spotlight)）。
+
+                @Code(name: "MemoEntity.swift", file: "MemoEntity-18.swift", previousFile: "MemoEntity-17.swift")
             }
         }
     }
 
-    @Section(title: "Siriにカスタムの内容を見つけてもらう") {
+    @Section(title: "Siriにカスタムの内容を見つけてもらう【iOS 27.3 beta】") {
         @ContentAndMedia {
             ツールを作っても、Siriがパラメータに入れるEntityを見つけられなければ使われない。
             [Bringing custom actions and content to Siri](https://developer.apple.com/documentation/appintents/bringing-custom-actions-and-content-to-siri)
             は、カスタムの操作とデータをSiriに届けるための準備として、次の点を挙げている。
+            使うAPIはどれも以前からあるもので、Developer Previewのツールからもそのまま効く。
         }
 
         @Steps {
             @Step {
-                Entityを見つけられるようにする。第6章のSpotlight索引に入れるのが基本で、索引に入れない場合は、
-                `EnumerableEntityQuery` で全件を返すか、パラメータに `DynamicOptionsProvider` で選択肢を出す方法でも
-                Siriが見つけられる。
+                Entityを見つけられるようにする。第6章のSpotlight索引に入れるのが基本になる。
+                索引に入れないEntityは、件数が少なければ `EnumerableEntityQuery` で全件を返せばよい。
+                第5章で用意した `MemoListQuery` を、`allEntities()` で全てのリストを返すクエリにする。
+
+                @Code(name: "MemoListQuery.swift", file: "MemoListQuery-01.swift")
             }
 
             @Step {
-                第6章の画面の注釈とdonationは、スキーマに合わせていないカスタムのEntityにもそのまま使える。
+                `EnumerableEntityQuery` も `EntityQuery` の一種なので、IDからリストを返す `entities(for:)` も書く。
+
+                @Code(name: "MemoListQuery.swift", file: "MemoListQuery-02.swift", previousFile: "MemoListQuery-01.swift")
+            }
+
+            @Step {
+                もう1つの方法は、パラメータに `DynamicOptionsProvider` で選択肢を出すこと。
+                `results()` が返したメモの中から、Siriはパラメータの値を選べる。
+                使う側の `@Parameter` には `optionsProvider:` でこの型を渡す。
+
+                @Code(name: "PinnedMemosOptionsProvider.swift", file: "PinnedMemosOptionsProvider-01.swift")
+            }
+
+            @Step {
+                第6章の画面の注釈とdonationは、スキーマに合わせていないカスタムのEntityやintentにもそのまま使える。
                 「このメモ」のような指示語や、あいまいな依頼の解釈に効く。
+                まず `MemoListModel` に、画面の優先度メニューから呼ぶ処理を足す。
+
+                @Code(name: "MemoListModel.swift", file: "MemoListModel-05.swift", previousFile: "MemoListModel-04.swift")
+            }
+
+            @Step {
+                第6章の `CreateMemoIntent` と同じように、ツールの `SetMemoPriorityIntent` を組み立ててdonateする。
+                渡す結果が無いので、`result:` を省いた `donate(intent:)` を使う。
+
+                @Code(name: "MemoListModel.swift", file: "MemoListModel-06.swift", previousFile: "MemoListModel-05.swift")
             }
 
             @Step {
                 あるアプリのEntityを別のアプリへ渡すには、Entityを `Transferable` に準拠させておく（第6章）。
                 「このメモをメールで送って」は、Memoアプリの `MemoEntity` がメールアプリで読める形に変換できて初めて成り立つ。
+
+                @Code(name: "MemoEntity+Transferable.swift", file: "MemoEntity+Transferable-03.swift", previousFile: "MemoEntity+Transferable-02.swift")
             }
         }
     }
 
-    @Section(title: "複数のツールを使う手順を教える: app skill") {
+    @Section(title: "複数のツールを使う手順を教える: app skill【iOS 27.3 beta】") {
         @ContentAndMedia {
             1つのツールは1つの操作しかしない。「溜まったメモを整理して」のような依頼では、
             探す・完了にする・優先度を変えるを組み合わせる必要があるが、個々のツールの説明だけでは
@@ -381,7 +440,7 @@
         }
     }
 
-    @Section(title: "Siri Integration Advisor") {
+    @Section(title: "Siri Integration Advisor【iOS 27.3 beta】") {
         @ContentAndMedia {
             Developer PreviewのXcodeには、App Intentsの実装を読んでSiri向けの改善点を示す
             Siri Integration Advisorが入っている
