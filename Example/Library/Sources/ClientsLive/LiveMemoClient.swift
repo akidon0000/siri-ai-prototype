@@ -33,6 +33,14 @@ public actor LiveMemoClient: MemoClient {
         storage
     }
 
+    public func delete(_ ids: [UUID]) {
+        storage.removeAll { ids.contains($0.id) }
+    }
+
+    public func contains(title: String) -> Bool {
+        storage.contains { $0.title.caseInsensitiveCompare(title) == .orderedSame }
+    }
+
     public func complete(_ id: UUID) throws {
         try update(id) { $0.isDone = true }
     }

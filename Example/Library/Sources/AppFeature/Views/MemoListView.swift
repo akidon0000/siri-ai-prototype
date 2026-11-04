@@ -24,6 +24,10 @@ struct MemoListView: View {
                         Task { await model.complete(memo) }
                     }
                 }
+                .onDelete { offsets in
+                    let targets = offsets.map { model.memos[$0] }
+                    Task { await model.delete(targets) }
+                }
             } footer: {
                 MemoListFooter()
                     .padding(.top, 24)

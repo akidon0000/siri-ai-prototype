@@ -16,4 +16,7 @@ public protocol MemoClient: Sendable {
     func memos(matching string: String) async throws -> [Memo]
     func allMemos() async throws -> [Memo]
     func complete(_ id: UUID) async throws
+    func delete(_ ids: [UUID]) async throws
+    /// 同じタイトル（大文字・小文字は区別しない）のメモがあるか。
+    func contains(title: String) async throws -> Bool
 }

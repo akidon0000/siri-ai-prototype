@@ -53,6 +53,24 @@ public nonisolated final class MemoStore: Sendable {
         try await memoClient.allMemos().map(MemoEntity.init)
     }
 
+    func memo(for id: MemoEntity.ID) async throws -> MemoEntity {
+        guard let memo = try await memos(for: [id]).first else { throw MemoIntentError.memoDeleted }
+        return memo
+    }
+
+    func exists(_ id: MemoEntity.ID) async throws -> Bool {
+        try await !memoClient.memos(for: [id]).isEmpty
+    }
+
+    func contains(title: String) async throws -> Bool {
+        try await memoClient.contains(title: title)
+    }
+
+    func delete(_ ids: [MemoEntity.ID]) async throws {
+        try await memoClient.delete(ids)
+        memosDidChange()
+    }
+
     func complete(_ id: MemoEntity.ID) async throws {
         try await memoClient.complete(id)
         memosDidChange()
