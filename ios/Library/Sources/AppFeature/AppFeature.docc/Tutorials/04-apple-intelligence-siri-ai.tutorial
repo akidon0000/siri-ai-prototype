@@ -1,50 +1,187 @@
-@Tutorial(time: 15) {
+@Tutorial(time: 30) {
     @Intro(title: "Apple IntelligenceとSiri AIへの統合") {
         App Intentsで公開したアクションとデータを、Apple Intelligence/Siri AIが
-        実際に見つけて使えるようにするための5つの観点を理解する。
+        実際に見つけて使えるようにするための6つの観点を、WWDC26
+        "Explore advanced App Intents features for Siri and Apple Intelligence"
+        で示された実例に沿って理解する。この章の内容はほぼ全てiOS 27世代で
+        新しく使えるようになったもの。
 
         教材: `docs/apple-intelligence/apple-intelligence-and-siri-ai.md`,
         `docs/apple-intelligence/apple-intelligence.md`（Apple Developer Documentation原文）
     }
 
-    @Section(title: "5つの観点") {
+    @Section(title: "① セマンティック索引に載せる: IndexedEntity") {
         @ContentAndMedia {
-            Apple Intelligence/Siri AIにアプリの機能とデータを統合するには、
-            次の5つを行う。
+            SpotlightのセマンティックサーチをApple Intelligenceが使うので、
+            人があいまいに説明したものでも見つけられるようになる。
         }
 
         @Steps {
             @Step {
-                Entityをインデックスする。SpotlightのセマンティックサーチをApple Intelligenceが
-                使うので、人があいまいに説明したものでも見つけられるようになる。
+                `MemoEntity` を `IndexedEntity` に準拠させ、追加・更新のたびに
+                `CSSearchableIndex.indexAppEntities(_:)` を呼ぶ。
+                削除したときは対になる `deleteAppEntities(identifiedBy:ofType:)`
+                で索引からも消す。
+
+                @Code(file: "04-indexed-entity.swift", name: "MemoSpotlightIndexer.swift")
             }
 
             @Step {
-                Transferableな型を選ぶ。AppEntityをTransferableに準拠させると、
-                Siri AIが「このアプリの内容を別のアプリに渡して実行する」操作ができる。
+                これで「あのメモ」のようなあいまいな言い方でも、
+                キーワードの完全一致ではなく意味で検索できるようになる
+                （`docs/` では「セマンティックサーチ」と表現されている部分）。
             }
 
             @Step {
-                スキーマを採用する。スキーマはApp Intent/Entity/Enumの構造についての
-                「アプリとシステムの間の契約」で、Siri AIが日常会話の言い回しと
-                アクション・データを対応づけるために使う。
+                データ量が多すぎて索引を作れない・サーバー側にある・頻繁に変わる、
+                といったEntityは索引に載せない選択もできる。その場合は
+                第2章の `EntityQuery` をそのまま使い続ければよい
+                （WWDC26ではこれを `IntentValueQuery` という発展形で補っている）。
+            }
+        }
+    }
+
+    @Section(title: "② 画面に映っているものを伝える: オンスクリーンコンテキスト") {
+        @ContentAndMedia {
+            Siri AIは画面上のテキストは見えるが、それがどの `MemoEntity` なのかは
+            教えないと分からない。アノテーションを付けることで
+            「これ」「3番目」のような指示語が通じるようになる。
+        }
+
+        @Steps {
+            @Step {
+                一覧のように多数のEntityが並ぶ画面では、行ごとにアノテーションを
+                付けるのではなく `.appEntityIdentifier(forSelectionType:)` を
+                Listに1つ付けるだけでよい。スクロールして画面外に出た選択項目も、
+                システムが必要なときに遅延して取得してくれる。
+
+                @Code(file: "04-onscreen-context.swift", name: "MemoListView.swift")
             }
 
             @Step {
-                オンスクリーンコンテキストを共有する。画面に表示中のEntityにビューを
-                関連づけておくと、「この写真」のような指示語をSiriが理解できる。
+                画面全体が1件に専念しているとき（詳細画面など）は、
+                `View Entity annotation` ではなく `NSUserActivity` に
+                `appEntityIdentifier` を持たせる。「このメモを完了にして」の
+                「このメモ」がこれで解決する。
             }
 
             @Step {
-                アクションとコンテンツをdonateする。利用の振る舞いをdonateしておくと、
-                Apple Intelligenceが傾向を把握し、次の行動を予測・提案できるようになる。
+                Entityが多いリストを素早く理解してもらうには、
+                `EntityQuery` に `displayRepresentations(for:)` を実装しておく。
+                これがあると、Siriは全データを取りに行かずテキスト表現だけを
+                問い合わせられるので、「3番目を再生して」のような応答が速くなる。
+            }
+        }
+    }
+
+    @Section(title: "③ UI操作をdonateする") {
+        @ContentAndMedia {
+            Siriを経由した操作はシステムが自動で学習するが、アプリのUIから
+            直接行った操作は教えてあげないと学習されない。
+        }
+
+        @Steps {
+            @Step {
+                UIからメモを追加する処理の中で、対応する `AddMemoIntent` を
+                組み立てて `IntentDonationManager.shared.donate(intent:result:)`
+                に渡す。これを続けると、Apple Intelligenceは
+                「このアプリでメモを追加する習慣がある」ことを学習していく。
+
+                @Code(file: "04-donation.swift", name: "MemoListModel.swift")
+            }
+
+            @Step {
+                donationは「進行中の活動」を伝える手段としても使える。
+                たとえばナビゲーションアプリがUIから開始したセッションをdonateしておけば、
+                運転中に「途中で1ヶ所寄りたい」と頼んだとき、Siriは
+                今どのセッションが進行中かを知った上で応答できる。
+            }
+
+            @Step {
+                donationは実際のユーザー行動を正確に反映させる。
+                過剰にdonateすると、システム側がその情報を無視するようになる。
+            }
+        }
+    }
+
+    @Section(title: "④ 公開・共有されたデータの所有権を伝える") {
+        @ContentAndMedia {
+            LLMを介した操作には「意図しない副作用」のリスクが伴う。
+            Siriは副作用のあるintentを実行前に確認してくれるが、
+            そのメモが「自分だけのもの」か「共有されたもの」かが
+            確認の判断材料になる。
+        }
+
+        @Steps {
+            @Step {
+                既定では、全てのEntityは「個人のもの」としてSiriに扱われ、
+                確認がスキップされやすい。共有・公開できるメモがあるなら、
+                `OwnershipProvidingEntity` に準拠させ、実際の共有状態を返す。
+
+                @Code(file: "04-ownership.swift", name: "MemoEntity+Ownership.swift")
+            }
+
+            @Step {
+                個人のメモを更新するときはSiriが確認を省略してもよいが、
+                共有相手がいるメモを更新するときは確認を挟んでもらう、
+                という区別がこれでできる。所有権の状態は、システムから
+                Entityを要求されるたびに最新のものを返すようにする。
+            }
+        }
+    }
+
+    @Section(title: "⑤ 応答に自分のビューを使う: DisplayRepresentationとスニペット") {
+        @ContentAndMedia {
+            Siriの応答が全部同じ見た目だと、アプリらしさが伝わらない。
+            `DisplayRepresentation` と独自のビュー（スニペット）で
+            ブランドを出せる。
+        }
+
+        @Steps {
+            @Step {
+                第2章で作った `displayRepresentation` は `title` だけだったが、
+                `subtitle` や `image` も渡せる。「完了」「未完了」のような
+                状態を一目で分かるようにしておくと、候補から選ぶときや
+                確認のときに役立つ。
+            }
+
+            @Step {
+                `perform()` の返り値に `ShowsSnippetView` を加えると、
+                `IntentResult` に自分のSwiftUIビューを渡せるようになる。
+                Siriは `dialog` の読み上げと一緒に、そのビューをカード形式で表示する。
+
+                @Code(file: "04-snippet-view.swift", name: "AddMemoIntent+Snippet.swift")
+            }
+
+            @Step {
+                カスタマイズは「本当に必要な場面」に絞る。全てのintentに
+                スニペットを付けるのではなく、見た目で伝えた方が分かりやすい
+                結果（追加できたメモの内容など）だけに使う。
+                音声のみのデバイス（AirPodsなど）でも伝わる `full` の文言は必ず用意する。
+            }
+        }
+    }
+
+    @Section(title: "⑥ 他のアプリへ渡す: Transferable") {
+        @ContentAndMedia {
+            Siri AIは、あるアプリのEntityを別のアプリに渡して操作を続けることができる
+            （例: 好きな靴をメッセージアプリでパートナーに送る）。これには
+            Entityが `Transferable` に準拠している必要がある。
+        }
+
+        @Steps {
+            @Step {
+                `MemoEntity` を `Transferable` に準拠させ、`CodableRepresentation`
+                などで表現を提供する。多くの標準型は既にTransferable対応済みなので、
+                自分で用意するのは独自のApp Entity・App Intentの結果部分だけでよい。
             }
         }
     }
 
     @Section(title: "次のステップ") {
         @ContentAndMedia {
-            Memoのentityを、Spotlightから見つけられ、donationされる状態にしてもらう。
+            Memoのentityを、Spotlightから見つけられ、画面上のコンテキストが伝わり、
+            donationされ、所有権を持つ状態にしてもらう。
         }
 
         @Steps {

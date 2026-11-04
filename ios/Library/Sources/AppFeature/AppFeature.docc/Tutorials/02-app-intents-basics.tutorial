@@ -1,31 +1,83 @@
-@Tutorial(time: 15) {
+@Tutorial(time: 20) {
     @Intro(title: "App Intentsの基礎") {
         App Intent / App Entity / App Enum という3つの型で、アプリの操作とデータを
-        システム（Siri・Spotlight・Shortcutsなど）に公開する仕組みを理解する。
+        システム（Siri・Spotlight・Shortcutsなど）に公開する仕組みを、
+        Memoアプリを題材に実際のコードで理解する。
 
         教材: `docs/app-intents/app-intents.md`（Apple Developer Documentation原文）
     }
 
-    @Section(title: "3つの型の役割") {
+    @Section(title: "App Entity: データをシステムに公開する") {
         @ContentAndMedia {
-            App Intentsフレームワークは、アプリの「できること」と「データ」を構造化して表現する。
+            App Entity はアプリのデータのうち、Siriなど外部から参照され得る部分を表す型。
+            Memoアプリなら、1件のメモが `MemoEntity` になる。
         }
 
         @Steps {
             @Step {
-                App Intent はアプリの1つの操作をカプセル化した型。たとえば音楽アプリなら
-                「曲を再生する」intentを定義する。パラメータと実行結果を持てる。
+                `AppEntity` に準拠する型には、`id`・`typeDisplayRepresentation`・
+                `displayRepresentation` の3つが必須。`typeDisplayRepresentation` は
+                「この型が何なのか」という総称の名前、`displayRepresentation` は
+                「この1件がどう見えるか」を返す。
+
+                @Code(file: "02-memo-entity.swift", name: "MemoEntity.swift")
             }
 
             @Step {
-                App Entity はアプリのデータのうち、Siriなど外部から参照され得る部分を表す型。
-                音楽アプリなら曲・アルバム・プレイリストがEntityになる。
-                データベース全体ではなく、人が言及しそうな範囲だけを軽量に表現する。
+                `defaultQuery` が指すのが `MemoQuery`。idからMemoEntityを取得する
+                `entities(for:)` と、候補を出す `suggestedEntities()` の2つを実装する。
+                Siriは「どのメモ？」と聞くとき、この `suggestedEntities()` の結果を使う。
             }
 
             @Step {
-                App Enum はアプリ独自の列挙値をシステムに公開する型。
-                コンパイル時にコンパイラがApple IntelligenceやSiriが必要とする情報を生成する。
+                データベース全体を公開するのではなく、人が言及しそうな範囲
+                （タイトル・完了状態）だけを軽量に表現するのがApp Entityの考え方。
+                本文全文のような重いデータは、必要になったときだけ取りに行く設計にする。
+            }
+        }
+    }
+
+    @Section(title: "App Enum: 列挙値を公開する") {
+        @ContentAndMedia {
+            Memoに優先度を持たせるなら、`MemoPriority` をApp Enumにする。
+        }
+
+        @Steps {
+            @Step {
+                `AppEnum` に準拠し、`caseDisplayRepresentations` で
+                各caseの表示名（Siriが読む言葉）を決める。これだけで
+                「優先度高のメモ」のような言い方がどのcaseに対応するか、
+                コンパイル時に生成される情報からSiriが理解できるようになる。
+
+                @Code(file: "02-memo-priority-enum.swift", name: "MemoPriority.swift")
+            }
+        }
+    }
+
+    @Section(title: "App Intent: 操作をカプセル化する") {
+        @ContentAndMedia {
+            「メモを追加する」という操作を `AddMemoIntent` として定義する。
+        }
+
+        @Steps {
+            @Step {
+                `@Parameter` でSiriから受け取る入力を宣言する。`title` は
+                必須、`priority` は `default: .normal` を指定しているので、
+                人が優先度を言わなくても追加できる。
+
+                @Code(file: "02-add-memo-intent.swift", name: "AddMemoIntent.swift")
+            }
+
+            @Step {
+                `perform()` の返り値は `some IntentResult & ReturnsValue<MemoEntity>`。
+                `ReturnsValue` を付けることで、追加した `MemoEntity` を
+                この後のShortcutsのステップや、Siriの応答に渡せるようになる。
+            }
+
+            @Step {
+                `static let title` はSiri・Shortcutsアプリ・Spotlightに
+                表示される操作名。関数名ではなくこの `title` の方を見て
+                人が探すので、具体的で短い言葉にする。
             }
         }
     }
@@ -33,7 +85,8 @@
     @Section(title: "次のステップ") {
         @ContentAndMedia {
             Memo (id, title, isDone) を題材に、AppEntityと3つのAppIntent
-            （追加・一覧・完了）を実装してもらう。
+            （追加・一覧・完了）を実装してもらう。ここまでのコードはあくまで教材用で、
+            `ios/Library` には取り込まれていない。
         }
 
         @Steps {

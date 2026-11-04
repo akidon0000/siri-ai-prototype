@@ -36,8 +36,9 @@
     @Chapter(name: "第4章: Apple IntelligenceとSiri AIへの統合") {
         @Image(source: "chapter4.svg", alt: "第4章のイメージ")
 
-        スキーマ・Transferable・オンスクリーンコンテキスト・donationという
-        5つの観点で、App IntentsをApple Intelligence/Siri AIに統合する流れを理解する。
+        セマンティック索引・オンスクリーンコンテキスト・donation・所有権・
+        スニペット・Transferableという6つの観点で、WWDC26の実例コードに沿って
+        App IntentsをApple Intelligence/Siri AIに統合する流れを理解する。
 
         @TutorialReference(tutorial: "doc:04-apple-intelligence-siri-ai")
     }
