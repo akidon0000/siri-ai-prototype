@@ -1,0 +1,15 @@
+Tutorial 7 (Siri AI Developer Preview: ツールとapp skill) を読んで理解した。
+Siri AI Developer Preview 向けに、スキーマに無い Memo の操作をツールとして公開して。
+
+- スキーマ対応済みの CreateMemoIntent / UpdateMemoIntent / DeleteMemoIntent には @AppIntent(.tool) を付けない
+- SetMemoPriorityIntent を追加して @AppIntent(.tool) を付け、title / description / 各@Parameterの description を埋める
+- MemoSearch (@AppEntity(.generable), TransientAppEntity) と、それを受け取る FindMemosIntent (@AppIntent(.tool)) を追加する
+- MemoEntity に鍵付き本文 (authenticationPolicy: .requiresLocalDeviceAuthentication) と
+  内部用リビジョン (visibility: .internal) を足す
+- アプリのターゲットに Skills.skillsbundle を追加し、Skills/memo-triage/SKILL.md を書く
+- Xcode の Siri Integration Advisor の指摘を確認して、直した内容をまとめる
+
+参考: docs/apple-intelligence/siri-ai-developer-preview.md、
+https://developer.apple.com/documentation/appintents/bringing-custom-actions-and-content-to-siri
+
+注意: Siri AI Developer Preview は Apple Intelligence 対応の実機（開発用署名）か TestFlight の内部テストでのみ動作する。

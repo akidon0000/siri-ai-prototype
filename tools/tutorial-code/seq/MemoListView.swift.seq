@@ -1,0 +1,17 @@
+#name MemoListView.swift
+1|import AppIntents
+1|import SwiftUI
+1|
+1|struct MemoListView: View {
+1|    let memos: [MemoEntity]
+1|    @State private var selection = Set<MemoEntity.ID>()
+2|
+2|    var body: some View {
+2|        List(memos, selection: $selection) { memo in
+2|            Text(memo.title)
+2|        }
+3|        .appEntityIdentifier(forSelectionType: MemoEntity.ID.self) { id in
+3|            EntityIdentifier(for: MemoEntity.self, identifier: id)
+3|        }
+2|    }
+1|}

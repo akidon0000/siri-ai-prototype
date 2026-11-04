@@ -1,0 +1,15 @@
+#name MemoSpotlightIndexer.swift
+1|import AppIntents
+1|import CoreSpotlight
+1|
+1|struct MemoSpotlightIndexer {
+1|    private let searchIndex = CSSearchableIndex(name: "memos")
+2|
+2|    func index(_ memos: [MemoEntity]) async throws {
+2|        try await searchIndex.indexAppEntities(memos)
+2|    }
+3|
+3|    func remove(_ ids: [MemoEntity.ID]) async throws {
+3|        try await searchIndex.deleteAppEntities(identifiedBy: ids, ofType: MemoEntity.self)
+3|    }
+1|}

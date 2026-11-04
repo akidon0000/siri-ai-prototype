@@ -1,0 +1,30 @@
+#name MemoIntentsTests.swift
+1|import AppIntentsTesting
+1|import XCTest
+1|
+1|final class MemoIntentsTests: XCTestCase {
+1|    let app = XCUIApplication()
+1|    var definitions: IntentDefinitions!
+2|
+2|    override func setUp() async throws {
+2|        app.launch()
+2|        definitions = IntentDefinitions(bundleIdentifier: "com.akidon0000.SiriAIPrototype")
+6|        try await definitions.intents["ResetMemosIntent"].makeIntent().run()
+2|    }
+3|
+3|    func testCreateMemo() async throws {
+3|        let result = try await definitions.intents["CreateMemoIntent"].makeIntent(title: "牛乳を買う").run()
+3|        let title: String = try result.value.title
+3|        XCTAssertEqual(title, "牛乳を買う")
+3|    }
+4|
+4|    func testFindMemoByName() async throws {
+4|        let memos = try await definitions.entities["MemoEntity"].entities(matching: "牛乳")
+4|        XCTAssertFalse(memos.isEmpty)
+4|    }
+5|
+5|    func testMemoIsIndexedInSpotlight() async throws {
+5|        let indexed = try await definitions.entities["MemoEntity"].spotlightQuery("牛乳")
+5|        XCTAssertFalse(indexed.isEmpty)
+5|    }
+1|}

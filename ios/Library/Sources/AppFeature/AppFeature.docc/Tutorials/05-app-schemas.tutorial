@@ -1,0 +1,277 @@
+@Tutorial(time: 35) {
+    @Intro(title: "スキーマでApple Intelligenceに載せる") {
+        スキーマは、App Intents側が用意した「この種類のアプリならこの形のintentとEntity」という型紙で、
+        アプリとシステムの間の契約になる。スキーマに合わせたintentはApple Intelligenceの
+        「app toolbox」に入り、Siriはいろいろな言い回しをそのintentに結び付けられるようになる。
+        この章では、Memoアプリを Reminders ドメインのスキーマに合わせる。
+
+        教材: `docs/apple-intelligence/apple-intelligence-and-siri-ai.md`、
+        Apple Developer Documentation「App schema domains」「Making actions and content discoverable by Apple Intelligence」
+    }
+
+    @Section(title: "ドメインを選ぶ") {
+        @ContentAndMedia {
+            スキーマは「ドメイン」ごとにまとまっている。まずアプリの機能に合うドメインを探す。
+        }
+
+        @Steps {
+            @Step {
+                Siriで使えるPrimary domainは、Audio・Calendar・Camera・Clock・Mail・Maps・Messages・
+                Notes・Phone・Photos・Reminders・System and in-app search・Video。
+                Books・Browser・Files・Journaling・Presentation・Reader・Spreadsheet・Whiteboard・
+                Word processorは、Shortcutsアプリでだけ使えるドメイン。
+            }
+
+            @Step {
+                Memoは「タイトル」と「完了状態」を持つので、メモ帳のNotesより、
+                完了・未完了を扱うRemindersが合う。Remindersには `createReminder`・`updateReminder`・
+                `deleteReminders` などのintentスキーマと、`reminder`・`list` などのEntityスキーマがある。
+                ドメインの本来の目的に合わない機能には、スキーマを当てはめない。
+            }
+
+            @Step {
+                Audio・Clock・Mail・Maps・Messagesには「use-case group」という、
+                同じ目的のスキーマの組がある。Siri AIで使うには組の全てを採用する必要があり、
+                一部だけを採用するとXcodeが欠けているスキーマごとにビルド警告を出す。
+            }
+
+            @Step {
+                Xcodeで `reminders_` と入力すると、スキーマを選ぶ補完候補が出て、
+                必要なプロパティが全て入ったテンプレートを展開できる。以降のコードはこのテンプレートから作る。
+            }
+        }
+    }
+
+    @Section(title: "Entityをスキーマに合わせる") {
+        @ContentAndMedia {
+            `reminder` スキーマは、リマインダーが所属するリスト（`list`）を必須にしている。
+            先にリスト側のEntityとEnumを作り、そのあとで `MemoEntity` をスキーマに合わせる。
+        }
+
+        @Steps {
+            @Step {
+                リストの種類を表すEnumに `@AppEnum(schema: .reminders.listType)` を付ける。
+                `AppEnum` への準拠はマクロが付けるので、自分では書かない。
+
+                @Code(name: "MemoListType.swift", file: "MemoListType-01.swift")
+            }
+
+            @Step {
+                メモのリストを表すEntityに `@AppEntity(schema: .reminders.list)` を付ける。
+                スキーマが決めたプロパティ（`id`・`name`）は、名前も型もスキーマ通りにする。
+
+                @Code(name: "MemoListEntity.swift", file: "MemoListEntity-01.swift")
+            }
+
+            @Step {
+                残りの必須プロパティ `type` と `displayRepresentation` を足す。
+
+                @Code(name: "MemoListEntity.swift", file: "MemoListEntity-02.swift", previousFile: "MemoListEntity-01.swift")
+            }
+
+            @Step {
+                `defaultQuery` を足す。`MemoListQuery` は第2章の `MemoQuery` と同じ形で作る。
+
+                @Code(name: "MemoListEntity.swift", file: "MemoListEntity-03.swift", previousFile: "MemoListEntity-02.swift")
+            }
+
+            @Step {
+                `MemoEntity` に `@AppEntity(schema: .reminders.reminder)` を付け、`AppEntity` への準拠を外す。
+                あわせて `typeDisplayRepresentation` も削除する。どちらもXcodeが展開するテンプレートには含まれていない。
+
+                @Code(name: "MemoEntity.swift", file: "MemoEntity-07.swift", previousFile: "MemoEntity-06.swift")
+            }
+
+            @Step {
+                スキーマでは完了状態の名前が `isCompleted` なので、`isDone` から名前を変える。
+                `displayRepresentation` の中の参照も合わせて直す。必須プロパティが欠けていたり
+                名前が違ったりすると、マクロがビルドエラーにして教えてくれる。
+
+                @Code(name: "MemoEntity.swift", file: "MemoEntity-08.swift", previousFile: "MemoEntity-07.swift")
+            }
+
+            @Step {
+                スキーマが求めるプロパティを足していく。まず `note`・`tags`・`urls`・`dueDate`・`recurrence`。
+                Memoアプリが対応していない機能も、プロパティ自体は用意して `nil` や空の値を返せばよい。
+
+                @Code(name: "MemoEntity.swift", file: "MemoEntity-09.swift", previousFile: "MemoEntity-08.swift")
+            }
+
+            @Step {
+                続けて `isFlagged`・`creationDate`・`completionDate`・`list`・`locationTrigger` を足す。
+                `list` には先ほど作った `MemoListEntity` を使う。
+                `locationTrigger` の型 `MemoLocationTriggerEntity` も `.reminders.locationTrigger` スキーマに
+                合わせたEntityとして別に作る必要がある（作り方は `MemoListEntity` と同じなので省略する）。
+
+                @Code(name: "MemoEntity.swift", file: "MemoEntity-10.swift", previousFile: "MemoEntity-09.swift")
+            }
+
+            @Step {
+                名前を変えた `isCompleted` に合わせて、第4章の `MemoSnippetView` も直す。
+
+                @Code(name: "MemoSnippetView.swift", file: "MemoSnippetView-04.swift", previousFile: "MemoSnippetView-03.swift")
+            }
+        }
+    }
+
+    @Section(title: "intentをスキーマに合わせる") {
+        @ContentAndMedia {
+            `AddMemoIntent` は `priority` を持つが、`createReminder` スキーマには優先度が無い。
+            スキーマに合わないプロパティを持つ既存のintentを書き換えると、それを使っているショートカットが壊れる。
+            Appleが勧めるのは、スキーマ対応のintentを別に作って並べる方法。
+        }
+
+        @Steps {
+            @Step {
+                新しい `CreateMemoIntent` に `@AppIntent(schema: .reminders.createReminder)` を付ける。
+                スキーマのプロパティは `@Parameter` を書かず、普通のプロパティとして宣言する。
+                システムは `perform()` を呼ぶ前に、これらのプロパティに値を入れる。
+
+                @Code(name: "CreateMemoIntent.swift", file: "CreateMemoIntent-01.swift")
+            }
+
+            @Step {
+                スキーマが定める残りのプロパティを足す。まず `note`・`isFlagged`・`images`・`tags`・`urls`。
+
+                @Code(name: "CreateMemoIntent.swift", file: "CreateMemoIntent-02.swift", previousFile: "CreateMemoIntent-01.swift")
+            }
+
+            @Step {
+                続けて `dueDate`・`recurrence`・`locationTrigger`・`section`。`section` も
+                `.reminders.section` スキーマに合わせたEntityを別に用意する。
+                Apple Intelligenceが使うのはスキーマが定めるプロパティだけで、
+                それ以外に足したオプショナルなプロパティはShortcutsアプリだけが使う。
+
+                @Code(name: "CreateMemoIntent.swift", file: "CreateMemoIntent-03.swift", previousFile: "CreateMemoIntent-02.swift")
+            }
+
+            @Step {
+                `perform()` を書く。戻り値は、`MemoEntity` を返す `ReturnsValue<MemoEntity>`。
+
+                @Code(name: "CreateMemoIntent.swift", file: "CreateMemoIntent-04.swift", previousFile: "CreateMemoIntent-03.swift")
+            }
+
+            @Step {
+                `isAssistantOnly` を `true` にする。このintentはShortcutsアプリに出なくなり、
+                Siri（Apple Intelligence）からだけ使われる。Shortcutsには旧 `AddMemoIntent` が残るので、
+                同じ操作が2つ並ぶことは無い。利用者がショートカットを移し終えたら、
+                この行を消して旧intentを廃止する。
+
+                @Code(name: "CreateMemoIntent.swift", file: "CreateMemoIntent-05.swift", previousFile: "CreateMemoIntent-04.swift")
+            }
+
+            @Step {
+                メモの完了は `updateReminder` スキーマの `isCompleted` で表す。
+                `UpdateMemoIntent` を作り、対象の `target` と `isCompleted` から書き始める。
+
+                @Code(name: "UpdateMemoIntent.swift", file: "UpdateMemoIntent-01.swift")
+            }
+
+            @Step {
+                `title`・`note`・`tags`・`urls`・`dueDate` を足す。更新のスキーマなので、
+                どのプロパティもオプショナルで、`nil` は「変更しない」を意味する。
+
+                @Code(name: "UpdateMemoIntent.swift", file: "UpdateMemoIntent-02.swift", previousFile: "UpdateMemoIntent-01.swift")
+            }
+
+            @Step {
+                残りの `recurrence`・`isFlagged`・`list`・`locationTrigger` を足す。
+
+                @Code(name: "UpdateMemoIntent.swift", file: "UpdateMemoIntent-03.swift", previousFile: "UpdateMemoIntent-02.swift")
+            }
+
+            @Step {
+                `perform()` を書く。これで「このメモを完了にして」「期限を明日にして」が、
+                同じ `UpdateMemoIntent` で処理される。
+
+                @Code(name: "UpdateMemoIntent.swift", file: "UpdateMemoIntent-04.swift", previousFile: "UpdateMemoIntent-03.swift")
+            }
+
+            @Step {
+                第4章の `DeleteMemoIntent` を `deleteReminders` スキーマに合わせる。
+                準拠先を `DeleteIntent` に変え、`title` と `@Parameter` を削除して、
+                スキーマが定める `entities`（削除するメモの配列）に置き換える。
+                まだ配布していないintentなのでその場で書き換えたが、
+                配布済みなら `CreateMemoIntent` と同じく別のintentを作って並べる。
+
+                @Code(name: "DeleteMemoIntent.swift", file: "DeleteMemoIntent-03.swift", previousFile: "DeleteMemoIntent-02.swift")
+            }
+        }
+    }
+
+    @Section(title: "検索と表示をスキーマに乗せる") {
+        @ContentAndMedia {
+            System and in-app searchドメインは、アプリの種類を問わず使える。
+            どのドメインにも当てはまらないアプリでも、検索と表示はSiriに任せられる。
+        }
+
+        @Steps {
+            @Step {
+                `SearchMemosIntent` に `@AppIntent(schema: .system.searchInApp)` を付け、
+                `ShowInAppSearchResultsIntent` に準拠させる。`criteria` には、人がSiriに言った検索語が入る。
+
+                @Code(name: "SearchMemosIntent.swift", file: "SearchMemosIntent-01.swift")
+            }
+
+            @Step {
+                `perform()` でアプリの検索画面を開き、`criteria.term` で検索する。
+                「メモで買い物を探して」と言われたとき、Siriの検索結果ではなく
+                アプリ自身の検索画面で結果を見せられる。
+
+                @Code(name: "SearchMemosIntent.swift", file: "SearchMemosIntent-02.swift", previousFile: "SearchMemosIntent-01.swift")
+            }
+
+            @Step {
+                `OpenMemoIntent` に `@AppIntent(schema: .system.open)` を付け、`OpenIntent` に準拠させる。
+                `target` が開く対象のメモ。
+
+                @Code(name: "OpenMemoIntent.swift", file: "OpenMemoIntent-01.swift")
+            }
+
+            @Step {
+                `perform()` で該当のメモの画面を開く。第6章でSpotlightに載せたメモをタップしたときや、
+                ビジュアルインテリジェンスの検索結果から開くときにも、このintentが使われる。
+
+                @Code(name: "OpenMemoIntent.swift", file: "OpenMemoIntent-02.swift", previousFile: "OpenMemoIntent-01.swift")
+            }
+        }
+    }
+
+    @Section(title: "参考: 日本だけのサイドボタン起動") {
+        @ContentAndMedia {
+            Assistantドメインの `activate` スキーマは、iPhoneのサイドボタンを長押ししたときに
+            音声で会話するアプリを起動させるもので、日本でだけ使える。Memoアプリは音声対話アプリではないので採用しないが、
+            日本向けのSiri関連の機能として形だけ確認しておく。
+        }
+
+        @Steps {
+            @Step {
+                `@AppIntent(schema: .assistant.activate)` を付け、`supportedModes` を `.foreground` にする。
+                利用には `com.apple.developer.side-button-access.allow` entitlementが必要で、
+                本番ではApple Accountの国または地域が日本で、日本国内にいる必要がある。
+
+                @Code(name: "ActivateConversationIntent.swift", file: "ActivateConversationIntent-01.swift")
+            }
+
+            @Step {
+                `perform()` では会話の画面を開き、すぐに話せるようにオーディオセッションを始める。
+
+                @Code(name: "ActivateConversationIntent.swift", file: "ActivateConversationIntent-02.swift", previousFile: "ActivateConversationIntent-01.swift")
+            }
+        }
+    }
+
+    @Section(title: "次のステップ") {
+        @ContentAndMedia {
+            MemoをRemindersドメインのスキーマに対応させてもらう。
+        }
+
+        @Steps {
+            @Step {
+                理解できたらこれをコピペする。
+
+                @Code(name: "prompt.txt", file: "05-prompt.txt")
+            }
+        }
+    }
+}

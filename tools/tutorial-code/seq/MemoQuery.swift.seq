@@ -1,0 +1,36 @@
+#name MemoQuery.swift
+1|import AppIntents
+4|import CoreSpotlight
+1|
+1-2|struct MemoQuery: EntityQuery {
+3|struct MemoQuery: EntityStringQuery {
+1|    func entities(for identifiers: [MemoEntity.ID]) async throws -> [MemoEntity] {
+1|        try await MemoStore.shared.memos(for: identifiers)
+1|    }
+2|
+2|    func suggestedEntities() async throws -> [MemoEntity] {
+2|        try await MemoStore.shared.recentMemos()
+2|    }
+3|
+3|    func entities(matching string: String) async throws -> [MemoEntity] {
+3|        try await MemoStore.shared.memos(matching: string)
+3|    }
+6|
+6|    func displayRepresentations(
+6|        for identifiers: [MemoEntity.ID],
+6|        requestedComponents: DisplayRepresentation.Components = .text
+6|    ) async throws -> [MemoEntity.ID: DisplayRepresentation] {
+6|        try await MemoStore.shared.titles(for: identifiers).mapValues { DisplayRepresentation(title: "\($0)") }
+6|    }
+1|}
+4|
+4|extension MemoQuery: IndexedEntityQuery {
+4|    func reindexAllEntities(indexDescription: CSSearchableIndexDescription) async throws {
+4|        try await MemoSpotlightIndexer().index(MemoStore.shared.allMemos())
+4|    }
+5|
+5|    func reindexEntities(for identifiers: [MemoEntity.ID],
+5|                         indexDescription: CSSearchableIndexDescription) async throws {
+5|        try await MemoSpotlightIndexer().index(MemoStore.shared.memos(for: identifiers))
+5|    }
+4|}

@@ -1,0 +1,48 @@
+#name MemoSiriEvaluationTests.swift
+1|import AppIntentsTesting
+1|import Evaluations
+1|import SiriEvaluations
+1|import Testing
+1|
+1|let memoIntents = IntentDefinitions(bundleIdentifier: "com.akidon0000.SiriAIPrototype")
+5|
+5|let addMemoScenario = SiriScenario {
+5|    UserTurn("SiriAIPrototypeに牛乳を買うってメモして") {
+5|        Calls { memoIntents.intents["CreateMemoIntent"].expect(title: .contains("牛乳")) }
+6|        Calls(.disallowed) { memoIntents.intents["DeleteMemoIntent"] }
+5|    }
+5|}
+8|
+8|let addMemoWithFollowUp = SiriScenario {
+8|    UserTurn("SiriAIPrototypeにメモを追加して")
+8|    UserTurn("牛乳を買う")
+8|} expectation: {
+8|    Calls { memoIntents.intents["CreateMemoIntent"].expect(title: .contains("牛乳")) }
+8|}
+2|
+2|struct MemoEvaluation: Evaluation {
+2|    let name: String
+2|    let dataset: SiriScenarioLoader
+3|
+3|    func subject(from sample: SiriScenario) async throws -> SiriScenarioSubject {
+3|        try await SiriService.run(scenario: sample)
+3|    }
+4|
+4|    var evaluators: Evaluators {
+4|        SiriExpectationEvaluator()
+4|    }
+4|
+4|    func aggregateMetrics(using aggregator: inout MetricsAggregator) {
+4|        Self.computeSiriMetrics(into: &aggregator)
+4|    }
+2|}
+7|
+7|@Test(.evaluates(MemoEvaluation(name: "メモの追加", dataset: SiriScenarioLoader { addMemoScenario })))
+7|func addsMemo() async throws {
+7|    #expect(EvaluationContext.current.result.aggregateValue(.mean(of: .intentsAllPass)) == 1)
+7|}
+9|
+9|@Test(.evaluates(MemoEvaluation(name: "聞き返し", dataset: SiriScenarioLoader { addMemoWithFollowUp })))
+9|func addsMemoAfterFollowUp() async throws {
+9|    #expect(EvaluationContext.current.result.aggregateValue(.mean(of: .intentsAllPass)) == 1)
+9|}

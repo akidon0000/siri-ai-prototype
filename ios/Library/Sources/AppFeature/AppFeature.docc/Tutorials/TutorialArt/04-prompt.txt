@@ -1,10 +1,14 @@
-Tutorial 4 (Apple IntelligenceとSiri AIへの統合) を読んで理解した。
-Memo の AppEntity を Apple Intelligence から見つけられるようにして。
+Tutorial 4 (Siriとの会話を設計する) を読んで理解した。
+Memo の Intent に、Siriとの会話まわりを実装して。
 
-- Memo を Transferable に準拠させる
-- Memo を IndexedEntity に準拠させ、CSSearchableIndex.indexAppEntities でSpotlightに載せる
-- UIからメモを追加したときに IntentDonationManager.shared.donate で donation する
-- Memo を OwnershipProvidingEntity に準拠させ、共有メモかどうかの所有権を返す
-- メモ一覧ビューに appEntityIdentifier(forSelectionType:) でオンスクリーンコンテキストを付ける
+- AddMemoIntent: ProvidesDialog で full / supporting の応答を返し、title に requestValueDialog を付ける
+- AddMemoIntent: 同じタイトルのメモがあるときだけ $title.requestValue で別の名前を聞く
+- DeleteMemoIntent を追加し、perform() の最初で requestConfirmation(dialog:) を呼ぶ
+- MemoEntity に sharedWith を足し、OwnershipProvidingEntity で共有中なら .shared を返す
+- MemoEntity の displayRepresentation に subtitle（完了/未完了）と image を足す
+- MemoSnippetView と MemoSnippetIntent (SnippetIntent) を作り、完了ボタンで CompleteMemoIntent を実行する
+- AddMemoIntent の結果に ShowsSnippetIntent を加える（ReturnsValue<MemoEntity> は残す）
+- MemoEntity を SnippetRepresentableEntity に準拠させ、CardSnippet を返す
+- 応答文は docs/apple-intelligence/siri-human-interface-guidelines.md の指針に沿わせる（アプリ名を入れない、音声だけで伝わる）
 
-参考: docs/apple-intelligence/apple-intelligence-and-siri-ai.md, docs/apple-intelligence/apple-intelligence.md
+参考: docs/apple-intelligence/siri-human-interface-guidelines.md

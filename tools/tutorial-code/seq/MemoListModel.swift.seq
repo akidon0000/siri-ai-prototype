@@ -1,0 +1,14 @@
+#name MemoListModel.swift
+1|import AppIntents
+1|
+1|@MainActor
+1|final class MemoListModel {
+2|    func addMemoFromUI(title: String, list: MemoListEntity) async throws {
+2|        let memo = try await MemoStore.shared.add(title: title, list: list, dueDate: nil)
+3|
+3|        var intent = CreateMemoIntent()
+3|        intent.title = title
+3|        intent.list = list
+3|        try await IntentDonationManager.shared.donate(intent: intent, result: .result(value: memo))
+2|    }
+1|}

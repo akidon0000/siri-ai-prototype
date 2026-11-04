@@ -1,3 +1,4 @@
-Tutorial 1 (SiriKitの限界) を読んで理解した。
+Tutorial 1 (SiriKitからApp Intentsへ) を読んで理解した。
 このPoCではSiriKit/Intents/IntentsUIは使わず、App Intentsフレームワークだけで実装する方針で進めてよいか確認して。
+SiriKitからの移行（CustomIntentMigratedAppIntent）はこのPoCでは不要という理解で合っているかも見て。
 問題なければ Tutorial 2 に進む準備として ios/Library/Sources/Clients/MemoClient.swift の TODO 一覧を出して。

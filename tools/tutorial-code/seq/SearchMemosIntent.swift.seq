@@ -1,0 +1,13 @@
+#name SearchMemosIntent.swift
+1|import AppIntents
+1|
+1|@AppIntent(schema: .system.searchInApp)
+1|struct SearchMemosIntent: ShowInAppSearchResultsIntent {
+1|    static let searchScopes: [StringSearchScope] = [.general]
+1|    var criteria: StringSearchCriteria
+2|
+2|    func perform() async throws -> some IntentResult {
+2|        await MemoNavigator.shared.showSearchResults(for: criteria.term)
+2|        return .result()
+2|    }
+1|}

@@ -1,0 +1,8 @@
+#name MemoStore+Shortcuts.swift
+1|import AppIntents
+1|
+1|extension MemoStore {
+1|    func memosDidChange() {
+1|        MemoShortcuts.updateAppShortcutParameters()
+1|    }
+1|}

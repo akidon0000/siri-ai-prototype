@@ -1,0 +1,14 @@
+#name ResetMemosIntent.swift
+1|#if DEBUG
+1|import AppIntents
+1|
+1|struct ResetMemosIntent: AppIntent {
+1|    static let title: LocalizedStringResource = "メモを初期データに戻す"
+2|    static let isDiscoverable = false
+2|
+2|    func perform() async throws -> some IntentResult {
+2|        try await MemoStore.shared.resetToSeedData()
+2|        return .result()
+2|    }
+1|}
+1|#endif

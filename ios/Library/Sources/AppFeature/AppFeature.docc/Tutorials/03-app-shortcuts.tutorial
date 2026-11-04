@@ -1,83 +1,126 @@
-@Tutorial(time: 15) {
+@Tutorial(time: 20) {
     @Intro(title: "App Shortcutsでフレーズを固定する") {
-        AppShortcutsProvider と AppShortcut で、決まった言い方からApp Intentを
-        確実に呼び出せるようにする仕組みを、実際のフレーズ定義で理解する。
+        App Intentを作っただけでは、Siriに話しかけて呼び出せるとは限らない。
+        `AppShortcutsProvider` で「この言い方ならこのintent」というフレーズを登録すると、
+        アプリをインストールした直後からSiri・Spotlight・Shortcutsアプリで使えるようになる。
 
-        教材: `docs/shortcuts/app-shortcuts.md`（Apple Developer Documentation原文）
+        教材: `docs/shortcuts/app-shortcuts.md`、
+        Human Interface Guidelines「App Shortcuts」
     }
 
     @Section(title: "AppShortcutsProviderを書く") {
         @ContentAndMedia {
-            App Shortcutは、App Intentに「タイトル・画像・話しかける言葉（フレーズ）」を
-            組み合わせ、Shortcutsアプリや他のシステム機能で使いやすくする。
+            App Shortcutは、App Intentにタイトル・アイコン・話しかけるフレーズを組み合わせたもの。
+            アプリ全体で `AppShortcutsProvider` に準拠した型を1つだけ用意し、そこに並べる。
         }
 
         @Steps {
             @Step {
-                `AppShortcutsProvider` に準拠した型を1つ作り、static な
-                `appShortcuts` の中に `AppShortcut` を並べる。これだけで、
-                アプリをインストールした時点でShortcutsアプリやSiriが
-                自動的に見つけられるようになる。
+                `AppShortcutsProvider` に準拠する構造体を作る。登録処理を呼ぶ必要は無く、
+                コンパイラがこの型を見つけてメタデータを生成する。
 
-                @Code(file: "03-app-shortcuts-provider.swift", name: "MemoShortcuts.swift")
+                @Code(name: "MemoShortcuts.swift", file: "MemoShortcuts-01.swift")
             }
 
             @Step {
-                `phrases` の中の `\(.applicationName)` はアプリ名に置き換わるトークン。
-                `\(\.$title)` のように `\.$パラメータ名` を書くと、その場所に
-                Siriが聞き取った値（メモのタイトル）がそのまま入る。
+                `appShortcuts` に最初の `AppShortcut` を書く。`intent` に呼び出すApp Intentを、
+                `phrases` に話しかける言い方を渡す。フレーズには必ず `\(.applicationName)` を含める。
+                アプリ名が入っていないフレーズは登録できない。
 
-                あらかじめパラメータが決まっている場合は、毎回聞き直さずに
-                一発で実行できるフレーズも用意できる
-                （例: いつものトレイルでハイキングを開始する）。
+                @Code(name: "MemoShortcuts.swift", file: "MemoShortcuts-02.swift", previousFile: "MemoShortcuts-01.swift")
             }
 
             @Step {
-                `shortTitle` と `systemImageName` は、Shortcutsアプリや
-                App Shortcutsのプラターに表示される見た目。SF Symbolsの名前を
-                そのまま使える。
+                `shortTitle` と `systemImageName` を足す。ShortcutsアプリやSpotlightのタイルに、
+                この短い名前とSF Symbolsのアイコンが表示される。
+
+                @Code(name: "MemoShortcuts.swift", file: "MemoShortcuts-03.swift", previousFile: "MemoShortcuts-02.swift")
+            }
+
+            @Step {
+                フレーズを2つに増やし、2つ目に `\(\.$priority)` を入れる。この部分には
+                `AddMemoIntent` の `priority` パラメータの値（低・通常・高）が当てはまる。
+                フレーズに埋め込めるのは `AppEnum` か `AppEntity` 型のパラメータだけで、
+                `title` のような `String` は入れられない。タイトルは実行後にSiriが聞き返す。
+
+                @Code(name: "MemoShortcuts.swift", file: "MemoShortcuts-04.swift", previousFile: "MemoShortcuts-03.swift")
+            }
+
+            @Step {
+                第1章の `CompleteMemoIntent` 用のショートカットを足す。`\(\.$memo)` は `MemoEntity` 型なので、
+                「牛乳を買うを完了にして」のように、メモのタイトルそのものをフレーズの一部として言える。
+
+                @Code(name: "MemoShortcuts.swift", file: "MemoShortcuts-05.swift", previousFile: "MemoShortcuts-04.swift")
+            }
+
+            @Step {
+                `shortcutTileColor` でShortcutsアプリ上のタイルの色を決める。
+
+                @Code(name: "MemoShortcuts.swift", file: "MemoShortcuts-06.swift", previousFile: "MemoShortcuts-05.swift")
+            }
+
+            @Step {
+                `\(\.$memo)` のようにEntityを埋め込んだフレーズは、システムがメモのタイトル一覧を
+                あらかじめ知っていないと聞き取れない。メモが増減したら
+                `updateAppShortcutParameters()` を呼び、`suggestedEntities()` の結果を読み直してもらう。
+
+                @Code(name: "MemoStore+Shortcuts.swift", file: "MemoStore+Shortcuts-01.swift")
+            }
+
+            @Step {
+                逆に「この言い方ではこのアプリを起動しないでほしい」フレーズは、
+                `AppShortcutsProvider` の `negativePhrases` に登録できる。
+                Appleは、ローカライズされたフレーズや表示名を匿名化してモデルの学習に使う場合があると明記しているので、
+                実際に人が口にする自然な言い方を選ぶ。
             }
         }
     }
 
-    @Section(title: "アプリ内でフレーズを教える") {
+    @Section(title: "アプリの中でフレーズを教える") {
         @ContentAndMedia {
-            Shortcutsアプリは自動的に見つけてくれるが、アプリを使っている人にも
-            「この言い方で呼び出せます」と教えたい場面がある。
+            Shortcutsアプリはフレーズを自動で見つけるが、アプリを使っている人がそれを知る機会は少ない。
+            アプリの画面にヒントを出しておく。
         }
 
         @Steps {
             @Step {
-                `SiriTipView` / `SiriTipUIView` に対象の intent を渡すだけで、
-                その intent に設定した `AppShortcut` のフレーズをヒントとして表示できる。
+                メモ一覧の下に置くビューを作る。
 
-                @Code(file: "03-siri-tip-view.swift", name: "MemoListFooter.swift")
+                @Code(name: "MemoListFooter.swift", file: "MemoListFooter-01.swift")
             }
 
             @Step {
-                `ShortcutsLink` / `ShortcutsUIButton` を使うと、アプリの
-                Shortcutsページを直接開くボタンも用意できる。
+                `SiriTipView` に対象のintentを渡すと、そのintentに登録したフレーズが
+                「Siriに〜と話しかけてみてください」というヒントとして表示される。
+
+                @Code(name: "MemoListFooter.swift", file: "MemoListFooter-02.swift", previousFile: "MemoListFooter-01.swift")
             }
 
             @Step {
-                Appleは、ローカライズされたフレーズや表示名などの
-                App Shortcutsデータを匿名化して学習に使う場合があると明記している。
-                機械学習モデルの改善に使われる前提で、フレーズは自然な言い方を選ぶとよい。
+                `VStack` で並べて `ShortcutsLink` を足す。タップすると、Shortcutsアプリで
+                このアプリのショートカット一覧が開く。
+
+                @Code(name: "MemoListFooter.swift", file: "MemoListFooter-03.swift", previousFile: "MemoListFooter-02.swift")
+            }
+
+            @Step {
+                App ShortcutはiPhoneやApple Watchのアクションボタンにも割り当てられる。
+                アクションボタンから押されたときは画面を見ていないこともあるので、
+                第4章で作る音声の応答だけで結果が伝わるようにしておく。
             }
         }
     }
 
     @Section(title: "次のステップ") {
         @ContentAndMedia {
-            Tutorial 2 で作ったMemoの2つのIntent（追加・完了）に、
-            具体的な話しかけるフレーズを設定してもらう。
+            第2章で作ったIntentに、フレーズ・アイコン・タイルの色を設定してもらう。
         }
 
         @Steps {
             @Step {
                 理解できたらこれをコピペする。
 
-                @Code(file: "03-prompt.txt", name: "prompt.txt")
+                @Code(name: "prompt.txt", file: "03-prompt.txt")
             }
         }
     }

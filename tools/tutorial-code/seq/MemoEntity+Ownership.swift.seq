@@ -1,0 +1,8 @@
+#name MemoEntity+Ownership.swift
+1|import AppIntents
+1|
+1|extension MemoEntity: OwnershipProvidingEntity {
+1|    var ownership: EntityOwnership {
+1|        sharedWith.isEmpty ? .unknown : .shared
+1|    }
+1|}

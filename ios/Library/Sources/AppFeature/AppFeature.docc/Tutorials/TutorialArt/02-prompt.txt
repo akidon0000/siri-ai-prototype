@@ -1,11 +1,13 @@
 Tutorial 2 (App Intentsの基礎) を読んで理解した。
 ios/Library に Memo の App Intents実装を追加して。
+チュートリアルの MemoStore は、このリポジトリでは Clients の MemoClient と ClientsLive の LiveMemoClient に当たる。
 
-- Clients/MemoClient.swift: Memo (id, title, isDone) の AppEntity と、MemoClient プロトコルに
-  addMemo / listMemos / completeMemo を定義する
+- Clients/MemoClient.swift: MemoClient プロトコルに add / memos(for:) / recentMemos / memos(matching:) / complete を定義する
 - ClientsLive/LiveMemoClient.swift: メモリ内配列で保持する実装
-- AppFeature に AddMemoIntent / ListMemosIntent / CompleteMemoIntent の3つの AppIntent を追加する
+- AppFeature に MemoEntity (id, title, isDone) と MemoQuery (EntityStringQuery) を追加する
+- AppFeature に MemoPriority (AppEnum: 低・通常・高) を追加する
+- AppFeature に AddMemoIntent（parameterSummary 付き）と CompleteMemoIntent を追加する
 - TestSupport に固定データを返す TestMemoClient を用意する
-- AppFeatureTests に3つのIntentの単体テストを書く
+- AppFeatureTests に2つのIntentと MemoQuery の単体テストを書く
 
 参考: docs/app-intents/app-intents.md
