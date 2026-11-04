@@ -33,6 +33,16 @@
             skipped = "NO">
             <BuildableReference
                BuildableIdentifier = "primary"
+               BlueprintIdentifier = "A3D9F1C47E2B4B8C9E6F2A10"
+               BuildableName = "SiriAIPrototypeUITests.xctest"
+               BlueprintName = "SiriAIPrototypeUITests"
+               ReferencedContainer = "container:App.xcodeproj">
+            </BuildableReference>
+         </TestableReference>
+         <TestableReference
+            skipped = "NO">
+            <BuildableReference
+               BuildableIdentifier = "primary"
                BlueprintIdentifier = "AppFeatureTests"
                BuildableName = "AppFeatureTests"
                BlueprintName = "AppFeatureTests"

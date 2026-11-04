@@ -13,12 +13,14 @@
   },
   "files": [
     { "kind": "folder", "path": "App", "target-membership": [ "SiriAIPrototype" ] },
+    { "kind": "folder", "path": "AppUITests", "target-membership": [ "SiriAIPrototypeUITests" ] },
     { "path": "../Library" },
     {
       "kind": "group",
       "name": "Products",
       "children": [
         { "path": "<PRODUCTS>/SiriAIPrototype.app", "id": "82ADC486AF7B4CC387859713", "type": "wrapper.application", "index": false },
+        { "path": "<PRODUCTS>/SiriAIPrototypeUITests.xctest", "id": "5C1A7E2B9D4F4E6A8B3C0D11", "type": "wrapper.cfbundle", "index": false },
       ],
     },
   ],
@@ -66,6 +68,33 @@
         "SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY": "YES",
         "SWIFT_VERSION": "6.0",
         "TARGETED_DEVICE_FAMILY": "1,2",
+      },
+    },
+    {
+      "name": "SiriAIPrototypeUITests",
+      "id": "A3D9F1C47E2B4B8C9E6F2A10",
+      "product": "Products/SiriAIPrototypeUITests.xctest",
+      "product-type": "bundle.ui-testing",
+      "build-phases": [
+        "compile-sources",
+        "frameworks",
+        "resources",
+      ],
+      "dependencies": [
+        "SiriAIPrototype",
+      ],
+      "build-settings": {
+        "CODE_SIGN_STYLE": "Automatic",
+        "CURRENT_PROJECT_VERSION": "1",
+        "GENERATE_INFOPLIST_FILE": "YES",
+        "MARKETING_VERSION": "1.0",
+        "PRODUCT_BUNDLE_IDENTIFIER": "com.akidon0000.SiriAIPrototypeUITests",
+        "PRODUCT_NAME": "$(TARGET_NAME)",
+        "SWIFT_APPROACHABLE_CONCURRENCY": "YES",
+        "SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY": "YES",
+        "SWIFT_VERSION": "6.0",
+        "TARGETED_DEVICE_FAMILY": "1,2",
+        "TEST_TARGET_NAME": "SiriAIPrototype",
       },
     },
   ],

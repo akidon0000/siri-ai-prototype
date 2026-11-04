@@ -70,6 +70,12 @@ intent の中身がチュートリアルのコードとほぼ同じ形になる�
 - **Xcode 27.1 は `.skillsbundle` を知らないので、`Skills.skillsbundle/Skills/memo-triage/SKILL.md` がアプリ直下に平らにコピーされる。**
   27.1 では Siri AI が動かないので実害は無い。27.3 beta の Xcode でバンドルのままコピーされるかは未確認。
 
+- **第8章の `testCreateMemo` は、`images`・`tags`・`urls` に空の値を渡す。**
+  `createReminder` スキーマはこの3つを必須かつ非オプショナルにしていて（オプショナルにするとビルドが落ちる）、
+  渡さないと App Intents Testing が値を聞き返されて `Code=206` で失敗する。チュートリアルのテストのコードにも足す必要がある。
+- **Siri Evaluations の評価は `#if canImport(SiriEvaluations)` で囲む。** 27.1 の SDK には無いので、コンパイルされない。
+- **UI テストのターゲット `SiriAIPrototypeUITests` は `App/AppUITests/` にある。** 手で確かめることは [App/README.md](App/README.md) のチェックリストにまとめた。
+
 ## 第1章で決めたこと
 
 Siri 連携は App Intents だけで書き、SiriKit（Intents / IntentsUI / `.intentdefinition`）は使わない。
@@ -101,6 +107,12 @@ cd Example/App && xcodebuild build -scheme SiriAIPrototype -destination 'platfor
 
 ```bash
 cd Example/App && xcodebuild build -scheme SiriAIPrototype -destination "generic/platform=iOS" -derivedDataPath build-device CODE_SIGNING_ALLOWED=NO
+```
+
+UI テスト（App Intents Testing）まで流すときは、アプリのスキームでテストする。
+
+```bash
+cd Example/App && xcodebuild test -scheme SiriAIPrototype -destination 'platform=iOS Simulator,name=iPhone 18 Pro'
 ```
 
 バンドルIDとスキーム名は `ios/` と同じにしてある（第8章のテストがバンドルIDで intent を引くため）。

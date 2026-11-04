@@ -17,6 +17,8 @@ public protocol MemoClient: Sendable {
     func allMemos() async throws -> [Memo]
     func update(_ id: UUID, _ change: MemoChange) async throws -> Memo
     func delete(_ ids: [UUID]) async throws
+    /// 全てのメモを `memos` に置き換える。
+    func replaceAll(with memos: [Memo]) async throws
     /// 同じタイトル（大文字・小文字は区別しない）のメモがあるか。
     func contains(title: String) async throws -> Bool
 

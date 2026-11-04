@@ -54,6 +54,10 @@ public actor TestMemoClient: MemoClient {
         storage.removeAll { ids.contains($0.id) }
     }
 
+    public func replaceAll(with memos: [Memo]) {
+        storage = memos
+    }
+
     public func contains(title: String) -> Bool {
         storage.contains { $0.title.caseInsensitiveCompare(title) == .orderedSame }
     }
