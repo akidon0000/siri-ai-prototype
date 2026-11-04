@@ -1,0 +1,20 @@
+{
+  "name": "siri-ai-tutorials",
+  "owner": {
+    "name": "akidon0000",
+    "url": "https://github.com/akidon0000"
+  },
+  "metadata": {
+    "description": "siri-ai-tutorials の内容を Claude Code から使うためのプラグイン"
+  },
+  "plugins": [
+    {
+      "name": "siri-ai",
+      "source": "./plugins/siri-ai",
+      "description": "iOS アプリを Siri・App Intents・Apple Intelligence・Siri AI Developer Preview に対応させる実装ガイド（siri-ai-tutorials 全8章）",
+      "version": "0.1.0",
+      "category": "development",
+      "keywords": ["ios", "siri", "app-intents", "apple-intelligence", "swift"]
+    }
+  ]
+}
