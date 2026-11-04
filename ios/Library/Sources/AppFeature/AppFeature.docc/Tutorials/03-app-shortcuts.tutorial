@@ -5,7 +5,8 @@
         アプリをインストールした直後からSiri・Spotlight・Shortcutsアプリで使えるようになる。
 
         教材: `docs/shortcuts/app-shortcuts.md`、
-        Human Interface Guidelines「App Shortcuts」
+        [App Shortcuts](https://developer.apple.com/documentation/appintents/app-shortcuts)、
+        [Human Interface Guidelines: App Shortcuts](https://developer.apple.com/design/human-interface-guidelines/app-shortcuts)
     }
 
     @Section(title: "AppShortcutsProviderを書く") {

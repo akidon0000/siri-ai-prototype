@@ -5,8 +5,9 @@
         最後にHuman Interface Guidelinesの応答文の指針を確認する。
 
         教材: `docs/apple-intelligence/siri-human-interface-guidelines.md`、
-        WWDC26「Explore advanced App Intents features for Siri and Apple Intelligence」、
-        Apple Developer Documentation「Displaying static and interactive snippets」
+        [Human Interface Guidelines: Siri](https://developer.apple.com/design/human-interface-guidelines/siri)、
+        [WWDC26: Explore advanced App Intents features for Siri and Apple Intelligence](https://developer.apple.com/videos/play/wwdc2026/343/)、
+        [Displaying static and interactive snippets](https://developer.apple.com/documentation/appintents/displaying-static-and-interactive-snippets)
     }
 
     @Section(title: "応答を言葉で返す") {

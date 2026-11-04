@@ -1,12 +1,13 @@
-@Tutorial(time: 30) {
+@Tutorial(time: 40) {
     @Intro(title: "Siri AI Developer Preview: ツールとapp skill") {
         Siri AI Developer Previewでは、スキーマに当てはまらないアプリ独自の操作とデータも、
         Siriが見つけて実行できるようになる。その入口が、App Intentを「ツール」にする `@AppIntent(.tool)` と、
         複数のツールの使い方を教える「app skill」。
 
         教材: `docs/apple-intelligence/siri-ai-developer-preview.md`、
-        Apple Developer Documentation「Bringing custom actions and content to Siri」
-        「Orchestrating complex actions with app skills」「ToolIntent」「GenerableEntity」
+        [Siri AI Developer Preview](https://developer.apple.com/documentation/appintents/siri-ai-developer-preview)、
+        [Bringing custom actions and content to Siri](https://developer.apple.com/documentation/appintents/bringing-custom-actions-and-content-to-siri)、
+        [Orchestrating complex actions with app skills](https://developer.apple.com/documentation/appintents/orchestrating-complex-actions-with-app-skills)
     }
 
     @Section(title: "Siriがツールを呼べる場面") {
@@ -18,12 +19,14 @@
             @Step {
                 アプリが前面にあるとき、Live Activityが動いているとき、Siriアプリでの会話にアプリが出てきたときは、
                 アプリ名を言わなくてもツールが使われる。例: 配車アプリのLive Activityを見ながら
-                「迎えの場所を変えて」と言う。
+                「迎えの場所を変えて」と言う
+                （[Siri AI Developer Preview](https://developer.apple.com/documentation/appintents/siri-ai-developer-preview)）。
             }
 
             @Step {
                 アプリが後ろにあるときは、依頼にアプリ名が入っていればツールが使われる。
-                また、そのアプリのEntityが検索結果に出てきたときにも使われる。
+                また、そのアプリのEntityが検索結果に出てきたときにも使われる
+                （[ToolIntent](https://developer.apple.com/documentation/appintents/toolintent)）。
             }
 
             @Step {
@@ -37,6 +40,7 @@
     @Section(title: "ツールにするintentを選ぶ") {
         @ContentAndMedia {
             どのintentをツールにするかはアプリが決める。全てをツールにすればよいわけではない。
+            判断の基準は [ToolIntent](https://developer.apple.com/documentation/appintents/toolintent) にまとまっている。
         }
 
         @Steps {
@@ -48,14 +52,14 @@
             @Step {
                 第5章でSiriが使えるスキーマ（`createReminder` など）に合わせたintentには、ツールの指定を付けない。
                 スキーマに合わせた時点でSiriに公開されていて、付けるとビルドエラーになる。
-                Shortcuts専用ドメインのスキーマ（例: Booksの `openBook`）だけは、
-                `@AppIntent(.tool, schema:)` のように併用できる。
+                例外はShortcuts専用ドメインのスキーマで、これは次のセクションで扱う。
             }
 
             @Step {
                 ウィジェットの設定用intentのように実行する操作を持たないもの、
                 ショートカットの途中の1手順としてしか意味を持たないもの、
                 注文と支払いのように人が明示的に始めるべき副作用を持つものも、ツールにしない。
+                `WidgetConfigurationIntent` でも、`perform()` で独自の操作をしているならツールにできる。
             }
 
             @Step {
@@ -90,18 +94,68 @@
             }
 
             @Step {
-                型の上に `@AppIntent(.tool)` を付ける。マクロが `ToolIntent` への準拠を足し、
-                このintentはSiriが呼べるツールになる。変更はこの1行だけ。
+                型の上に `@AppIntent(.tool)` を付ける。変更はこの1行だけ。
+                [AppIntent(_:)](https://developer.apple.com/documentation/appintents/appintent(_:)) マクロは、
+                型に `ToolIntent` への準拠を足す。型に `@available` があればそれを、無ければ `ToolIntent` 側の
+                availabilityを引き継ぐ。
 
                 @Code(name: "SetMemoPriorityIntent.swift", file: "SetMemoPriorityIntent-04.swift", previousFile: "SetMemoPriorityIntent-03.swift")
             }
 
             @Step {
+                マクロに渡している `.tool` は
+                [AppIntentTraits](https://developer.apple.com/documentation/appintents/appintenttraits) の値で、
+                intentが担う役割を表す。`.tool` のように1つでも、`[.tool]` のように配列でも書ける。
+                マクロは書かれたままの値を読むので、変数や計算した値は渡せない。
+            }
+
+            @Step {
                 `description` と、各 `@Parameter` の `description` を足す。Siriのモデルは、
                 これらを読んでツールが何をするか・何を渡せばよいかを判断する。
-                アプリを知らない人に向けて書き、値の形式・範囲・単位があれば書いておく。
+                アプリを知らない人に向けて書き、文字列の形式・数値の範囲・単位があれば書いておく
+                （[ToolIntent](https://developer.apple.com/documentation/appintents/toolintent)、
+                [Bringing custom actions and content to Siri](https://developer.apple.com/documentation/appintents/bringing-custom-actions-and-content-to-siri)）。
 
                 @Code(name: "SetMemoPriorityIntent.swift", file: "SetMemoPriorityIntent-05.swift", previousFile: "SetMemoPriorityIntent-04.swift")
+            }
+        }
+    }
+
+    @Section(title: "参考: Shortcuts専用スキーマをツールにする") {
+        @ContentAndMedia {
+            Shortcutsアプリでだけ使えるドメイン（Journaling・Booksなど）のスキーマは、Siriには公開されない。
+            これらのスキーマに合わせたintentは、
+            [AppIntent(_:schema:)](https://developer.apple.com/documentation/appintents/appintent(_:schema:))
+            でツールにもできる。Memoアプリには当てはまるドメインが無いので、日記アプリを例にする。
+        }
+
+        @Steps {
+            @Step {
+                Journalingドメインの `createEntry` スキーマに合わせたintentを作る。
+                `message` と `title` から書き始める。
+
+                @Code(name: "CreateJournalEntryIntent.swift", file: "CreateJournalEntryIntent-01.swift")
+            }
+
+            @Step {
+                スキーマが定める残りのプロパティ `location`・`mediaItems`・`entryDate` を足す。
+
+                @Code(name: "CreateJournalEntryIntent.swift", file: "CreateJournalEntryIntent-02.swift", previousFile: "CreateJournalEntryIntent-01.swift")
+            }
+
+            @Step {
+                `perform()` で日記を作り、作った日記のEntityを返す。この時点では
+                Shortcutsアプリでしか使えない。
+
+                @Code(name: "CreateJournalEntryIntent.swift", file: "CreateJournalEntryIntent-03.swift", previousFile: "CreateJournalEntryIntent-02.swift")
+            }
+
+            @Step {
+                `@AppIntent(schema:)` を `@AppIntent(.tool, schema:)` に置き換える。
+                `@AppIntent(schema:)` が付けるものは全てそのまま付き、それに加えて `ToolIntent` への準拠が付く。
+                Siriで使えるドメイン（`.messages.sendMessage` など）のスキーマにこの書き方をするとビルドエラーになる。
+
+                @Code(name: "CreateJournalEntryIntent.swift", file: "CreateJournalEntryIntent-04.swift", previousFile: "CreateJournalEntryIntent-03.swift")
             }
         }
     }
@@ -109,15 +163,27 @@
     @Section(title: "Siriに値を組み立ててもらう") {
         @ContentAndMedia {
             「優先度が高い買い物のメモを探して」のような依頼では、検索条件そのものは
-            アプリのデータベースに存在しない。こうした値は、Siriが依頼の文から直接組み立てられるようにする。
+            アプリのデータベースに存在しない。こうした値は、Siriが依頼の文から直接組み立てられるようにする
+            （[GenerableEntity](https://developer.apple.com/documentation/appintents/generableentity)）。
         }
 
         @Steps {
             @Step {
                 検索条件を表す `MemoSearch` を `TransientAppEntity` として作り、`@AppEntity(.generable)` を付ける。
-                マクロが `GenerableEntity` への準拠を足し、Siriはクエリを呼ばずにこの値を作れるようになる。
+                [AppEntity(_:)](https://developer.apple.com/documentation/appintents/appentity(_:)) マクロが
+                `GenerableEntity` への準拠を足し、Siriはクエリを呼ばずにこの値を作れるようになる。
+                マクロを付けられるのは `TransientAppEntity` に準拠した型だけ。
 
                 @Code(name: "MemoSearch.swift", file: "MemoSearch-01.swift")
+            }
+
+            @Step {
+                `.generable` は
+                [AppEntityTraits](https://developer.apple.com/documentation/appintents/appentitytraits) の値。
+                `AppIntentTraits` と同じく、`.generable` でも `[.generable]` でも書けて、計算した値は渡せない。
+                スキーマに合わせた一時的なEntityをGenerableにしたいときは、`@AppEntity(schema:)` の代わりに
+                [AppEntity(_:schema:)](https://developer.apple.com/documentation/appintents/appentity(_:schema:))
+                を使い、`@AppEntity(.generable, schema: ...)` と書く。
             }
 
             @Step {
@@ -162,13 +228,15 @@
     @Section(title: "見せてよい範囲を決める") {
         @ContentAndMedia {
             Entityの情報は、既定では認証なしでSiriやShortcutsに表示される。
-            見られたくない値はプロパティごとに制限する。
+            見られたくない値はプロパティごとに制限する
+            （[Bringing custom actions and content to Siri](https://developer.apple.com/documentation/appintents/bringing-custom-actions-and-content-to-siri)）。
         }
 
         @Steps {
             @Step {
                 鍵付きメモの本文を `@Property` で足し、`authenticationPolicy` に
                 `.requiresLocalDeviceAuthentication` を指定する。Siriは本文を含む応答の前に端末の認証を求める。
+                Entity全体の既定は `static let authenticationPolicy` で決め、プロパティ側で上書きする。
                 プロパティの指定が効くのはSiriの応答だけなので、intentの結果そのものが機微な情報なら、
                 intentの側で認証を要求する。
 
@@ -177,10 +245,92 @@
 
             @Step {
                 同期用のリビジョン番号のように、アプリの外では意味が無い値には `visibility: .internal` を付ける。
-                Siri・Shortcutsには出ず、アプリとそのextension（ウィジェットなど）だけが使える。
-                `.internal` を `indexingKey` と一緒に使うとSpotlightから見えてしまうので、併用しない。
+                [IntentVisibility](https://developer.apple.com/documentation/appintents/intentvisibility) には
+                Siri・Shortcutsにも見せる `.default` と、アプリとそのextension（ウィジェットなど）だけに見せる
+                `.internal` がある。`.internal` を `indexingKey` や `customIndexingKey` と一緒に使うと
+                Spotlightから見えてしまうので、併用しない。
 
                 @Code(name: "MemoEntity.swift", file: "MemoEntity-13.swift", previousFile: "MemoEntity-12.swift")
+            }
+        }
+    }
+
+    @Section(title: "Siriに見せるプロパティを増やす: ComputedPropertyとDeferredProperty") {
+        @ContentAndMedia {
+            保存しているプロパティだけでは、Siriが答えられる質問は限られる。
+            「期限切れのメモは？」に答えるには、保存していない値も見せる必要がある。
+            計算で出せる値は `@ComputedProperty`、取得に時間がかかる値は `@DeferredProperty` で公開する。
+        }
+
+        @Steps {
+            @Step {
+                `@ComputedProperty` で、期限切れかどうかを返す `isOverdue` を足す。getアクセサ（必要ならsetも）を持つ
+                計算プロパティを、Siriやショートカットが読めるEntityのプロパティにする
+                （[ComputedProperty(title:description:authenticationPolicy:visibility:)](https://developer.apple.com/documentation/appintents/computedproperty(title:description:authenticationpolicy:visibility:))）。
+                `@Property` と同じく `title`・`description`・`authenticationPolicy`・`visibility` を指定できる。
+
+                @Code(name: "MemoEntity.swift", file: "MemoEntity-14.swift", previousFile: "MemoEntity-13.swift")
+            }
+
+            @Step {
+                メモ本文のテキストを返す `noteText` を足し、`indexingKey: \.contentDescription` を指定する。
+                値がSpotlightの既存の属性 `contentDescription` として索引に入り、第6章のセマンティック検索で本文が引っかかる
+                （[ComputedProperty(…, indexingKey:)](https://developer.apple.com/documentation/appintents/computedproperty(title:description:authenticationpolicy:visibility:indexingkey:))）。
+                キーの型 `CSSearchableItemAttributeSet` を使うので `CoreSpotlight` をimportする。
+
+                @Code(name: "MemoEntity.swift", file: "MemoEntity-15.swift", previousFile: "MemoEntity-14.swift")
+            }
+
+            @Step {
+                Spotlightに該当する属性が無い値は、`customIndexingKey` にアプリ独自のキーを渡す。
+                ここではリスト名を `CSCustomAttributeKey` で索引に入れる
+                （[ComputedProperty(…, customIndexingKey:)](https://developer.apple.com/documentation/appintents/computedproperty(title:description:authenticationpolicy:visibility:customindexingkey:))）。
+                キー名は他のアプリと衝突しないよう、アプリと型の名前を含める。
+
+                @Code(name: "MemoEntity.swift", file: "MemoEntity-16.swift", previousFile: "MemoEntity-15.swift")
+            }
+
+            @Step {
+                共有相手の名前のように、サーバーへの問い合わせが要る値は `@DeferredProperty` にし、
+                `get async` で返す。値はSiriが必要としたときだけ取りに来る
+                （[DeferredProperty(title:description:authenticationPolicy:visibility:)](https://developer.apple.com/documentation/appintents/deferredproperty(title:description:authenticationpolicy:visibility:))）。
+                ここでは `authenticationPolicy` で認証も求めている。
+
+                @Code(name: "MemoEntity.swift", file: "MemoEntity-17.swift", previousFile: "MemoEntity-16.swift")
+            }
+
+            @Step {
+                `indexingKey` を付けない `@DeferredProperty` は、`IndexedEntity` を索引に入れるときに含まれない。
+                索引に入れたいときは
+                [DeferredProperty(…, indexingKey:)](https://developer.apple.com/documentation/appintents/deferredproperty(title:description:authenticationpolicy:visibility:indexingkey:))
+                を使う。その場合、Spotlightは索引を作るたびに値を取りに来るので、取得が重いと索引作成も遅くなる
+                （[Making app entities available in Spotlight](https://developer.apple.com/documentation/appintents/making-app-entities-available-in-spotlight)）。
+            }
+        }
+    }
+
+    @Section(title: "Siriにカスタムの内容を見つけてもらう") {
+        @ContentAndMedia {
+            ツールを作っても、Siriがパラメータに入れるEntityを見つけられなければ使われない。
+            [Bringing custom actions and content to Siri](https://developer.apple.com/documentation/appintents/bringing-custom-actions-and-content-to-siri)
+            は、カスタムの操作とデータをSiriに届けるための準備として、次の点を挙げている。
+        }
+
+        @Steps {
+            @Step {
+                Entityを見つけられるようにする。第6章のSpotlight索引に入れるのが基本で、索引に入れない場合は、
+                `EnumerableEntityQuery` で全件を返すか、パラメータに `DynamicOptionsProvider` で選択肢を出す方法でも
+                Siriが見つけられる。
+            }
+
+            @Step {
+                第6章の画面の注釈とdonationは、スキーマに合わせていないカスタムのEntityにもそのまま使える。
+                「このメモ」のような指示語や、あいまいな依頼の解釈に効く。
+            }
+
+            @Step {
+                あるアプリのEntityを別のアプリへ渡すには、Entityを `Transferable` に準拠させておく（第6章）。
+                「このメモをメールで送って」は、Memoアプリの `MemoEntity` がメールアプリで読める形に変換できて初めて成り立つ。
             }
         }
     }
@@ -189,7 +339,8 @@
         @ContentAndMedia {
             1つのツールは1つの操作しかしない。「溜まったメモを整理して」のような依頼では、
             探す・完了にする・優先度を変えるを組み合わせる必要があるが、個々のツールの説明だけでは
-            Siriが組み合わせ方を判断できないことがある。そこで、追加の指示をapp skillとして渡す。
+            Siriが組み合わせ方を判断できないことがある。そこで、追加の指示をapp skillとして渡す
+            （[Orchestrating complex actions with app skills](https://developer.apple.com/documentation/appintents/orchestrating-complex-actions-with-app-skills)）。
             形式は `name` と `description` のfrontmatterとMarkdownの本文で、Claude Codeの
             `.claude/skills/*/SKILL.md` と同じ形をしている。
         }
@@ -233,7 +384,8 @@
     @Section(title: "Siri Integration Advisor") {
         @ContentAndMedia {
             Developer PreviewのXcodeには、App Intentsの実装を読んでSiri向けの改善点を示す
-            Siri Integration Advisorが入っている。
+            Siri Integration Advisorが入っている
+            （[Bringing custom actions and content to Siri](https://developer.apple.com/documentation/appintents/bringing-custom-actions-and-content-to-siri)）。
         }
 
         @Steps {

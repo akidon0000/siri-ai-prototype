@@ -6,8 +6,9 @@
         Spotlightでの確認、Siriに実際に話しかける確認で、Siri AI Developer Previewでは
         最後の段階をSiri Evaluationsで自動化できる。
 
-        教材: Apple Developer Documentation「Verifying your App Intents implementation」
-        「Testing your App Intents code」「Siri Evaluations」
+        教材: [Verifying your App Intents implementation](https://developer.apple.com/documentation/appintents/verifying-your-app-intents-implementation)、
+        [Testing your App Intents code](https://developer.apple.com/documentation/appintentstesting/testing-your-app-intents-code)、
+        [Siri Evaluations](https://developer.apple.com/documentation/sirievaluations)
     }
 
     @Section(title: "App Intents Testingで統合テストを書く") {

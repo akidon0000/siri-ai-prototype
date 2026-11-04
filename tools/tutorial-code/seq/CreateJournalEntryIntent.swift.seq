@@ -1,0 +1,16 @@
+#name CreateJournalEntryIntent.swift
+1|import AppIntents
+1|
+1-3|@AppIntent(schema: .journal.createEntry)
+4|@AppIntent(.tool, schema: .journal.createEntry)
+1|struct CreateJournalEntryIntent {
+1|    var message: AttributedString
+1|    var title: String?
+2|    var location: GeoToolbox.PlaceDescriptor?
+2|    var mediaItems: [IntentFile]
+2|    var entryDate: Date?
+3|
+3|    func perform() async throws -> some ReturnsValue<JournalEntryEntity> {
+3|        .result(value: try await JournalStore.shared.add(message: message, title: title))
+3|    }
+1|}

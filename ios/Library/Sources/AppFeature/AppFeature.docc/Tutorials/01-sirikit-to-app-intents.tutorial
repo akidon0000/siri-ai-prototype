@@ -5,7 +5,8 @@
         既存ユーザーのショートカットを壊さずにApp Intentsへ移行する方法を押さえる。
 
         教材: `docs/sirikit/sirikit.md`、
-        Apple Developer Documentation「CustomIntentMigratedAppIntent」
+        [SiriKit](https://developer.apple.com/documentation/sirikit)、
+        [CustomIntentMigratedAppIntent](https://developer.apple.com/documentation/appintents/customintentmigratedappintent)
     }
 
     @Section(title: "SiriKitのintentハンドラ") {

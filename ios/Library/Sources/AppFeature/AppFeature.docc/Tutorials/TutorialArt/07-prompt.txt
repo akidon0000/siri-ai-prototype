@@ -6,6 +6,8 @@ Siri AI Developer Preview 向けに、スキーマに無い Memo の操作をツ
 - MemoSearch (@AppEntity(.generable), TransientAppEntity) と、それを受け取る FindMemosIntent (@AppIntent(.tool)) を追加する
 - MemoEntity に鍵付き本文 (authenticationPolicy: .requiresLocalDeviceAuthentication) と
   内部用リビジョン (visibility: .internal) を足す
+- MemoEntity に @ComputedProperty の isOverdue / noteText (indexingKey: \.contentDescription) /
+  listName (customIndexingKey) と、@DeferredProperty の collaboratorNames を足す
 - アプリのターゲットに Skills.skillsbundle を追加し、Skills/memo-triage/SKILL.md を書く
 - Xcode の Siri Integration Advisor の指摘を確認して、直した内容をまとめる
 

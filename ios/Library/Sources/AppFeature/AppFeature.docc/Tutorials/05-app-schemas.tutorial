@@ -6,7 +6,9 @@
         この章では、Memoアプリを Reminders ドメインのスキーマに合わせる。
 
         教材: `docs/apple-intelligence/apple-intelligence-and-siri-ai.md`、
-        Apple Developer Documentation「App schema domains」「Making actions and content discoverable by Apple Intelligence」
+        [App schema domains](https://developer.apple.com/documentation/appintents/app-schema-domains)、
+        [Making actions and content discoverable by Apple Intelligence](https://developer.apple.com/documentation/appintents/making-actions-and-content-discoverable-by-apple-intelligence)、
+        [Reminders](https://developer.apple.com/documentation/appintents/app-schema-domain-reminders)
     }
 
     @Section(title: "ドメインを選ぶ") {
