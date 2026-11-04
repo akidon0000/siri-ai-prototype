@@ -6,7 +6,6 @@
 1|struct MemoSnippetIntent: SnippetIntent {
 1|    static let title: LocalizedStringResource = "メモのスニペット"
 2|
-2|    // 表示するメモ
 2|    @Parameter var memo: MemoEntity
 3|
 3|    init() {}

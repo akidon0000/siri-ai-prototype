@@ -16,9 +16,9 @@ Apple Intelligence/Siri AI → Siri AI Developer Preview (ToolIntent) の流れ�
 各チュートリアルの教材は、このリポジトリの `docs/apple-doc/` 配下に保存してある
 Apple Developer Documentation の原文（`update-apple-siri-docs` スキルで取得したもの）。
 
-Created by Dan Akiyama ([@akidon0000](https://github.com/akidon0000))。
-Claude Opus 5.5で作ったため、誤りを含むことがある。見つけたら
-[akidon0000/siri-ai-tutorials](https://github.com/akidon0000/siri-ai-tutorials) にPRを送ってほしい。
+Created by Opus 5.5 with Dan Akiyama ([@akidon0000](https://github.com/akidon0000))
+
+誤りや不足を見つけたら 気軽に [akidon0000/siri-ai-tutorials](https://github.com/akidon0000/siri-ai-tutorials) にPRを。
 
 ## Topics
 

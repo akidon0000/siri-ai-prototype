@@ -5,13 +5,11 @@ import AppIntents
 struct MemoListEntity {
     let id: UUID
     var name: String
-    // スキーマが求める残りの必須プロパティ
     var type: MemoListType
 
     var displayRepresentation: DisplayRepresentation {
         DisplayRepresentation(title: "\(name)")
     }
 
-    // リストを探すクエリ
     static let defaultQuery = MemoListQuery()
 }

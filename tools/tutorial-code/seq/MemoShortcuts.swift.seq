@@ -15,7 +15,6 @@
 4|                "\(.applicationName)にメモを追加して",
 4|                "\(.applicationName)に優先度\(\.$priority)のメモを追加",
 4|            ],
-3|            // ShortcutsアプリやSpotlightのタイルに出る、短い名前とアイコン
 3|            shortTitle: "メモを追加",
 3|            systemImageName: "note.text.badge.plus"
 2|        )
@@ -29,7 +28,6 @@
 5|        )
 2|    }
 6|
-6|    // Shortcutsアプリでのタイルの色
 6|    static let shortcutTileColor: ShortcutTileColor = .orange
 7|
 7|    // この言い方ではアプリを起動しない、というフレーズ

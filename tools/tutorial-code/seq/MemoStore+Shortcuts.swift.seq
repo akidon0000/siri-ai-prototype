@@ -2,7 +2,6 @@
 1|import AppIntents
 1|
 1|extension MemoStore {
-1|    // メモが増えたり減ったりしたら呼ぶ
 1|    func memosDidChange() {
 1|        // フレーズの \(\.$memo) に入るタイトルの一覧を、suggestedEntities() から読み直してもらう
 1|        MemoShortcuts.updateAppShortcutParameters()

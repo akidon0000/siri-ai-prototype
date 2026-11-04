@@ -6,7 +6,6 @@ struct MemoEntity: AppEntity {
     var title: String
     var isDone: Bool
 
-    // ShortcutsアプリなどでのEntityの型名
     static let typeDisplayRepresentation: TypeDisplayRepresentation = "メモ"
 
     // Siriの応答・候補の一覧・Spotlightでメモ1件を表示するときの見た目

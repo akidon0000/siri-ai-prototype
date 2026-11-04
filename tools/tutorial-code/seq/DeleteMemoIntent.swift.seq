@@ -9,7 +9,6 @@
 1-2|
 1-2|    @Parameter(title: "メモ")
 1-2|    var memo: MemoEntity
-3|    // スキーマが定める、削除するメモの配列
 3|    var entities: [MemoEntity]
 2|
 2|    func perform() async throws -> some IntentResult {

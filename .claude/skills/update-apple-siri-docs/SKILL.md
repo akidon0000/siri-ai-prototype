@@ -40,7 +40,7 @@ Siri 関連ページを**毎回同じ手順**で見つけて本文をそのま�
 |---|---|
 | sirikit | `https://developer.apple.com/documentation/sirikit` |
 | app-intents | `https://developer.apple.com/documentation/appintents` |
-| apple-intelligence | `https://developer.apple.com/documentation/appintents/apple-intelligence-and-siri-ai`, `https://developer.apple.com/documentation/appintents/siri-ai-developer-preview`, `https://developer.apple.com/design/human-interface-guidelines/siri` |
+| apple-intelligence | `https://developer.apple.com/documentation/appintents/apple-intelligence-and-siri-ai`, `https://developer.apple.com/documentation/appintents/siri-ai-developer-preview`, `https://developer.apple.com/documentation/sirievaluations`, `https://developer.apple.com/design/human-interface-guidelines/siri` |
 | shortcuts | `https://developer.apple.com/documentation/appintents/app-shortcuts` |
 
 ルートページ自体は既に `sources.yaml` にあるので、新規に見つかるのは主にそこから
@@ -52,6 +52,9 @@ SiriKit / Shortcuts と直接関係するかで判断する。
 「Tool support」「Entity support」の各リンク（`@AppIntent`、`AppIntentTraits`、`IntentVisibility`、
 `ToolIntent`、`GenerableEntity`、`@AppEntity`、`@ComputedProperty`、`@DeferredProperty`、`AppEntityTraits` など）を
 候補に入れ、`kind: tool` で保存する。Topics に新しい項目が増えたら、それも同じ扱いで追加する。
+Siri AI 用のフレームワーク **Siri Evaluations**（`/documentation/sirievaluations`）は、Developer Preview の Topics ではなく本文からしか
+リンクされていないので、独立したルートページとして扱う。トップページは `kind: article`、その Topics にある各シンボル
+（`SiriService`、`SiriScenario`、`UserTurn`、`Calls` など）は `kind: tool` で `apple-intelligence/` に保存する。
 上記以外のAPIリファレンス（SiriKit の個々のクラス、`AppEntity` や `AppIntent` 本体など、Siri AI のツールと直接関係しないシンボル）は
 対象外。
 - 同名でオーバーロードがあるマクロ（`ComputedProperty` など）は、オーバーロードごとに別ページとして保存する。

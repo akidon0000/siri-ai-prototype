@@ -182,7 +182,7 @@
         }
     }
 
-    @Section(title: "【iOS 27.3 beta】Siri AIのカードに出す") {
+    @Section(title: "Siri AIのカードに出す") {
         @ContentAndMedia {
             Siri AI経由でintentが実行されたとき、システムは `IntentDialog` や `ShowsSnippetView` を
             表示しないことがある。Siri AIがアプリのデータを見せるときに使うのは、Entity側に用意したカード。

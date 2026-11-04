@@ -7,7 +7,6 @@
 2|    var attributeSet: CSSearchableItemAttributeSet {
 2-2|        CSSearchableItemAttributeSet()
 3|        let attributes = CSSearchableItemAttributeSet()
-3|        // タグをキーワードにして、タグの語でも見つかるようにする
 3|        attributes.keywords = Array(tags)
 3|        return attributes
 2|    }

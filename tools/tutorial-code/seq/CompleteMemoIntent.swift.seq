@@ -8,7 +8,6 @@
 6|// 新規アプリでは要らない。SiriKitから移行するときだけ準拠させる
 5|struct CompleteMemoIntent: AppIntent, CustomIntentMigratedAppIntent {
 5|    static let intentClassName = "CompleteMemoIntent"
-1|    // ShortcutsアプリやSpotlightに表示される操作名
 1|    static let title: LocalizedStringResource = "メモを完了にする"
 2|
 2|    // 値が無ければ、システムが MemoEntity の候補を出して聞き返す

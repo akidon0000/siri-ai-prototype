@@ -3,7 +3,6 @@ import AppIntents
 // 複数のメモを消す deleteReminders スキーマ。準拠先は DeleteIntent
 @AppIntent(schema: .reminders.deleteReminders)
 struct DeleteMemoIntent: DeleteIntent {
-    // スキーマが定める、削除するメモの配列
     var entities: [MemoEntity]
 
     func perform() async throws -> some IntentResult {

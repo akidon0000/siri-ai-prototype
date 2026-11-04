@@ -4,6 +4,5 @@ import AppIntents
 enum MemoPriority: String, AppEnum {
     case low, normal, high
 
-    // ShortcutsアプリやSiriでの型の名前
     static let typeDisplayRepresentation: TypeDisplayRepresentation = "優先度"
 }

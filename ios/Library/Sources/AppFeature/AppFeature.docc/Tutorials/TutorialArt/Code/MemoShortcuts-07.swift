@@ -11,7 +11,6 @@ struct MemoShortcuts: AppShortcutsProvider {
                 "\(.applicationName)にメモを追加して",
                 "\(.applicationName)に優先度\(\.$priority)のメモを追加",
             ],
-            // ShortcutsアプリやSpotlightのタイルに出る、短い名前とアイコン
             shortTitle: "メモを追加",
             systemImageName: "note.text.badge.plus"
         )
@@ -25,7 +24,6 @@ struct MemoShortcuts: AppShortcutsProvider {
         )
     }
 
-    // Shortcutsアプリでのタイルの色
     static let shortcutTileColor: ShortcutTileColor = .orange
 
     // この言い方ではアプリを起動しない、というフレーズ

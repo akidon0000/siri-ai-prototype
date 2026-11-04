@@ -14,7 +14,6 @@
 1-7|    var isDone: Bool
 8|    // スキーマでの完了状態の名前は isCompleted
 8|    var isCompleted: Bool
-5|    // 共有相手の一覧
 5|    var sharedWith: [String]
 9|    // ここからはスキーマが求めるプロパティ。対応していない機能は nil や空の値を返す
 9|    var note: AttributedString?
@@ -73,7 +72,6 @@
 18|        }
 18|    }
 2-6|
-2-6|    // ShortcutsアプリなどでのEntityの型名
 2-6|    static let typeDisplayRepresentation: TypeDisplayRepresentation = "メモ"
 3|
 3|    // Siriの応答・候補の一覧・Spotlightでメモ1件を表示するときの見た目

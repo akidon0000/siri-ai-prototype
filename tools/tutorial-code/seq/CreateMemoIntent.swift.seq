@@ -1,13 +1,11 @@
 #name CreateMemoIntent.swift
 1|import AppIntents
 1|
-1|// Remindersドメインの createReminder スキーマに合わせる
 1|@AppIntent(schema: .reminders.createReminder)
 1|struct CreateMemoIntent {
 1|    // スキーマのプロパティ。perform() を呼ぶ前にシステムが値を入れる
 1|    var title: String
 1|    var list: MemoListEntity?
-2|    // ここからはスキーマが定める残りのプロパティ
 2|    var note: AttributedString?
 2|    var isFlagged: Bool?
 2|    var images: [IntentFile]

@@ -1,80 +1,50 @@
 # siri-ai-tutorials
 
-SiriKit から Siri AI までを、Memoアプリのコードを組み立てながら学ぶチュートリアル（DocC）。
-あわせて、教材にした Apple Developer Documentation の Siri / Siri AI (Apple Intelligence) 関連ページを
-そのまま git 管理し、改訂の差分を `git log` / `git diff` で追えるようにしている。
+Memoアプリを1ステップ数行ずつ組み立てながら、SiriKit から Siri AI Developer Preview（iOS 27.3 beta）までを順に学ぶ DocC チュートリアル。
 
-Created by Dan Akiyama ([@akidon0000](https://github.com/akidon0000))。
-Claude Opus 5.5で作ったため、誤りを含むことがある。見つけたらPRを送ってほしい。
+**読む:** [akidon0000.github.io/siri-ai-tutorials/tutorials/](https://akidon0000.github.io/siri-ai-tutorials/tutorials/)
 
-チュートリアルはブラウザで読める: [akidon0000.github.io/siri-ai-tutorials/tutorials/](https://akidon0000.github.io/siri-ai-tutorials/tutorials/)
+Created by Opus 5.5 with Dan Akiyama ([@akidon0000](https://github.com/akidon0000))
 
-## Apple公式ドキュメントのアーカイブ（docs/apple-doc/）
+誤りや不足を見つけたら 気軽に [akidon0000/siri-ai-tutorials](https://github.com/akidon0000/siri-ai-tutorials) にPRを。
 
-`docs/adr/`（意思決定の記録）や `docs/superpowers/`（設計メモ）と区別するため、Appleの原文は `docs/apple-doc/` に置く。
-対象カテゴリは以下の4つ（それぞれ `docs/apple-doc/<category>/` に対応）。
+## 章立て
 
-| カテゴリ | ディレクトリ | 内容 |
-|---|---|---|
-| SiriKit | `docs/apple-doc/sirikit/` | 旧世代の Intents / IntentsUI フレームワーク |
-| App Intents | `docs/apple-doc/app-intents/` | App Intents フレームワーク本体 |
-| Apple Intelligence / Siri | `docs/apple-doc/apple-intelligence/` | Apple Intelligence と Siri AI への統合、Siri AI Developer Preview、Siri の HIG |
-| Shortcuts | `docs/apple-doc/shortcuts/` | App Shortcuts（Shortcuts アプリ・Siri からの呼び出し） |
+| 章 | 内容 |
+|---|---|
+| 1 | SiriKit から App Intents へ |
+| 2 | App Intents の基礎 |
+| 3 | App Shortcuts でフレーズを固定する |
+| 4 | Siri との会話を設計する |
+| 5 | スキーマで Apple Intelligence に載せる |
+| 6 | Apple Intelligence に文脈を渡す |
+| 7 | Siri AI Developer Preview【iOS 27.3 beta】 |
+| 8 | 検証する |
 
-## ファイル形式
+各ステップでは、そのステップで足した行がハイライトされる。章末には Claude Code に渡すワークショップ用プロンプトがあり、章の内容を実際に実装してビルド・テスト・シミュレータで確かめるところまでを任せられる。
 
-各ページは1ファイル1ページで、frontmatter に出典情報を付けて本文をそのまま保存する。
+ブラウザのほか、Xcode で `ios/Library` を開いて Build Documentation（⌃⇧⌘D）でも読める。
 
-```markdown
----
-source_url: https://developer.apple.com/documentation/...
-title: ページタイトル
-category: sirikit | app-intents | apple-intelligence | shortcuts
-kind: article | tool
-fetched_at: 2026-11-04T00:00:00Z
----
+## リポジトリの中身
 
-(本文)
-```
+| パス | 中身 |
+|---|---|
+| `ios/Library/Sources/AppFeature/AppFeature.docc/` | チュートリアル本体（`.tutorial`） |
+| `tools/tutorial-code/` | チュートリアルに載せるコードの元ファイル（`seq/*.seq`）と生成スクリプト |
+| `ios/App`、`ios/Library` | Memoアプリ（SwiftUI の殻と SPM パッケージ）。Siri 連携はまだ入っておらず、章末プロンプトで実装していく |
+| `docs/apple-doc/` | 教材にした Apple Developer Documentation の原文。改訂を `git diff` で追う |
+| `docs/adr/` | 構成上の決定の記録 |
 
-`kind` はページの種類。`article` は記事・概要・HIG・APIコレクション、`tool` は Siri AI のツール関連のAPIリファレンス
-（`IntentVisibility`、`ToolIntent`、`GenerableEntity`、`@AppIntent` など、シンボル単位のページ）。
+## チュートリアルを直すとき
 
-`sources.yaml` が追跡中ページの一覧（マニフェスト）。カテゴリ・種類・ローカルパス・初回取得日・最終取得日を持つ。
+コードは `tools/tutorial-code/seq/` を編集して `python3 tools/tutorial-code/generate.py` で生成する。生成先の `TutorialArt/Code/` は直接触らない。`.seq` の書式、1ステップの行数制限、`.tutorial` の改名時のリダイレクト、PR 前の確認は [CONTRIBUTING.md](./CONTRIBUTING.md) にまとめてある。
 
-著作権に関する注記は [DISCLAIMER.md](./DISCLAIMER.md) を参照。
+手元での確認は `xcrun docc convert` が警告0件で通ればよい（コマンドは [docc-pages.yml](./.github/workflows/docc-pages.yml) と同じ）。`main` に push すると GitHub Pages に自動で再公開される。
 
-## 更新の手順（再現可能にするためのスキル）
+## Apple ドキュメントのアーカイブ
 
-ページの再取得・新規追加・コミット・PR作成は、このリポジトリ同梱の Claude Code スキル
-[`.claude/skills/update-apple-siri-docs/SKILL.md`](./.claude/skills/update-apple-siri-docs/SKILL.md)
-に手順を固定してある。Claude Code で次のように呼び出す。
+`docs/apple-doc/<category>/` に、Siri 関連のページを1ページ1ファイルで保存している。カテゴリは `sirikit`、`app-intents`、`apple-intelligence`、`shortcuts` の4つ。追跡中のページ一覧は [sources.yaml](./sources.yaml)。
 
-```
-このリポジトリで Apple の Siri / Siri AI 関連ドキュメントを更新して
-```
+再取得・追加・PR 作成までの手順は Claude Code のスキル [update-apple-siri-docs](./.claude/skills/update-apple-siri-docs/SKILL.md) に固定してある。このリポジトリで「Apple の Siri 関連ドキュメントを更新して」と頼めば動く。
 
-スキルは「固定した検索方法」で対象ページを洗い出し、`sources.yaml` と差分がある
-ページだけを更新し、ブランチを切って commit → push → PR 作成まで行う。
-
-## チュートリアルとMemoアプリ（ios/）
-
-`docs/apple-doc/` のドキュメントを教材に、Siri/App Intents統合を学びながら実装する。
-
-- `ios/App` — SwiftUIアプリの殻（Xcodeプロジェクト）
-- `ios/Library` — SPMパッケージ（Clients / ClientsLive / Components / AppFeature / TestSupport）。
-  pickle-app (akidon0000) のアーキテクチャを踏襲。Siri関連の実機能は、各章のプロンプトで実装していく。
-- `ios/Library/Sources/AppFeature/AppFeature.docc` — DocC Tutorial形式のチュートリアル
-  （SiriKitからApp Intentsへ → App Intentsの基礎 → App Shortcuts → Siriとの会話の設計 →
-  スキーマ → Apple Intelligenceに文脈を渡す → Siri AI Developer Preview → 検証、の8章）。
-  Memoアプリのコードを1ステップ数行ずつ組み立て、変えた行がハイライトされる。
-  Xcodeの「Build Documentation」（⌃⇧⌘D）で読める。各章末に、Claude Codeに実装させて動かして確かめるワークショップ用のプロンプトがある
-  （章のURL、作るもの、ビルド・テスト・シミュレータでの確認手順、報告の形式が入っている）。
-  チュートリアルのコードは `tools/tutorial-code/` のソースから生成している（手順は [CLAUDE.md](./CLAUDE.md)）。
-  GitHub Pagesでも公開していて、ブラウザから読める:
-  [akidon0000.github.io/siri-ai-tutorials/tutorials/](https://akidon0000.github.io/siri-ai-tutorials/tutorials/)
-  （章ごとのURLは `.../tutorials/appfeature/01-sirikit-to-app-intents` の形）
-  （`ios/Library` 配下をmainにpushすると `.github/workflows/docc-pages.yml` が自動で再公開する）
-
-構成の決定理由は [docs/adr/](./docs/adr/) を参照。
-
+原文の著作権は Apple Inc. にある。扱いの方針は [DISCLAIMER.md](./DISCLAIMER.md) を参照。

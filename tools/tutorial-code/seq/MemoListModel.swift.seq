@@ -3,7 +3,6 @@
 1|
 1|@MainActor
 1|final class MemoListModel {
-2|    // 画面の「追加」ボタンから呼ぶ
 2|    func addMemoFromUI(title: String, list: MemoListEntity) async throws {
 2|        let memo = try await MemoStore.shared.add(title: title, list: list, dueDate: nil)
 3|
@@ -16,7 +15,6 @@
 3|        try await IntentDonationManager.shared.donate(intent: intent, result: .result(value: memo))
 2|    }
 5|
-5|    // 画面の優先度メニューから呼ぶ
 5|    func setPriorityFromUI(_ memo: MemoEntity, to priority: MemoPriority) async throws {
 5|        try await MemoStore.shared.setPriority(priority, for: memo.id)
 6|

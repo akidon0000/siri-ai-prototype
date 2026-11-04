@@ -8,7 +8,6 @@ struct MemoEntity {
     var title: String
     // スキーマでの完了状態の名前は isCompleted
     var isCompleted: Bool
-    // 共有相手の一覧
     var sharedWith: [String]
 
     // Siriの応答・候補の一覧・Spotlightでメモ1件を表示するときの見た目
