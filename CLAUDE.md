@@ -31,6 +31,15 @@
 - `Example/` は `ios/` と同じ App + Library 構成。DocCカタログは複製しない。`ios/` の土台を直したら `Example/` にも反映する。
 - iOS 27.3 beta にしか無いAPIは `#if SIRI_AI_PREVIEW` で囲む。有効にするのは `Example/Library/Package.swift` の `siriAIPreview`。
 
+## skill（plugins/siri-ai）
+
+- `plugins/siri-ai/skills/siri-ai/references/` は生成物。直接編集しない（`tools/skill/generate.py` が毎回消して作り直す）。
+- `.tutorial` か `.seq` を変えたら `python3 tools/skill/generate.py` を実行し、生成物の差分も同じコミットに入れる。
+  CI は `--check` で古いままになっていないかを見る。
+- 手で書くのは `SKILL.md` だけ。章や API が変わったら、章の見取り図と「間違えやすい点」も直す。
+- 中身を変えたら `plugin.json`・`apm.yml`・`.claude-plugin/marketplace.json` の `version` を同じ値で上げる。
+- `docs/apple-doc/` の原文は再配布しない方針（DISCLAIMER.md）なので、skill に入れない。
+
 ## 決定の記録
 
 構成上の判断は `docs/adr/` に残す。
