@@ -25,6 +25,12 @@
 - `.tutorial` のファイル名を変えると公開URLが変わり、旧URLは404になる。改名したら `tools/docc-redirects.sh` に
   `redirect <旧名> <新名>` を足す（Pagesのデプロイ時に旧URLへ転送ページを置く）。
 
+## Example
+
+- `ios/` はワークショップを始める前の土台なので、Siri連携を実装しない。全章を実装したコードは `Example/` に置く（ADR 0008）。
+- `Example/` は `ios/` と同じ App + Library 構成。DocCカタログは複製しない。`ios/` の土台を直したら `Example/` にも反映する。
+- iOS 27.3 beta にしか無いAPIは `#if SIRI_AI_PREVIEW` で囲む。有効にするのは `Example/Library/Package.swift` の `siriAIPreview`。
+
 ## skill（plugins/siri-ai）
 
 - `plugins/siri-ai/skills/siri-ai/references/` は生成物。直接編集しない（`tools/skill/generate.py` が毎回消して作り直す）。
