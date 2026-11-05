@@ -67,8 +67,13 @@ intent の中身がチュートリアルのコードとほぼ同じ形になる�
   認証を求められない 27.1 では、`lockedBody` と `collaboratorNames` を Siri に見せない。
 - **`attachmentText` に `\.textContent` を付けると、スキーマの `note` と索引のキーが重なるという警告が出る。**
   チュートリアルの指示どおりに書いた結果なので、警告は残している。チュートリアル側で別のキーにするか検討が要る。
-- **Xcode 27.1 は `.skillsbundle` を知らないので、`Skills.skillsbundle/Skills/memo-triage/SKILL.md` がアプリ直下に平らにコピーされる。**
-  27.1 では Siri AI が動かないので実害は無い。27.3 beta の Xcode でバンドルのままコピーされるかは未確認。
+- **Xcode 27.1 は `.skillsbundle` を知らないので、中の `SKILL.md` がアプリ直下に平らにコピーされる。**
+  スキルを2つ置くと `Multiple commands produce '…/SKILL.md'` でビルドが落ちるので、27.1 では1つだけにする。
+  Xcode 27.3 beta でビルドすると `Metadata.appintents/Skills.skillsc` ができる（確認済み）。
+  現在のスキルは動作確認用の `memo-don`（返事の語尾を「ドン」にする）。実機で語尾が変わるかは未確認。
+- **`#if SIRI_AI_PREVIEW` は `Library/Package.swift` の `siriAIPreview` で決まる。** 端末のOSやXcodeの版では変わらない。
+  `true` にすると、パッケージとアプリの配布対象が 27.3 になる。Xcode 27.3 beta でビルドする必要がある。
+  `CardSnippet` は `AppIntents` と `SwiftUI` の両方を import しないと見つからない。
 
 - **第8章の `testCreateMemo` は、`images`・`tags`・`urls` に空の値を渡す。**
   `createReminder` スキーマはこの3つを必須かつ非オプショナルにしていて（オプショナルにするとビルドが落ちる）、

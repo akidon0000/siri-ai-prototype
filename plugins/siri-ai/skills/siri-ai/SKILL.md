@@ -68,6 +68,9 @@ description: iOS アプリを Siri・Shortcuts・Spotlight・Apple Intelligence�
 - `indexingKey` を付けない `@DeferredProperty` は索引に入らない（第7章）。
 - app skill はアプリのターゲットに `.skillsbundle` を1つだけ置き、1スキル1フォルダに `SKILL.md` だけを入れる。`name` はフォルダ名と一致させた小文字・数字・ハイフンの1〜64文字、`description` は1行1024文字以内、本文は10,000文字まで。ツールは型名ではなく役割で呼ぶ（第7章）。
 - Siri AI Developer Preview は Apple Intelligence 対応の実機（開発用署名）と TestFlight の内部テスターでしか動かない。配布中のアプリでは型に `@available(iOS 27.3, *)` を付ける（第7章）。
+- `CardSnippet` は `AppIntents` と `SwiftUI` の両方を import しないと見つからない（第4章）。
+- `.skillsbundle` は27.3 beta以降のXcodeだけが `Skills.skillsc` にコンパイルする。27.1のXcodeは `SKILL.md` を平らにコピーし、スキルが2つあるとビルドが落ちる（第7章）。
+- 27.3 beta にしか無いAPIを `#if SIRI_AI_PREVIEW` で囲むとき、このフラグはパッケージの設定で決まり、端末のOSやXcodeの版では変わらない。有効にするなら、パッケージとアプリの配布対象も27.3にする（第7章）。
 - App Intents Testing のテストはアプリの型を import せず名前で引くので、UI テストのターゲットに置く。テスト用 intent は `#if DEBUG` と `isDiscoverable = false` で隠す（第8章）。
 - Siri Evaluations の `Calls` は起きた呼び出ししか見ない。呼ばれてはいけない操作は `Calls(.disallowed)` で明示する（第8章）。
 

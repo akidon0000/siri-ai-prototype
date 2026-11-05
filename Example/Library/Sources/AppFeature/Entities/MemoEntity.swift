@@ -104,7 +104,8 @@ public struct MemoEntity: Sendable {
         DisplayRepresentation(
             title: "\(title)",
             subtitle: isCompleted ? "完了" : "未完了",
-            image: .init(systemName: isCompleted ? "checkmark.circle.fill" : "circle")
+            // 画像データを渡すと、SF Symbols以外の絵も出せる
+            image: .init(data: MemoImageRenderer.thumbnail(isCompleted: isCompleted))
         )
     }
 

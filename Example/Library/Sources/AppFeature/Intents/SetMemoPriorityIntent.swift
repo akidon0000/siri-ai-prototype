@@ -19,8 +19,8 @@ struct SetMemoPriorityIntent: AppIntent {
     @Parameter(title: "優先度", description: "変更後の優先度。低・通常・高のいずれか")
     var priority: MemoPriority
 
-    func perform() async throws -> some IntentResult {
+    func perform() async throws -> some IntentResult & ShowsSnippetIntent {
         try await MemoStore.shared.setPriority(priority, for: memo.id)
-        return .result()
+        return .result(snippetIntent: MemoSnippetIntent(memo: memo))
     }
 }
