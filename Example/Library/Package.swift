@@ -4,7 +4,7 @@ import PackageDescription
 
 // iOS 27.3 beta の SDK でビルドするときだけ true にする。
 // CardSnippet・@AppIntent(.tool)・Siri Evaluations など、27.1 の SDK に無いAPIを #if SIRI_AI_PREVIEW で囲んでいる
-let siriAIPreview = false
+let siriAIPreview = true
 
 let siriAIPreviewSettings: [SwiftSetting] = siriAIPreview ? [.define("SIRI_AI_PREVIEW")] : []
 
@@ -17,7 +17,8 @@ let package = Package(
     defaultLocalization: "ja",
     platforms: [
         // チュートリアルで使う App Intents の API（スニペット、OwnershipProvidingEntity、IndexedEntityQuery など）が iOS 26〜27 以降なので、27.0 からにする
-        .iOS("27.0")
+        // siriAIPreview を true にしたときは、27.3 beta にしか無いAPIを呼べるように 27.3 からにする
+        .iOS(siriAIPreview ? "27.3" : "27.0")
     ],
     products: [
         // 製品は 1 つにする。2 つ以上にすると、パッケージのスキーム名が Library-Package に変わる。

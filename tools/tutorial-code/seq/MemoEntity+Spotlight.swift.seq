@@ -4,6 +4,7 @@
 1|
 1|extension MemoEntity {
 2|    // 索引に入れる属性。タイトルなどの既定の属性に、足したい値を加える
+2|    // ホーム画面を下にスワイプして「買い物」と打つと、タグに持つメモが候補に出る。選ぶと OpenMemoIntent でそのメモが開く
 2|    var attributeSet: CSSearchableItemAttributeSet {
 2-2|        CSSearchableItemAttributeSet()
 3|        let attributes = CSSearchableItemAttributeSet()

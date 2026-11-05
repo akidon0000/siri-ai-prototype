@@ -7,7 +7,9 @@ final class MemoListModel {
 
         // 実際に人が行った操作だけをdonateする。実際より多いと、システムはこのアプリのdonationを無視する
         // パラメータはなるべく埋める。ただし予測に使ってほしくない値（本文など）は入れない
+        // Siri経由の操作はiOSが記録するが、画面を直接触った操作は見えない。保存が成功したあとに、アプリから報告する
         // 同じ操作に当たるintentを組み立てる。システムはこれを実行せず、記録して学習に使う
+        // 毎朝メモを追加する人なら、その時間帯にロック画面やショートカットの候補に出ることがある
         var intent = CreateMemoIntent()
         intent.title = title
         intent.list = list

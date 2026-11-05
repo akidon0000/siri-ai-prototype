@@ -410,6 +410,10 @@
                 アプリのターゲットに追加する。1つのスキルにつきフォルダを1つ作り、中に `SKILL.md` だけを置く。
                 アプリのターゲットに置ける `.skillsbundle` は1つだけで、
                 Copy Bundle Resourcesに入っていないとSiriに渡らない。
+                `.skillsbundle` を知っているのは27.3 beta以降のXcodeだけ。ビルドすると
+                `Metadata.appintents/Skills.skillsc` ができ、これがSiriに渡るスキルになる。
+                27.1のXcodeは `SKILL.md` をアプリ直下に平らにコピーするだけで、スキルを2つ置くと
+                `Multiple commands produce '…/SKILL.md'` でビルドが落ちる。
 
                 @Code(name: "Skills.skillsbundle", file: "SkillsBundle-01.txt")
             }

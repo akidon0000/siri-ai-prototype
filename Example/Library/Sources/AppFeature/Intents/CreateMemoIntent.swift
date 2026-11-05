@@ -18,7 +18,7 @@ struct CreateMemoIntent {
     // Shortcutsアプリには出さず、Siriからだけ使う。Shortcutsには AddMemoIntent が残る
     static let isAssistantOnly: Bool = true
 
-    func perform() async throws -> some ReturnsValue<MemoEntity> {
+    func perform() async throws -> some ReturnsValue<MemoEntity> & ShowsSnippetIntent {
         let memo = try await MemoStore.shared.add(
             title: title,
             note: note.map { String($0.characters) },
@@ -28,6 +28,6 @@ struct CreateMemoIntent {
             list: list
         )
         // スキーマは作ったリマインダー（MemoEntity）を返すことを求める
-        return .result(value: memo)
+        return .result(value: memo, snippetIntent: MemoSnippetIntent(memo: memo))
     }
 }

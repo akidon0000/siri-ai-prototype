@@ -1,9 +1,11 @@
 #name MemoEntity+Snippet.swift
 1|import AppIntents
+1|import SwiftUI
 1|
 1|// Siri AIがメモを見せるときのカードを決める
 1|extension MemoEntity: SnippetRepresentableEntity {
 2|    static var snippet: some EntitySnippetContent<MemoEntity> {
+2|        // メモを結果として返す操作（探して見つかったメモなど）の応答に、このカードが出る
 2|        // 中身には第4章の MemoSnippetView をそのまま使う
 2|        CardSnippet(supportedFamilies: [.standard]) { memo, _ in
 2|            MemoSnippetView(memo: memo)

@@ -17,7 +17,7 @@ struct MemoSearch: TransientAppEntity {
     var priorities: [MemoPriority]
 
     var displayRepresentation: DisplayRepresentation {
-        "「\(keyword)」の検索"
+        DisplayRepresentation(title: "「\(keyword)」の検索")
     }
 
     init() {}

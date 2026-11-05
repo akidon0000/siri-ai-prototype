@@ -191,6 +191,8 @@
         @Steps {
             @Step {
                 `MemoEntity` を `SnippetRepresentableEntity` に準拠させる。
+                次のステップで使う `CardSnippet` は、`AppIntents` と `SwiftUI` の両方を import したときだけ使える。
+                `AppIntents` だけだと `cannot find 'CardSnippet' in scope` になる。
 
                 @Code(name: "MemoEntity+Snippet.swift", file: "MemoEntity+Snippet-01.swift")
             }

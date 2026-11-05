@@ -7,6 +7,12 @@ struct MemoSnippetView: View {
 
     var body: some View {
         HStack {
+            // 仮の画像。メモごとの画像を持たせるときは、ここを差し替える
+            Image(systemName: "photo")
+                .font(.title)
+                .foregroundStyle(.secondary)
+                .frame(width: 56, height: 56)
+                .background(.quaternary, in: RoundedRectangle(cornerRadius: 12))
             Label(memo.title, systemImage: memo.isCompleted ? "checkmark.circle.fill" : "circle")
             Spacer()
             // ボタンにintentを渡すと、押したときにアプリを開かずにそのintentが実行される

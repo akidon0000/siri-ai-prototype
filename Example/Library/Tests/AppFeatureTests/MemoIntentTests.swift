@@ -52,6 +52,16 @@ struct MemoIntentTests {
         }
     }
 
+    @Test func exportMemoImageIntentReturnsPNGFile() async throws {
+        let intent = ExportMemoImageIntent(memo: MemoEntity(TestMemoClient.seed[0]))
+
+        let file = try #require(try await intent.perform().value)
+
+        #expect(file.filename == "牛乳を買う.png")
+        // PNGの先頭8バイトは決まっている
+        #expect(file.data.prefix(4) == Data([0x89, 0x50, 0x4E, 0x47]))
+    }
+
     @Test func sharedMemoReportsSharedOwnership() {
         var memo = MemoEntity(TestMemoClient.seed[0])
         #expect(memo.ownership == .unknown)

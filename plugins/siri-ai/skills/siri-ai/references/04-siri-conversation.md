@@ -398,7 +398,7 @@ struct AddMemoIntent: AppIntent {
 
 Siri AI経由でintentが実行されたとき、システムは `IntentDialog` や `ShowsSnippetView` を表示しないことがある。Siri AIがアプリのデータを見せるときに使うのは、Entity側に用意したカード。
 
-1. `MemoEntity` を `SnippetRepresentableEntity` に準拠させる。 — コード: `MemoEntity+Snippet.swift`
+1. `MemoEntity` を `SnippetRepresentableEntity` に準拠させる。次のステップで使う `CardSnippet` は、`AppIntents` と `SwiftUI` の両方を import したときだけ使える。`AppIntents` だけだと `cannot find 'CardSnippet' in scope` になる。 — コード: `MemoEntity+Snippet.swift`
 2. `snippet` で `CardSnippet` を返し、その中でこの章の `MemoSnippetView` を使い回す。カードは事前に描画されて保存され、アプリが動いていないときにも表示される。あとから内容を変えられないので、必要なデータはビューを返す前に揃えておく。ボタンは使えて、押されるとintentが実行され、カードが描き直される。 — コード: `MemoEntity+Snippet.swift`
 
 ### このセクションを終えた時点のコード
@@ -407,10 +407,12 @@ Siri AI経由でintentが実行されたとき、システムは `IntentDialog` 
 
 ```swift
 import AppIntents
+import SwiftUI
 
 // Siri AIがメモを見せるときのカードを決める
 extension MemoEntity: SnippetRepresentableEntity {
     static var snippet: some EntitySnippetContent<MemoEntity> {
+        // メモを結果として返す操作（探して見つかったメモなど）の応答に、このカードが出る
         // 中身には第4章の MemoSnippetView をそのまま使う
         CardSnippet(supportedFamilies: [.standard]) { memo, _ in
             MemoSnippetView(memo: memo)

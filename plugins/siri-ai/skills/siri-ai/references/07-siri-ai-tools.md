@@ -443,7 +443,9 @@ final class MemoListModel {
 
         // 実際に人が行った操作だけをdonateする。実際より多いと、システムはこのアプリのdonationを無視する
         // パラメータはなるべく埋める。ただし予測に使ってほしくない値（本文など）は入れない
+        // Siri経由の操作はiOSが記録するが、画面を直接触った操作は見えない。保存が成功したあとに、アプリから報告する
         // 同じ操作に当たるintentを組み立てる。システムはこれを実行せず、記録して学習に使う
+        // 毎朝メモを追加する人なら、その時間帯にロック画面やショートカットの候補に出ることがある
         var intent = CreateMemoIntent()
         intent.title = title
         intent.list = list
@@ -482,7 +484,7 @@ extension MemoEntity: Transferable {
 
 1つのツールは1つの操作しかしない。「溜まったメモを整理して」のような依頼では、探す・完了にする・優先度を変えるを組み合わせる必要があるが、個々のツールの説明だけでは Siriが組み合わせ方を判断できないことがある。そこで、追加の指示をapp skillとして渡す（[Orchestrating complex actions with app skills](https://developer.apple.com/documentation/appintents/orchestrating-complex-actions-with-app-skills)）。形式は `name` と `description` のfrontmatterとMarkdownの本文で、Claude Codeの `.claude/skills/*/SKILL.md` と同じ形をしている。
 
-1. Xcodeの File > New > File from Template で Skills Bundle を選び、名前は `Skills` のまま、アプリのターゲットに追加する。1つのスキルにつきフォルダを1つ作り、中に `SKILL.md` だけを置く。アプリのターゲットに置ける `.skillsbundle` は1つだけで、Copy Bundle Resourcesに入っていないとSiriに渡らない。 — コード: `Skills.skillsbundle`
+1. Xcodeの File > New > File from Template で Skills Bundle を選び、名前は `Skills` のまま、アプリのターゲットに追加する。1つのスキルにつきフォルダを1つ作り、中に `SKILL.md` だけを置く。アプリのターゲットに置ける `.skillsbundle` は1つだけで、Copy Bundle Resourcesに入っていないとSiriに渡らない。`.skillsbundle` を知っているのは27.3 beta以降のXcodeだけ。ビルドすると `Metadata.appintents/Skills.skillsc` ができ、これがSiriに渡るスキルになる。27.1のXcodeは `SKILL.md` をアプリ直下に平らにコピーするだけで、スキルを2つ置くと `Multiple commands produce '…/SKILL.md'` でビルドが落ちる。 — コード: `Skills.skillsbundle`
 2. frontmatterに `name` と `description` を書く。`name` は小文字・数字・ハイフンの1〜64文字で、フォルダ名と一致させる。`description` は1行・1024文字以内。Siriはまず `description` だけを読んで、このスキルを使うかどうかを決める。 — コード: `memo-triage/SKILL.md`
 3. 本文に手順を書く（10,000文字まで）。intentは `SetMemoPriorityIntent` のような型名ではなく、「優先度を変えるツール」のように役割で呼ぶ。titleやdescriptionなど、コードに既に書いてあることは繰り返さない。 — コード: `memo-triage/SKILL.md`
 4. やってはいけないことも書ける。ただしapp skillは決まった順で実行させる仕組みではない。Siriが判断に使う追加情報で、書いた通りの順に必ずツールが呼ばれるわけではない。動作の確認は、シミュレータではなく実機かTestFlightの内部テストで行う。 — コード: `memo-triage/SKILL.md`

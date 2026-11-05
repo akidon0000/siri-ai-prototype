@@ -73,6 +73,7 @@ import CoreSpotlight
 
 extension MemoEntity {
     // 索引に入れる属性。タイトルなどの既定の属性に、足したい値を加える
+    // ホーム画面を下にスワイプして「買い物」と打つと、タグに持つメモが候補に出る。選ぶと OpenMemoIntent でそのメモが開く
     var attributeSet: CSSearchableItemAttributeSet {
         let attributes = CSSearchableItemAttributeSet()
         attributes.keywords = Array(tags)
@@ -185,6 +186,9 @@ struct MemoDetailView: View {
     var body: some View {
         Text(memo.title)
             // 表示中のメモをNSUserActivityに載せ、「これ」がどのメモかをSiriに伝える
+            // 無いと、画面を開いたまま「これを完了にして」と言っても、Siriは「どのメモですか」と聞き返す
+            // 有効なのは、この画面が表示されている間だけ。閉じれば「これ」の対象からも外れる
+            // Siriが使うのは appEntityIdentifier のID。種類の名前（末尾の .memo）は自分で決める識別子で、動作には関係しない
             .userActivity("com.akidon0000.SiriAIPrototype.memo") { activity in
                 activity.title = memo.title
                 activity.appEntityIdentifier = EntityIdentifier(for: MemoEntity.self, identifier: memo.id)
@@ -288,7 +292,9 @@ final class MemoListModel {
 
         // 実際に人が行った操作だけをdonateする。実際より多いと、システムはこのアプリのdonationを無視する
         // パラメータはなるべく埋める。ただし予測に使ってほしくない値（本文など）は入れない
+        // Siri経由の操作はiOSが記録するが、画面を直接触った操作は見えない。保存が成功したあとに、アプリから報告する
         // 同じ操作に当たるintentを組み立てる。システムはこれを実行せず、記録して学習に使う
+        // 毎朝メモを追加する人なら、その時間帯にロック画面やショートカットの候補に出ることがある
         var intent = CreateMemoIntent()
         intent.title = title
         intent.list = list

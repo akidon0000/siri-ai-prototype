@@ -1,6 +1,6 @@
 {
   "name": "siri-ai",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "description": "iOS アプリを Siri・App Intents・Apple Intelligence・Siri AI Developer Preview に対応させる実装ガイド（siri-ai-tutorials 全8章）",
   "author": {
     "name": "Dan Akiyama",

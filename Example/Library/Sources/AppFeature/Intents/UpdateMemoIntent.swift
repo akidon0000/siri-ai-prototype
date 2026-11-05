@@ -17,7 +17,7 @@ struct UpdateMemoIntent {
     var list: MemoListEntity?
     var locationTrigger: MemoLocationTriggerEntity?
 
-    func perform() async throws -> some ReturnsValue<MemoEntity> {
+    func perform() async throws -> some ReturnsValue<MemoEntity> & ShowsSnippetIntent {
         let change = MemoChange(
             title: title,
             isCompleted: isCompleted,
@@ -28,6 +28,6 @@ struct UpdateMemoIntent {
             listID: list?.id
         )
         let memo = try await MemoStore.shared.update(target.id, change)
-        return .result(value: memo)
+        return .result(value: memo, snippetIntent: MemoSnippetIntent(memo: memo))
     }
 }
