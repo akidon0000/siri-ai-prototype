@@ -8,7 +8,6 @@
     "development": "ja",
     "supported": [
       "Base",
-      "ja",
     ],
   },
   "files": [
@@ -46,9 +45,11 @@
         "ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME": "AccentColor",
         "CODE_SIGN_STYLE": "Automatic",
         "CURRENT_PROJECT_VERSION": "1",
+        "DEVELOPMENT_TEAM": "XSC9AJPSP3",
         "ENABLE_PREVIEWS": "YES",
         "GENERATE_INFOPLIST_FILE": "YES",
-        "INFOPLIST_KEY_CFBundleDisplayName": "Siri AI Prototype",
+        "INFOPLIST_FILE": "Info.plist",
+        "INFOPLIST_KEY_CFBundleDisplayName": "yonyon",
         "INFOPLIST_KEY_UIApplicationSceneManifest_Generation": "YES",
         "INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents": "YES",
         "INFOPLIST_KEY_UILaunchScreen_Generation": "YES",
@@ -69,19 +70,18 @@
         "SWIFT_VERSION": "6.0",
         "TARGETED_DEVICE_FAMILY": "1,2",
       },
-    },
-    {
+    }, {
       "name": "SiriAIPrototypeUITests",
       "id": "A3D9F1C47E2B4B8C9E6F2A10",
       "product": "Products/SiriAIPrototypeUITests.xctest",
       "product-type": "bundle.ui-testing",
+      "dependencies": [
+        "SiriAIPrototype",
+      ],
       "build-phases": [
         "compile-sources",
         "frameworks",
         "resources",
-      ],
-      "dependencies": [
-        "SiriAIPrototype",
       ],
       "build-settings": {
         "CODE_SIGN_STYLE": "Automatic",
