@@ -1,0 +1,142 @@
+@Tutorial(time: 20) {
+    @Intro(title: "From SiriKit to App Intents") {
+        Write "complete a memo" with SiriKit to feel how much work it took,
+        then rewrite the same action with App Intents. Finally, see how an app that used SiriKit custom intents
+        moves to App Intents without breaking its existing users' shortcuts.
+
+        Sources: `docs/apple-doc/sirikit/sirikit.md`,
+        [SiriKit](https://developer.apple.com/documentation/sirikit),
+        [CustomIntentMigratedAppIntent](https://developer.apple.com/documentation/appintents/customintentmigratedappintent)
+    }
+
+    @Section(title: "A SiriKit intent handler") {
+        @ContentAndMedia {
+            With SiriKit, you first define the custom intent's schema in an Xcode `.intentdefinition` file.
+            Xcode generates a `CompleteMemoIntent` class and a `CompleteMemoIntentHandling` protocol from it,
+            and you write a handler that conforms to that protocol inside an Intents app extension.
+        }
+
+        @Steps {
+            @Step {
+                Create a class that conforms to the generated `CompleteMemoIntentHandling`.
+                This type usually lived in a separate Intents app extension target, not in the app itself.
+
+                @Code(name: "CompleteMemoIntentHandler.swift", file: "CompleteMemoIntentHandler-01.swift")
+            }
+
+            @Step {
+                Write the first stage, `resolveMemo`. If `intent.memo` is empty, return `.needsValue()`
+                so that Siri asks back "Which memo?". Every parameter you add
+                needs one more `resolve…` method like this.
+
+                @Code(name: "CompleteMemoIntentHandler.swift", file: "CompleteMemoIntentHandler-02.swift", previousFile: "CompleteMemoIntentHandler-01.swift")
+            }
+
+            @Step {
+                Write the second stage, `confirm`. Check that the intent is ready to run and return `.ready`.
+                Even when there was nothing to check, you couldn't skip this stage.
+
+                @Code(name: "CompleteMemoIntentHandler.swift", file: "CompleteMemoIntentHandler-03.swift", previousFile: "CompleteMemoIntentHandler-02.swift")
+            }
+
+            @Step {
+                The third stage, `handle`, finally completes the memo. Return the result by passing
+                a `CompleteMemoIntentResponse` to the completion handler. Exposing a single action
+                took a schema definition, an extension target and three methods.
+
+                @Code(name: "CompleteMemoIntentHandler.swift", file: "CompleteMemoIntentHandler-04.swift", previousFile: "CompleteMemoIntentHandler-03.swift")
+            }
+
+            @Step {
+                On top of that, SiriKit required you to add the Siri capability to the app
+                and ask the person for permission to use Siri with `INPreferences.requestSiriAuthorization`.
+                App Intents has no such permission prompt.
+
+                @Code(name: "SiriAuthorization.swift", file: "SiriAuthorization-01.swift")
+            }
+        }
+    }
+
+    @Section(title: "Rewrite it with App Intents") {
+        @ContentAndMedia {
+            Write the same "complete a memo" with App Intents. You create no schema file and no extension;
+            you only put one struct in the app itself (in this repository, the `ios/Library` package).
+        }
+
+        @Steps {
+            @Step {
+                Create a struct that conforms to `AppIntent` and give it a `title`.
+                This `title` becomes the action name shown in the Shortcuts app and Spotlight.
+
+                @Code(name: "CompleteMemoIntent.swift", file: "CompleteMemoIntent-01.swift")
+            }
+
+            @Step {
+                Declare the input with `@Parameter`. Its type is `MemoEntity`, which you build in chapter 2.
+                You don't write anything like SiriKit's `resolveMemo`. When the value is missing,
+                the system asks back using the `MemoEntity` suggestions.
+
+                @Code(name: "CompleteMemoIntent.swift", file: "CompleteMemoIntent-02.swift", previousFile: "CompleteMemoIntent-01.swift")
+            }
+
+            @Step {
+                Write the work in `perform()`. You can use async/await, and you report failure by `throw`ing.
+                When you need a check like SiriKit's `confirm`, call `requestConfirmation`
+                (covered in chapter 4) inside `perform()`.
+
+                @Code(name: "CompleteMemoIntent.swift", file: "CompleteMemoIntent-03.swift", previousFile: "CompleteMemoIntent-02.swift")
+            }
+
+            @Step {
+                The compiler generates the metadata that Siri, Shortcuts and Spotlight need from this code
+                at build time. As soon as the app is installed, "Complete Memo" appears in the Shortcuts app,
+                with no registration call in advance.
+
+                @Code(name: "CompleteMemoIntent.swift", file: "CompleteMemoIntent-04.swift", previousFile: "CompleteMemoIntent-03.swift")
+            }
+        }
+    }
+
+    @Section(title: "Carry over existing SiriKit users") {
+        @ContentAndMedia {
+            SiriKit, Intents and IntentsUI are still supported as legacy frameworks,
+            but only App Intents integrates with Apple Intelligence and Siri AI.
+            An app that already ships SiriKit custom intents has to migrate without breaking
+            the shortcuts its users made.
+        }
+
+        @Steps {
+            @Step {
+                Conform to `CustomIntentMigratedAppIntent` and set `intentClassName` to
+                the class name of the SiriKit intent being replaced. Existing shortcuts and donations
+                that used the old intent keep working with the new App Intent.
+
+                @Code(name: "CompleteMemoIntent.swift", file: "CompleteMemoIntent-05.swift", previousFile: "CompleteMemoIntent-04.swift")
+            }
+
+            @Step {
+                This repository never used SiriKit, so it doesn't need this migration when you implement it.
+                A new app can start with App Intents alone. Leave a comment that says so.
+
+                @Code(name: "CompleteMemoIntent.swift", file: "CompleteMemoIntent-06.swift", previousFile: "CompleteMemoIntent-05.swift")
+            }
+        }
+    }
+
+    @Section(title: "Next steps") {
+        @ContentAndMedia {
+            Once this makes sense, copy the prompt below and paste it into Claude Code.
+            It builds no feature; it only confirms the decision not to use SiriKit and checks that the base project
+            is ready for the implementation in the following chapters.
+        }
+
+        @Steps {
+            @Step {
+                When you've understood the chapter, paste this into Claude Code. It confirms the approach and makes sure
+                the project builds, tests and launches.
+
+                @Code(name: "prompt.txt", file: "01-prompt.txt")
+            }
+        }
+    }
+}

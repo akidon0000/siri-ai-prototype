@@ -1,0 +1,24 @@
+ja|// ○ ツールにする: 1文で頼めて、その文からパラメータを埋められる
+en|// ○ Make a tool: can be asked for in one sentence that fills in the parameters
+ja|// 「牛乳のメモを優先度高にして」なら、memo と priority が1文に入っている
+en|// "Make the milk memo high priority" has both memo and priority in one sentence
+ja|struct SetMemoPriorityIntent: AppIntent { /* 次のセクションで作る */ }
+en|struct SetMemoPriorityIntent: AppIntent { /* built in the next section */ }
+ja|// × 付けない: Siriで使えるスキーマに合わせたintentは、それだけでSiriに公開されている
+en|// × Don't: intents that follow a Siri-enabled schema are already exposed to Siri
+ja|// @AppIntent(.tool, schema: .reminders.createReminder) と書くとビルドエラーになる
+en|// Writing @AppIntent(.tool, schema: .reminders.createReminder) is a build error
+ja|struct CreateMemoIntent { /* 第5章 */ }
+en|struct CreateMemoIntent { /* chapter 5 */ }
+ja|// × 付けない: 実行する操作を持たない、ウィジェットの設定用intent
+en|// × Don't: widget configuration intents, which have no action to perform
+ja|// （perform() で独自の操作をしているなら、WidgetConfigurationIntent でもツールにできる）
+en|// (a WidgetConfigurationIntent can be a tool if its perform() does an action of its own)
+ja|// × 付けない: ショートカットの途中の1手順としてしか意味を持たないintent
+en|// × Don't: intents that only make sense as one step inside a shortcut
+ja|// × 付けない: 注文や支払いのように、人が明示的に始めるべき副作用を持つintent
+en|// × Don't: intents with side effects a person should start explicitly, like ordering or paying
+ja|// ○ ツールにする: スキーマに無い「条件でメモを探す」
+en|// ○ Make a tool: "find memos by conditions", which has no schema
+ja|struct FindMemosIntent: AppIntent { /* 後のセクションで作る */ }
+en|struct FindMemosIntent: AppIntent { /* built in a later section */ }

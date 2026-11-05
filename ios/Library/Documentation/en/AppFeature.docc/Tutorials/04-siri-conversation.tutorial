@@ -1,0 +1,279 @@
+@Tutorial(time: 35) {
+    @Intro(title: "Design the conversation with Siri") {
+        Even when an intent works, people won't use it if Siri's replies are curt or a memo gets deleted without confirmation.
+        In this chapter you add, in order, the words of the response, follow-up questions, confirmation before running,
+        and how the result is shown (snippets), and finally review the Human Interface Guidelines for responses.
+
+        Sources: `docs/apple-doc/apple-intelligence/siri-human-interface-guidelines.md`,
+        [Human Interface Guidelines: Siri](https://developer.apple.com/design/human-interface-guidelines/siri),
+        [WWDC26: Explore advanced App Intents features for Siri and Apple Intelligence](https://developer.apple.com/videos/play/wwdc2026/343/),
+        [Displaying static and interactive snippets](https://developer.apple.com/documentation/appintents/displaying-static-and-interactive-snippets)
+    }
+
+    @Section(title: "Respond in words") {
+        @ContentAndMedia {
+            If you specify nothing, Siri builds a response from the intent's result by itself.
+            Return a dialog only when you want wording of your own.
+        }
+
+        @Steps {
+            @Step {
+                Add `ProvidesDialog` to the return type of `perform()` and pass an `IntentDialog` to `.result`.
+                `full` is read aloud where there's no screen, such as on AirPods; `supporting` is a short line shown with the screen.
+                Write `full` so that it alone tells what happened, even without a screen.
+
+                @Code(name: "AddMemoIntent.swift", file: "AddMemoIntent-07.swift", previousFile: "AddMemoIntent-06.swift")
+            }
+        }
+    }
+
+    @Section(title: "Ask for missing information") {
+        @ContentAndMedia {
+            There are two kinds of follow-up question: a fixed one when a value is missing,
+            and one that depends on what happens while the intent runs.
+        }
+
+        @Steps {
+            @Step {
+                Add `requestValueDialog` to `@Parameter`. When the intent is called without a `title`,
+                Siri asks with this sentence instead of the default "Title?".
+                As the HIG says, "What memo do you want to add?" is easier to answer than "Which one?".
+
+                @Code(name: "AddMemoIntent.swift", file: "AddMemoIntent-08.swift", previousFile: "AddMemoIntent-07.swift")
+            }
+
+            @Step {
+                Calling `$title.requestValue(_:)` inside `perform()` lets you ask in the middle of running.
+                Here it asks for a different name only when a memo with the same name already exists.
+                Every follow-up question adds one more round trip to the conversation, so keep them to where they're really needed.
+
+                @Code(name: "AddMemoIntent.swift", file: "AddMemoIntent-09.swift", previousFile: "AddMemoIntent-08.swift")
+            }
+        }
+    }
+
+    @Section(title: "Confirm before running") {
+        @ContentAndMedia {
+            Actions taken through an LLM carry the risk of unintended side effects. Siri sometimes confirms
+            intents with large side effects automatically, but your app can also ask for confirmation,
+            and it can tell Siri that "this data is shared with other people".
+        }
+
+        @Steps {
+            @Step {
+                Create `DeleteMemoIntent`, which deletes a memo.
+
+                @Code(name: "DeleteMemoIntent.swift", file: "DeleteMemoIntent-01.swift")
+            }
+
+            @Step {
+                Call `requestConfirmation(dialog:)` at the start of `perform()`. If the person answers "Yes", execution moves to the next line;
+                if they cancel, an error is thrown and the deletion doesn't run.
+
+                @Code(name: "DeleteMemoIntent.swift", file: "DeleteMemoIntent-02.swift", previousFile: "DeleteMemoIntent-01.swift")
+            }
+
+            @Step {
+                Add `sharedWith` (the people a memo is shared with) to the memo.
+
+                @Code(name: "MemoEntity.swift", file: "MemoEntity-05.swift", previousFile: "MemoEntity-04.swift")
+            }
+
+            @Step {
+                Conform `MemoEntity` to `OwnershipProvidingEntity` and return `.shared` when it has someone to share with.
+                By default Siri treats an entity as belonging only to that person and may skip confirmation.
+                With this, Siri confirms before updating a shared memo.
+                Don't add this conformance to entities that can't be shared or published.
+
+                @Code(name: "MemoEntity+Ownership.swift", file: "MemoEntity+Ownership-01.swift")
+            }
+        }
+    }
+
+    @Section(title: "Show the result") {
+        @ContentAndMedia {
+            How things look on Siri's screen is decided by the entity's `DisplayRepresentation` and by snippets.
+        }
+
+        @Steps {
+            @Step {
+                The `displayRepresentation` from chapter 2 had only the title; add a `subtitle` for the completion state and
+                an SF Symbols `image`. This representation is used not only in responses but also when picking from suggestions,
+                when confirming, and in Spotlight search results.
+
+                @Code(name: "MemoEntity.swift", file: "MemoEntity-06.swift", previousFile: "MemoEntity-05.swift")
+            }
+
+            @Step {
+                Create a SwiftUI view for the snippet that receives the memo to show.
+
+                @Code(name: "MemoSnippetView.swift", file: "MemoSnippetView-01.swift")
+            }
+
+            @Step {
+                Show the completion icon and the title in `body`. A snippet appears as part of Siri's screen,
+                so show less information than the app's own screens do.
+
+                @Code(name: "MemoSnippetView.swift", file: "MemoSnippetView-02.swift", previousFile: "MemoSnippetView-01.swift")
+            }
+
+            @Step {
+                Add `ShowsSnippetView` to `AddMemoIntent`'s return type and pass `view:` to `.result`.
+                Siri shows this view as a card along with the dialog.
+
+                @Code(name: "AddMemoIntent.swift", file: "AddMemoIntent-10.swift", previousFile: "AddMemoIntent-09.swift")
+            }
+        }
+    }
+
+    @Section(title: "Make the snippet interactive") {
+        @ContentAndMedia {
+            If people can complete the memo they just added right there, they don't need to open the app.
+            You build a snippet with buttons using `SnippetIntent`.
+        }
+
+        @Steps {
+            @Step {
+                So that the snippet's button can call it, add an initializer that takes a memo
+                to chapter 1's `CompleteMemoIntent`.
+
+                @Code(name: "CompleteMemoIntent.swift", file: "CompleteMemoIntent-07.swift", previousFile: "CompleteMemoIntent-06.swift")
+            }
+
+            @Step {
+                Add a `Button(_:intent:)` to `MemoSnippetView`. As in widgets,
+                a button in a snippet runs an App Intent.
+
+                @Code(name: "MemoSnippetView.swift", file: "MemoSnippetView-03.swift", previousFile: "MemoSnippetView-02.swift")
+            }
+
+            @Step {
+                Create `MemoSnippetIntent`, which conforms to `SnippetIntent`.
+
+                @Code(name: "MemoSnippetIntent.swift", file: "MemoSnippetIntent-01.swift")
+            }
+
+            @Step {
+                Receive the memo to show with `@Parameter`.
+
+                @Code(name: "MemoSnippetIntent.swift", file: "MemoSnippetIntent-02.swift", previousFile: "MemoSnippetIntent-01.swift")
+            }
+
+            @Step {
+                Add an initializer that takes a memo, so `AddMemoIntent` can pass one.
+
+                @Code(name: "MemoSnippetIntent.swift", file: "MemoSnippetIntent-03.swift", previousFile: "MemoSnippetIntent-02.swift")
+            }
+
+            @Step {
+                Return the view from `perform()`. When the button is pressed and `CompleteMemoIntent` finishes,
+                the system calls this `perform()` again to redraw the snippet.
+                So that it can be called any number of times, read the latest memo from `MemoStore` every time and give it no side effects.
+
+                @Code(name: "MemoSnippetIntent.swift", file: "MemoSnippetIntent-04.swift", previousFile: "MemoSnippetIntent-03.swift")
+            }
+
+            @Step {
+                Change `AddMemoIntent`'s return type to `ShowsSnippetIntent` and return `snippetIntent:`
+                instead of `view:`. It keeps `ReturnsValue<MemoEntity>`,
+                so existing shortcuts that use this intent don't break.
+
+                @Code(name: "AddMemoIntent.swift", file: "AddMemoIntent-11.swift", previousFile: "AddMemoIntent-10.swift")
+            }
+        }
+    }
+
+    @Section(title: "Show it on a Siri AI card") {
+        @ContentAndMedia {
+            When an intent runs through Siri AI, the system may not show the `IntentDialog` or `ShowsSnippetView`.
+            What Siri AI uses to show your app's data is a card you provide on the entity.
+        }
+
+        @Steps {
+            @Step {
+                Conform `MemoEntity` to `SnippetRepresentableEntity`.
+
+                @Code(name: "MemoEntity+Snippet.swift", file: "MemoEntity+Snippet-01.swift")
+            }
+
+            @Step {
+                Return a `CardSnippet` from `snippet` and reuse this chapter's `MemoSnippetView` inside it.
+                The card is rendered and saved ahead of time, and is shown even when the app isn't running.
+                Its content can't change afterward, so gather all the data you need before returning the view.
+                Buttons work: pressing one runs the intent and redraws the card.
+
+                @Code(name: "MemoEntity+Snippet.swift", file: "MemoEntity+Snippet-02.swift", previousFile: "MemoEntity+Snippet-01.swift")
+            }
+        }
+    }
+
+    @Section(title: "Guidelines for responses (HIG)") {
+        @ContentAndMedia {
+            Siri's HIG describes how to write the responses your app returns.
+            Review the dialogs so far with these points in mind, and add a response to chapter 1's `CompleteMemoIntent`, which doesn't return one yet.
+        }
+
+        @Steps {
+            @Step {
+                Provide your own response only when Siri's built-in responses aren't enough.
+                Siri can respond to many requests without any extra setup.
+                `CompleteMemoIntent` returns nothing so far, so Siri builds the response from the result.
+
+                @Code(name: "CompleteMemoIntent.swift", file: "CompleteMemoIntent-08.swift", previousFile: "CompleteMemoIntent-07.swift")
+            }
+
+            @Step {
+                Keep it short and make clear what happened. People hear the same response many times,
+                so leave out jokes and extra words. Don't put the app name in the response either;
+                the system shows and reads which app is responding.
+                Add `ProvidesDialog` and say only the name of the completed memo.
+
+                @Code(name: "CompleteMemoIntent.swift", file: "CompleteMemoIntent-09.swift", previousFile: "CompleteMemoIntent-08.swift")
+            }
+
+            @Step {
+                Make it work by voice alone and by screen alone. Avoid wording that depends on a particular device
+                ("on this screen" and so on); the device that receives the request may differ from the one that runs it.
+                Make `full` a sentence that works by voice alone, and move a short line for the screen into `supporting`.
+
+                @Code(name: "CompleteMemoIntent.swift", file: "CompleteMemoIntent-10.swift", previousFile: "CompleteMemoIntent-09.swift")
+            }
+
+            @Step {
+                Describe errors in terms of the situation. "That memo has already been deleted" is clearer than
+                "Couldn't complete it".
+                First, create the error type the intent throws. When it conforms to `CustomLocalizedStringResourceConvertible`,
+                Siri reads that text aloud.
+
+                @Code(name: "MemoIntentError.swift", file: "MemoIntentError-01.swift")
+            }
+
+            @Step {
+                Return the text for each case from `localizedStringResource`. Don't put ads or upsells in responses.
+
+                @Code(name: "MemoIntentError.swift", file: "MemoIntentError-02.swift", previousFile: "MemoIntentError-01.swift")
+            }
+
+            @Step {
+                At the start of `perform()`, throw this error if the memo no longer exists.
+
+                @Code(name: "CompleteMemoIntent.swift", file: "CompleteMemoIntent-11.swift", previousFile: "CompleteMemoIntent-10.swift")
+            }
+        }
+    }
+
+    @Section(title: "Next steps") {
+        @ContentAndMedia {
+            Have Claude Code implement responses, follow-up questions, delete confirmation and snippets for the Memo intents.
+        }
+
+        @Steps {
+            @Step {
+                When you've understood the chapter, paste this into Claude Code. It handles the implementation
+                through building and checking that it works.
+
+                @Code(name: "prompt.txt", file: "04-prompt.txt")
+            }
+        }
+    }
+}

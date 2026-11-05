@@ -5,8 +5,9 @@
 
 Every step number >= N in seq/<seq-stem>.seq is increased by `count`
 (default 1), and every @Code(file:/previousFile:) reference to those
-snapshots in the .tutorial files is renumbered the same way. Afterwards,
-add the new lines tagged N| and reference <stem>-NN from the tutorial.
+snapshots in the .tutorial files of both the Japanese and the English
+catalog is renumbered the same way. Afterwards, add the new lines tagged N|
+and reference <stem>-NN from both tutorials.
 """
 
 import pathlib
@@ -15,7 +16,10 @@ import sys
 
 ROOT = pathlib.Path(__file__).resolve().parents[2]
 SEQ = pathlib.Path(__file__).resolve().parent / "seq"
-TUTORIALS = ROOT / "ios/Library/Sources/AppFeature/AppFeature.docc/Tutorials"
+TUTORIALS = [
+    ROOT / "ios/Library/Sources/AppFeature/AppFeature.docc/Tutorials",
+    ROOT / "ios/Library/Documentation/en/AppFeature.docc/Tutorials",
+]
 
 
 def main():
@@ -37,7 +41,7 @@ def main():
     path.write_text(re.sub(r"(?m)^(\d+)(?:-(\d+))?\|", retag, path.read_text()))
 
     ref = re.compile(rf'"{re.escape(stem)}-(\d+)\.{re.escape(ext)}"')
-    for tutorial in TUTORIALS.glob("*.tutorial"):
+    for tutorial in (t for d in TUTORIALS for t in d.glob("*.tutorial")):
         text = tutorial.read_text()
         new = ref.sub(lambda m: f'"{stem}-{bump(int(m.group(1))):02d}.{ext}"', text)
         if new != text:

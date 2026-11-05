@@ -1,0 +1,2 @@
+ja|// 表示中のメモをNSUserActivityに載せ、「これ」がどのメモかをSiriに伝える
+en|// Put the memo on screen in an NSUserActivity so Siri knows which memo "this" is

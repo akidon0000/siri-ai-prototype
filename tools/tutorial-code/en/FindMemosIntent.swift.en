@@ -1,0 +1,14 @@
+ja|// 条件でメモを探すツール。スキーマに無い操作なので .tool でSiriに公開する
+en|// A tool that finds memos by conditions. No schema covers it, so .tool exposes it to Siri
+ja|static let title: LocalizedStringResource = "メモを探す"
+en|static let title: LocalizedStringResource = "Find Memos"
+ja|// Siriのモデルはこの説明を読んで、このツールをいつ使うかを決める
+en|// Siri's model reads this description to decide when to use this tool
+ja|static let description = IntentDescription("キーワードと優先度に合う未完了のメモを探す。")
+en|static let description = IntentDescription("Finds incomplete memos that match a keyword and priorities.")
+ja|// MemoSearch はGenerableなので、Siriが依頼の文から値を組み立てて渡す
+en|// MemoSearch is generable, so Siri builds the value from the request and passes it in
+ja|@Parameter(title: "検索条件", description: "探したいメモの条件")
+en|@Parameter(title: "Search Conditions", description: "The conditions of the memos to find")
+ja|// 返したメモは、次に呼ぶツールのパラメータにそのまま渡される
+en|// The memos you return are passed as is to the parameters of the next tool called

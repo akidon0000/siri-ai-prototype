@@ -1,0 +1,6 @@
+ja|// intentが投げるエラー。Siriはこの型の文をそのまま読み上げる
+en|// The error the intent throws. Siri reads this type's text aloud as is
+ja|// 何が起きたかを、その状況の言葉で伝える。広告や課金の勧誘は入れない
+en|// Say what happened in terms of the situation. No ads or upsells
+ja|case .memoDeleted: "そのメモはもう削除されています"
+en|case .memoDeleted: "That memo has already been deleted"

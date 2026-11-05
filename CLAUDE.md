@@ -21,9 +21,21 @@
 - `.tutorial` からは `@Code(name: "<#nameの値>", file: "<名前>-NN.<拡張子>", previousFile: "<名前>-(NN-1).<拡張子>")` で参照する。
   生成スクリプトは、全スナップショットがどこかのステップから参照されているか、`name` と `previousFile` が正しいかも検査する。
 - `.md` をDocCカタログに置くと記事として解釈されるので、Markdownを載せたいときは拡張子を `.txt` にする（例: `MemoTriageSkill.txt.seq`）。
-- 変更後は `xcrun docc convert` が警告0件で通ることを確かめる（コマンドは `.github/workflows/docc-pages.yml` と同じ）。
-- `.tutorial` のファイル名を変えると公開URLが変わり、旧URLは404になる。改名したら `tools/docc-redirects.sh` に
+- 変更後は日本語版・英語版の両カタログで `xcrun docc convert` が警告0件で通ることを確かめる（コマンドは `.github/workflows/docc-pages.yml` と同じ）。
+- `.tutorial` のファイル名を変えると公開URLが変わり、旧URLは404になる。改名したら両言語とも同じ名前に変え、`tools/docc-redirects.sh` に
   `redirect <旧名> <新名>` を足す（Pagesのデプロイ時に旧URLへ転送ページを置く）。
+
+## 英語版（ADR 0010）
+
+- 英語版のDocCカタログは `ios/Library/Documentation/en/AppFeature.docc/`。`/siri-ai-tutorials/en/` に公開し、日本語版と同じパスにする。
+  公開時に `tools/docc-language-switch.sh` が全ページへ言語切り替え（右下のボタン）を差し込む。
+- `.tutorial`・`AppFeature.md`・章末プロンプト（`TutorialArt/NN-prompt.txt`）を直したら、英語版の同じファイルも同じコミットで直す。
+  セクション・ステップ・`@Code`・`@Image` の並びは日本語版と同じにする（`generate.py` が検査する）。
+- 英語版のコードは同じ `.seq` から作る。日本語を含む行は `tools/tutorial-code/en/<名前>.<拡張子>.en` の対訳
+  （`ja|<日本語の行>` と `en|<英語の行>` の組。字下げは元の行のものを使う）で置き換える。`.seq` の日本語の行を足す・変えたら対訳も直す。
+  対訳が無い・使われていない・英語側に日本語が残っていると `generate.py` がエラーにする。
+- 英語版の章名のbetaタグは ` [iOS 27.3 beta]`、本文では「(iOS 27.3 beta)」と書く。
+- skill（`plugins/siri-ai`）は日本語版だけから生成する。
 
 ## Example
 

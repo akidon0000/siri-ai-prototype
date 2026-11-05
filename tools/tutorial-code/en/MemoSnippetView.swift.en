@@ -1,0 +1,6 @@
+ja|// Siriの結果に出すビュー。アプリの画面より小さく、要点だけを見せる
+en|// A view shown in Siri's results. Smaller than the app's screens, showing only the essentials
+ja|// ボタンにintentを渡すと、押したときにアプリを開かずにそのintentが実行される
+en|// A button with an intent runs that intent when pressed, without opening the app
+ja|Button("完了", intent: CompleteMemoIntent(memo: memo))
+en|Button("Complete", intent: CompleteMemoIntent(memo: memo))

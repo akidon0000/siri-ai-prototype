@@ -1,0 +1,6 @@
+ja|// スニペットの表示を作るintent。ボタンで操作したあと、システムがもう一度 perform() を呼ぶ
+en|// An intent that builds the snippet. After a button is used, the system calls perform() again
+ja|static let title: LocalizedStringResource = "メモのスニペット"
+en|static let title: LocalizedStringResource = "Memo Snippet"
+ja|// 呼ばれるたびに最新の状態を読み直して表示する
+en|// Read the latest state every time it's called

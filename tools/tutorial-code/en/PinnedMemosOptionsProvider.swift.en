@@ -1,0 +1,4 @@
+ja|// パラメータに選択肢を出す。索引に入れていないEntityも、Siriはこの選択肢から見つけられる
+en|// Offers options for a parameter. Siri can find entities among them even if they aren't indexed
+ja|// 使う側: @Parameter(title: "メモ", optionsProvider: PinnedMemosOptionsProvider()) var memo: MemoEntity
+en|// Usage: @Parameter(title: "Memo", optionsProvider: PinnedMemosOptionsProvider()) var memo: MemoEntity

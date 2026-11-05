@@ -1,0 +1,50 @@
+ja|// Remindersドメインの reminder スキーマに合わせる。AppEntity への準拠はマクロが付ける
+en|// Follows the Reminders domain's reminder schema. The macro adds the AppEntity conformance
+ja|// IndexedEntity にすると、Spotlightの索引に入れられる
+en|// Making it an IndexedEntity lets you put it in the Spotlight index
+ja|// システムがこのメモを指すときに使う、変わらないID
+en|// A stable ID the system uses to refer to this memo
+ja|// スキーマでの完了状態の名前は isCompleted
+en|// The schema names the completion state isCompleted
+ja|// ここからはスキーマが求めるプロパティ。対応していない機能は nil や空の値を返す
+en|// Properties the schema requires. Return nil or empty values for unsupported features
+ja|// 本文を含む応答の前に、端末の認証（Face IDなど）を求める
+en|// Ask for device authentication (Face ID and so on) before a response that includes the body
+ja|@Property(title: "鍵付きメモの本文", description: "ロックしたメモの本文",
+en|@Property(title: "Locked Memo Body", description: "The body of a locked memo",
+ja|// アプリとそのextensionの中だけで使う値。Siri・Shortcutsには見せない
+en|// A value used only inside the app and its extensions. Hidden from Siri and Shortcuts
+ja|@Property(title: "同期リビジョン", visibility: .internal)
+en|@Property(title: "Sync Revision", visibility: .internal)
+ja|// 保存していない値を、計算してSiriに見せる
+en|// Compute a value that isn't stored and show it to Siri
+ja|@ComputedProperty(title: "期限切れ", description: "期限を過ぎていて、まだ完了していなければtrue")
+en|@ComputedProperty(title: "Overdue", description: "True if the due date has passed and the memo isn't completed")
+ja|// 本文をSpotlightの contentDescription として索引に入れる
+en|// Index the body as Spotlight's contentDescription
+ja|@ComputedProperty(title: "本文", description: "メモの本文のテキスト", indexingKey: \.contentDescription)
+en|@ComputedProperty(title: "Body", description: "The text of the memo's body", indexingKey: \.contentDescription)
+ja|// Spotlightに当てはまる属性が無いので、アプリ独自のキーで索引に入れる
+en|// Spotlight has no matching attribute, so index it with the app's own key
+ja|@ComputedProperty(title: "リスト名", description: "メモが入っているリストの名前",
+en|@ComputedProperty(title: "List Name", description: "The name of the list the memo is in",
+ja|// サーバーへの問い合わせが要る値。Siriが必要としたときだけ取りに来る
+en|// A value that needs a server request. Siri fetches it only when it needs it
+ja|// indexingKey が無いので、Spotlightの索引には入らない
+en|// It has no indexingKey, so it isn't in the Spotlight index
+ja|@DeferredProperty(title: "共有相手", description: "このメモを共有している人の名前", authenticationPolicy: .requiresAuthentication)
+en|@DeferredProperty(title: "Shared With", description: "The names of the people this memo is shared with", authenticationPolicy: .requiresAuthentication)
+ja|// indexingKey を付けると索引に入る。索引を作るたびに取りに来るので、すぐ返せる値にする
+en|// With an indexingKey it's indexed. It's fetched every time the index is built, so return it quickly
+ja|@DeferredProperty(title: "添付の文字", description: "添付した画像から読み取った文字", indexingKey: \.textContent)
+en|@DeferredProperty(title: "Attachment Text", description: "Text recognized in attached images", indexingKey: \.textContent)
+ja|static let typeDisplayRepresentation: TypeDisplayRepresentation = "メモ"
+en|static let typeDisplayRepresentation: TypeDisplayRepresentation = "Memo"
+ja|// Siriの応答・候補の一覧・Spotlightでメモ1件を表示するときの見た目
+en|// How one memo looks in Siri's responses, suggestion lists and Spotlight
+ja|subtitle: isDone ? "完了" : "未完了",
+en|subtitle: isDone ? "Done" : "Not Done",
+ja|subtitle: isCompleted ? "完了" : "未完了",
+en|subtitle: isCompleted ? "Done" : "Not Done",
+ja|// Siriが名前やIDからメモを探すときに使うクエリ
+en|// The query Siri uses to find memos by name or ID

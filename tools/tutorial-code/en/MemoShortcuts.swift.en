@@ -1,0 +1,28 @@
+ja|// コンパイラがこの型を見つけて登録する。登録処理を呼ぶ必要は無い
+en|// The compiler finds and registers this type. There's no registration call to make
+ja|// アクションボタンにも割り当てられる。画面を見ずに押されても伝わる応答にしておく（第4章）
+en|// Can be assigned to the Action button. Make responses work without looking at the screen (chapter 4)
+ja|// フレーズには必ず \(.applicationName) を入れる
+en|// Every phrase must include \(.applicationName)
+ja|phrases: ["\(.applicationName)にメモを追加して"]
+en|phrases: ["Add a memo in \(.applicationName)"]
+ja|phrases: ["\(.applicationName)にメモを追加して"],
+en|phrases: ["Add a memo in \(.applicationName)"],
+ja|// \(\.$priority) には優先度（低・通常・高）が入る。String型のパラメータは埋め込めない
+en|// \(\.$priority) is filled with a priority (Low, Normal, High). String parameters can't be embedded
+ja|"\(.applicationName)にメモを追加して",
+en|"Add a memo in \(.applicationName)",
+ja|"\(.applicationName)に優先度\(\.$priority)のメモを追加",
+en|"Add a \(\.$priority) priority memo in \(.applicationName)",
+ja|shortTitle: "メモを追加",
+en|shortTitle: "Add Memo",
+ja|// MemoEntity を埋め込むと、メモのタイトルそのものをフレーズの一部として言える
+en|// Embedding a MemoEntity lets people say the memo's title itself as part of the phrase
+ja|phrases: ["\(.applicationName)で\(\.$memo)を完了にして"],
+en|phrases: ["Complete \(\.$memo) in \(.applicationName)"],
+ja|shortTitle: "メモを完了",
+en|shortTitle: "Complete Memo",
+ja|// この言い方ではアプリを起動しない、というフレーズ
+en|// Phrases that should not launch the app
+ja|"\(.applicationName)の使い方を教えて",
+en|"How do I use \(.applicationName)",

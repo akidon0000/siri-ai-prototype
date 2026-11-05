@@ -1,0 +1,4 @@
+ja|// SiriKitで必要だった利用許可のダイアログ。App Intentsでは要らない
+en|// The permission prompt SiriKit required. App Intents doesn't need it
+ja|print("Siri:", status == .authorized ? "許可" : "未許可")
+en|print("Siri:", status == .authorized ? "authorized" : "not authorized")

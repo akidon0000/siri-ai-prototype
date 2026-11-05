@@ -1,0 +1,38 @@
+[Workshop] Siri AI Tutorials Chapter 3: Fix phrases with App Shortcuts
+
+Tutorial: https://akidon0000.github.io/siri-ai-tutorials/en/tutorials/appfeature/03-app-shortcuts
+Repository: https://github.com/akidon0000/siri-ai-tutorials (work in this already-cloned directory)
+
+Read the tutorial above first to understand the order in which the code is built and why it's written that way.
+If you can't open it, read ios/Library/Documentation/en/AppFeature.docc/Tutorials/03-app-shortcuts.tutorial.
+Original documents to read alongside:
+  - docs/apple-doc/shortcuts/app-shortcuts.md
+The tutorial's MemoStore corresponds to MemoClient in Clients and LiveMemoClient in ClientsLive in this repository.
+
+## Build
+Add App Shortcuts to the AddMemoIntent / CompleteMemoIntent you made in chapter 2.
+
+- Add MemoShortcuts: AppShortcutsProvider to AppFeature
+- Every phrase must include \(.applicationName), and only AppEnum / AppEntity parameters may be embedded
+  (\(\.$priority) for AddMemoIntent, \(\.$memo) for CompleteMemoIntent)
+- Set shortTitle / systemImageName / shortcutTileColor
+- Call MemoShortcuts.updateAppShortcutParameters() whenever memos are added or removed
+- Put a SiriTipView and a ShortcutsLink below the memo list
+
+## Run it and check
+1. Unit tests: `cd ios/Library && xcodebuild test -scheme Library -destination 'platform=iOS Simulator,name=iPhone 18 Pro'`
+   (You may change the simulator name to an iPhone you have, from `xcrun simctl list devices available`)
+2. Build the app and launch it in Simulator:
+   `cd ios/App && xcodebuild build -scheme SiriAIPrototype -destination 'platform=iOS Simulator,name=iPhone 18 Pro' -derivedDataPath build`
+   `xcrun simctl boot 'iPhone 18 Pro' ; open -a Simulator ; xcrun simctl install booted ios/App/build/Build/Products/Debug-iphonesimulator/SiriAIPrototype.app ; xcrun simctl launch booted com.akidon0000.SiriAIPrototype`
+   After launching, take a screenshot with `xcrun simctl io booted screenshot` and check it.
+3. Check in a screenshot that the SiriTipView and ShortcutsLink appear on the app's screen.
+4. Open the Shortcuts app and check that this app's tile appears under "App Shortcuts" with its color and icon.
+   Run the tile and check on the app's screen that a memo is added.
+   If you have no tool that can operate the UI, walk the user through these steps and ask for the results.
+5. Siri's speech recognition in Simulator isn't reliable, so ask the user to check the phrases on a device (report whether that was confirmed).
+
+When you're done, report in these three parts:
+- What you made (files added or changed)
+- What you confirmed by running it (commands run and their results, screenshots)
+- What you couldn't confirm (with reasons). Don't write "it worked" for anything you didn't check

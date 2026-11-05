@@ -1,0 +1,297 @@
+@Tutorial(time: 35) {
+    @Intro(title: "Give Apple Intelligence context") {
+        Schemas tell the system at build time what your app can do, but they don't tell it at run time which memo someone is talking about.
+        In this chapter you pass your app's context to Apple Intelligence through six routes: the Spotlight index, what's on screen,
+        notifications, actions taken in the UI, handing data to other apps, and the camera (visual intelligence).
+
+        Sources: `docs/apple-doc/apple-intelligence/apple-intelligence-and-siri-ai.md`,
+        [Making app entities available in Spotlight](https://developer.apple.com/documentation/appintents/making-app-entities-available-in-spotlight),
+        [Providing contextual cues to Apple Intelligence and Siri](https://developer.apple.com/documentation/appintents/providing-contextual-cues-to-apple-intelligence-and-siri),
+        [Donating your app's data and actions to the system](https://developer.apple.com/documentation/appintents/donating-your-apps-data-and-actions-to-the-system),
+        [Integrating your app with visual intelligence](https://developer.apple.com/documentation/visualintelligence/integrating-your-app-with-visual-intelligence),
+        [WWDC26: Explore advanced App Intents features for Siri and Apple Intelligence](https://developer.apple.com/videos/play/wwdc2026/343/)
+    }
+
+    @Section(title: "Add memos to Spotlight's semantic index") {
+        @ContentAndMedia {
+            Apple Intelligence uses Spotlight's semantic search to find your app's data.
+            Indexed memos can be found by closeness in meaning, even when someone says something vague like "the milk one".
+        }
+
+        @Steps {
+            @Step {
+                Conform `MemoEntity` to `IndexedEntity`. That's the only requirement for indexing;
+                the title and subtitle from `displayRepresentation` are used as index attributes automatically.
+
+                @Code(name: "MemoEntity.swift", file: "MemoEntity-11.swift", previousFile: "MemoEntity-10.swift")
+            }
+
+            @Step {
+                For when you want to index more than the automatic attributes, create an extension of `MemoEntity`.
+
+                @Code(name: "MemoEntity+Spotlight.swift", file: "MemoEntity+Spotlight-01.swift")
+            }
+
+            @Step {
+                Implement `attributeSet`. The contents of the `CSSearchableItemAttributeSet` you return here
+                are added to the automatically created attributes.
+
+                @Code(name: "MemoEntity+Spotlight.swift", file: "MemoEntity+Spotlight-02.swift", previousFile: "MemoEntity+Spotlight-01.swift")
+            }
+
+            @Step {
+                Put the memo's tags in `keywords`. If you also put a title, subtitle or image in `attributeSet`,
+                the values from `displayRepresentation` take precedence.
+
+                @Code(name: "MemoEntity+Spotlight.swift", file: "MemoEntity+Spotlight-03.swift", previousFile: "MemoEntity+Spotlight-02.swift")
+            }
+
+            @Step {
+                Create a type responsible for indexing. Use a named `CSSearchableIndex` rather than the default index;
+                the default index is for prototyping and testing.
+
+                @Code(name: "MemoSpotlightIndexer.swift", file: "MemoSpotlightIndexer-01.swift")
+            }
+
+            @Step {
+                Add memos to the index with `indexAppEntities(_:)`. If a memo with the same `id` is already there, it's updated instead of duplicated.
+                Call it when a memo is added and when a value used for display, such as the title, changes.
+
+                @Code(name: "MemoSpotlightIndexer.swift", file: "MemoSpotlightIndexer-02.swift", previousFile: "MemoSpotlightIndexer-01.swift")
+            }
+
+            @Step {
+                When a memo is deleted, remove it from the index too with `deleteAppEntities(identifiedBy:ofType:)`.
+                If you forget, Siri will find memos that no longer exist.
+
+                @Code(name: "MemoSpotlightIndexer.swift", file: "MemoSpotlightIndexer-03.swift", previousFile: "MemoSpotlightIndexer-02.swift")
+            }
+
+            @Step {
+                When something goes wrong with the index, Spotlight asks the app to index again.
+                Conform `MemoQuery` to `IndexedEntityQuery` and write `reindexAllEntities`, which indexes everything again.
+
+                @Code(name: "MemoQuery.swift", file: "MemoQuery-04.swift", previousFile: "MemoQuery-03.swift")
+            }
+
+            @Step {
+                Also write `reindexEntities(for:indexDescription:)`, which indexes only the given `id`s again.
+                Spotlight can behave differently in Simulator and on a device, so check the index on a device.
+
+                @Code(name: "MemoQuery.swift", file: "MemoQuery-05.swift", previousFile: "MemoQuery-04.swift")
+            }
+        }
+    }
+
+    @Section(title: "Tell Siri what's on screen") {
+        @ContentAndMedia {
+            Siri can read the text on screen, but it doesn't know which of your app's data it is.
+            Annotating views with entities makes requests like "Complete the third one" and "this memo" work.
+            Annotate only the data the screen is actually showing.
+        }
+
+        @Steps {
+            @Step {
+                Create the memo list screen. Keep the selection in `selection`.
+
+                @Code(name: "MemoListView.swift", file: "MemoListView-01.swift")
+            }
+
+            @Step {
+                List the memos with `List`.
+
+                @Code(name: "MemoListView.swift", file: "MemoListView-02.swift", previousFile: "MemoListView-01.swift")
+            }
+
+            @Step {
+                Add `appEntityIdentifier(forSelectionType:)` to the `List`, and build and return an
+                `EntityIdentifier` from the selection ID. Instead of annotating each row, the system asks by ID
+                when it needs to, so the cost stays low even with many rows. Siri can also find a selected row
+                that has scrolled off screen.
+
+                @Code(name: "MemoListView.swift", file: "MemoListView-03.swift", previousFile: "MemoListView-02.swift")
+            }
+
+            @Step {
+                Create a detail screen that shows a single memo across the whole screen.
+
+                @Code(name: "MemoDetailView.swift", file: "MemoDetailView-01.swift")
+            }
+
+            @Step {
+                Show the title as the body.
+
+                @Code(name: "MemoDetailView.swift", file: "MemoDetailView-02.swift", previousFile: "MemoDetailView-01.swift")
+            }
+
+            @Step {
+                On a screen that shows only one item, create an `NSUserActivity` with `userActivity`
+                and put the memo in `appEntityIdentifier`. This activity is also used for Handoff to another device.
+                When several entities are on screen and you want to annotate only some of them,
+                you can also add `appEntityIdentifier(_:)` to a view.
+
+                @Code(name: "MemoDetailView.swift", file: "MemoDetailView-03.swift", previousFile: "MemoDetailView-02.swift")
+            }
+
+            @Step {
+                Add `displayRepresentations(for:requestedComponents:)` to `MemoQuery`.
+                When many entities are on screen, Siri can ask for just the display text instead of all the data,
+                so it can quickly tell which one is "the third one". If that's slow, Siri asks back or picks something else.
+
+                @Code(name: "MemoQuery.swift", file: "MemoQuery-06.swift", previousFile: "MemoQuery-05.swift")
+            }
+        }
+    }
+
+    @Section(title: "Pass context from outside the screen") {
+        @ContentAndMedia {
+            Your app's data also appears outside its screens, in notifications, Now Playing and alarms.
+            You can annotate these with entities too.
+        }
+
+        @Steps {
+            @Step {
+                Prepare a function that creates the due-date notification.
+
+                @Code(name: "MemoNotification.swift", file: "MemoNotification-01.swift")
+            }
+
+            @Step {
+                Put the memo's ID in `UNMutableNotificationContent`'s `appEntityIdentifiers`.
+                When someone says "Mark that done" after AirPods read the notification aloud, Siri knows which memo it is.
+                In the same way, pass entities to the `appEntityIdentifiers` of `MusicContent` and similar types for Now Playing,
+                and to `AlarmConfiguration` for AlarmKit.
+                A temporary `TransientAppEntity` has no persistent ID, so it can't be used for these annotations.
+
+                @Code(name: "MemoNotification.swift", file: "MemoNotification-02.swift", previousFile: "MemoNotification-01.swift")
+            }
+        }
+    }
+
+    @Section(title: "Donate actions taken in the UI") {
+        @ContentAndMedia {
+            The system records intents run from Siri or Shortcuts automatically.
+            Actions taken on your app's screens don't reach Apple Intelligence unless your app donates them.
+        }
+
+        @Steps {
+            @Step {
+                Prepare the model for the memo list screen.
+
+                @Code(name: "MemoListModel.swift", file: "MemoListModel-01.swift")
+            }
+
+            @Step {
+                Write `addMemoFromUI`, called from the screen's "Add" button. So far it's an ordinary add operation
+                with nothing to do with donations.
+
+                @Code(name: "MemoListModel.swift", file: "MemoListModel-02.swift", previousFile: "MemoListModel-01.swift")
+            }
+
+            @Step {
+                Build the `CreateMemoIntent` (chapter 5's schema intent) that corresponds to the same action,
+                and pass it with the result to `IntentDonationManager.shared.donate(intent:result:)`.
+                The system doesn't run this intent. It records it and uses it to learn habits ("this person always takes notes in this app"),
+                to interpret vague requests, and for suggestions on the Lock Screen and elsewhere.
+
+                @Code(name: "MemoListModel.swift", file: "MemoListModel-03.swift", previousFile: "MemoListModel-02.swift")
+            }
+
+            @Step {
+                You can set the wording shown in suggestions with `PredictableIntent`.
+                Add the conformance to `AddMemoIntent` and return a short description such as "Add 'Buy milk' to memos"
+                from `predictionConfiguration`.
+
+                @Code(name: "AddMemoIntent.swift", file: "AddMemoIntent-12.swift", previousFile: "AddMemoIntent-11.swift")
+            }
+
+            @Step {
+                Donate only actions a person actually took, and fill in as many parameters as you can.
+                But leave out values you don't want used for predictions, such as message bodies.
+                If you donate more than people actually do, the system starts ignoring that app's donations.
+
+                @Code(name: "MemoListModel.swift", file: "MemoListModel-04.swift", previousFile: "MemoListModel-03.swift")
+            }
+        }
+    }
+
+    @Section(title: "Hand data to other apps") {
+        @ContentAndMedia {
+            Siri AI can hand one app's entity to another app to continue a task, as in "Email this memo".
+            For that, the entity has to conform to `Transferable`.
+        }
+
+        @Steps {
+            @Step {
+                Conform `MemoEntity` to `Transferable`.
+
+                @Code(name: "MemoEntity+Transferable.swift", file: "MemoEntity+Transferable-01.swift")
+            }
+
+            @Step {
+                In `transferRepresentation`, export the memo as its title string.
+                Mail and Messages can take this string as the body.
+                For an entity that represents a contact or a place, making it convertible to `IntentPerson` or
+                `PlaceDescriptor` with `IntentValueRepresentation` lets you hand it over in a form the receiving app can use as is.
+
+                @Code(name: "MemoEntity+Transferable.swift", file: "MemoEntity+Transferable-02.swift", previousFile: "MemoEntity+Transferable-01.swift")
+            }
+        }
+    }
+
+    @Section(title: "Find memos from what the camera sees") {
+        @ContentAndMedia {
+            Visual intelligence uses what appears in the camera or a screenshot as a clue
+            and lists the matching data in your app as search results.
+        }
+
+        @Steps {
+            @Step {
+                Create a query that conforms to `IntentValueQuery`. An app can have only one query
+                for visual intelligence (one that takes a `SemanticContentDescriptor`).
+
+                @Code(name: "MemoVisualSearchQuery.swift", file: "MemoVisualSearchQuery-01.swift")
+            }
+
+            @Step {
+                Receive a `SemanticContentDescriptor` in `values(for:)`. `labels` contains English labels such as "milk"
+                that describe what's in the picture, so return the memos that match them.
+                Point the camera at a milk carton and the "Buy milk" memo shows up.
+                Labels are common `en_US` words, with no translation and no synonym expansion.
+                To search by the image itself, use `pixelBuffer`.
+
+                @Code(name: "MemoVisualSearchQuery.swift", file: "MemoVisualSearchQuery-02.swift", previousFile: "MemoVisualSearchQuery-01.swift")
+            }
+
+            @Step {
+                When someone taps a search result, chapter 5's `OpenMemoIntent` opens the memo.
+                For many results, an intent that follows the Visual intelligence domain's `semanticContentSearch` schema
+                lets people go from "More results" to a list in your app. What was recognized goes into `semanticContent`.
+
+                @Code(name: "ShowMemoSearchResultsIntent.swift", file: "ShowMemoSearchResultsIntent-01.swift")
+            }
+
+            @Step {
+                In `perform()`, show the list of memos that match what was received on your app's screen.
+
+                @Code(name: "ShowMemoSearchResultsIntent.swift", file: "ShowMemoSearchResultsIntent-02.swift", previousFile: "ShowMemoSearchResultsIntent-01.swift")
+            }
+        }
+    }
+
+    @Section(title: "Next steps") {
+        @ContentAndMedia {
+            Have Claude Code make Memo's entities findable from Spotlight, pass the context of screens and notifications,
+            and donate actions taken in the UI.
+        }
+
+        @Steps {
+            @Step {
+                When you've understood the chapter, paste this into Claude Code. It handles the implementation
+                through building and checking that it works.
+
+                @Code(name: "prompt.txt", file: "06-prompt.txt")
+            }
+        }
+    }
+}

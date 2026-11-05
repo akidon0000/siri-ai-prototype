@@ -1,0 +1,224 @@
+@Tutorial(time: 25) {
+    @Intro(title: "Verify your implementation") {
+        App Intents bugs often break things quietly, without errors. They show up as Siri choosing a different action,
+        a shortcut failing, or something not appearing in Spotlight.
+        Apple splits verification into four stages: integration tests written in code, checks in the Shortcuts app,
+        checks in Spotlight, and checks by actually talking to Siri. With the Siri AI Developer Preview,
+        you can automate the last stage with Siri Evaluations.
+
+        Sources: [Verifying your App Intents implementation](https://developer.apple.com/documentation/appintents/verifying-your-app-intents-implementation),
+        [Testing your App Intents code](https://developer.apple.com/documentation/appintentstesting/testing-your-app-intents-code),
+        [Siri Evaluations](https://developer.apple.com/documentation/sirievaluations)
+    }
+
+    @Section(title: "Write integration tests with App Intents Testing") {
+        @ContentAndMedia {
+            App Intents Testing runs your app's intents from outside the process, through the same path as Siri and Shortcuts.
+            Tests don't import your app's types; they look up intents and entities by name strings.
+            So they go in a UI test target, not a unit test target.
+        }
+
+        @Steps {
+            @Step {
+                In the app, create a test-only intent that sets up the preconditions for tests.
+                Wrap it in `#if DEBUG` so it isn't in release builds.
+
+                @Code(name: "ResetMemosIntent.swift", file: "ResetMemosIntent-01.swift")
+            }
+
+            @Step {
+                Set `isDiscoverable` to `false` so it doesn't appear in Shortcuts or Siri,
+                and restore the initial data in `perform()`. You no longer need to drive the UI to set up state, and tests don't break when screens change.
+
+                @Code(name: "ResetMemosIntent.swift", file: "ResetMemosIntent-02.swift", previousFile: "ResetMemosIntent-01.swift")
+            }
+
+            @Step {
+                Create a test class in the UI test target. It holds an `XCUIApplication` and `IntentDefinitions`.
+                Use the same signing team for the test target as for the app.
+
+                @Code(name: "MemoIntentsTests.swift", file: "MemoIntentsTests-01.swift")
+            }
+
+            @Step {
+                Launch the app in `setUp` and create `IntentDefinitions` from the bundle ID.
+                From here you can look up, by name, every intent, entity, enum and query the app registered.
+
+                @Code(name: "MemoIntentsTests.swift", file: "MemoIntentsTests-02.swift", previousFile: "MemoIntentsTests-01.swift")
+            }
+
+            @Step {
+                Look up the intent with `intents["CreateMemoIntent"]`, pass parameters with `makeIntent(title:)`, and `run()` it.
+                You can read the result with dynamic member lookup, as in `result.value.title`.
+
+                @Code(name: "MemoIntentsTests.swift", file: "MemoIntentsTests-03.swift", previousFile: "MemoIntentsTests-02.swift")
+            }
+
+            @Step {
+                With `entities["MemoEntity"].entities(matching:)`, try the same lookup Siri does when it hears a name.
+                This checks that chapter 2's `entities(matching:)` works correctly.
+
+                @Code(name: "MemoIntentsTests.swift", file: "MemoIntentsTests-04.swift", previousFile: "MemoIntentsTests-03.swift")
+            }
+
+            @Step {
+                With `spotlightQuery(_:)`, check that memos are in chapter 6's Spotlight index.
+                Pass `nil` to get every indexed entity of that type.
+
+                @Code(name: "MemoIntentsTests.swift", file: "MemoIntentsTests-05.swift", previousFile: "MemoIntentsTests-04.swift")
+            }
+
+            @Step {
+                Run `ResetMemosIntent` at the end of `setUp` so every test starts from the same initial data.
+                There are also APIs to check on-screen annotations with `viewAnnotations()`, and
+                `Transferable` round trips with `exported(as:)` and `resolved(from:)`.
+
+                @Code(name: "MemoIntentsTests.swift", file: "MemoIntentsTests-06.swift", previousFile: "MemoIntentsTests-05.swift")
+            }
+        }
+    }
+
+    @Section(title: "Check by hand in Shortcuts and Spotlight") {
+        @ContentAndMedia {
+            Integration tests can't tell you whether things read naturally, or whether the system can find your data.
+        }
+
+        @Steps {
+            @Step {
+                Create a new shortcut in the Shortcuts app and check that your app's intents appear in the list of actions.
+                Check in every language you support that chapter 2's `parameterSummary` reads as one natural sentence.
+
+                @Code(name: "AddMemoIntent.swift", file: "AddMemoIntent-13.swift", previousFile: "AddMemoIntent-12.swift")
+            }
+
+            @Step {
+                Connect the intent's result to the next action and check that `MemoEntity` flows through with the right type.
+                If you set a breakpoint at the start of `perform()` and run it from Shortcuts, it stops there.
+
+                @Code(name: "AddMemoIntent.swift", file: "AddMemoIntent-14.swift", previousFile: "AddMemoIntent-13.swift")
+            }
+
+            @Step {
+                Search for a memo title in Spotlight on a device, tap the result, and check that the right screen in the app opens.
+                Also check whether the App Shortcut phrases show up as suggestions while typing.
+                To rebuild the index, reset it from Settings > Developer > CoreSpotlight Testing.
+
+                @Code(name: "MemoSpotlightIndexer.swift", file: "MemoSpotlightIndexer-04.swift", previousFile: "MemoSpotlightIndexer-03.swift")
+            }
+        }
+    }
+
+    @Section(title: "Test conversations automatically with Siri Evaluations") {
+        @ContentAndMedia {
+            Siri Evaluations runs requests to Siri written as scripts (scenarios)
+            and compares which intents Siri called and which entities it found against your expectations.
+            It runs on the Evaluations framework and Swift Testing, and Xcode produces a report for each turn after the run.
+        }
+
+        @Steps {
+            @Step {
+                Create a file for the evaluation in the UI test target and prepare `IntentDefinitions`.
+
+                @Code(name: "MemoSiriEvaluationTests.swift", file: "MemoSiriEvaluationTests-01.swift")
+            }
+
+            @Step {
+                Create a type that conforms to `Evaluation`. `name` is the title of the Xcode report, and `dataset` is the set of scenarios to run.
+
+                @Code(name: "MemoSiriEvaluationTests.swift", file: "MemoSiriEvaluationTests-02.swift", previousFile: "MemoSiriEvaluationTests-01.swift")
+            }
+
+            @Step {
+                In `subject(from:)`, run the given scenario through `SiriService.run(scenario:)`.
+                It's called once per scenario, so you can also set up state and clean up here.
+
+                @Code(name: "MemoSiriEvaluationTests.swift", file: "MemoSiriEvaluationTests-03.swift", previousFile: "MemoSiriEvaluationTests-02.swift")
+            }
+
+            @Step {
+                Use `SiriExpectationEvaluator` for scoring, and put the standard metrics in the report with `computeSiriMetrics(into:)`.
+
+                @Code(name: "MemoSiriEvaluationTests.swift", file: "MemoSiriEvaluationTests-04.swift", previousFile: "MemoSiriEvaluationTests-03.swift")
+            }
+
+            @Step {
+                Write a scenario. A `UserTurn` is one utterance by the person, and `Calls` inside it
+                expects that "`CreateMemoIntent` is called with a title that contains milk".
+
+                @Code(name: "MemoSiriEvaluationTests.swift", file: "MemoSiriEvaluationTests-05.swift", previousFile: "MemoSiriEvaluationTests-04.swift")
+            }
+
+            @Step {
+                Add the expectation that "delete isn't called" with `Calls(.disallowed)`.
+                A normal `Calls` only checks whether the listed calls happened, so you can't tell whether a wrong action was taken
+                unless you state it with `.disallowed`. `.disallowed` fails even when Siri only asked for confirmation.
+
+                @Code(name: "MemoSiriEvaluationTests.swift", file: "MemoSiriEvaluationTests-06.swift", previousFile: "MemoSiriEvaluationTests-05.swift")
+            }
+
+            @Step {
+                Attach the evaluation to a test with `@Test(.evaluates(...))`, and check with `#expect` that every intent expectation was met.
+
+                @Code(name: "MemoSiriEvaluationTests.swift", file: "MemoSiriEvaluationTests-07.swift", previousFile: "MemoSiriEvaluationTests-06.swift")
+            }
+
+            @Step {
+                Write a multi-turn scenario. The first turn doesn't say the title, and the second turn answers.
+                Write expectations that span turns in `SiriScenario`'s `expectation:`.
+                A call in progress while Siri is asking a follow-up question doesn't satisfy `Calls` until it completes.
+
+                @Code(name: "MemoSiriEvaluationTests.swift", file: "MemoSiriEvaluationTests-08.swift", previousFile: "MemoSiriEvaluationTests-07.swift")
+            }
+
+            @Step {
+                Add a test for this scenario too. Siri's responses vary from run to run, so run the scenarios several times,
+                and keep adding indirect phrasings and phrasings that lack information. To make more scenarios pass,
+                refine the names and descriptions of intents and parameters, and the app skill.
+                Only apps signed by the same development team as the test target can be evaluated,
+                and on a device you turn on UI Automation in Settings > Developer.
+
+                @Code(name: "MemoSiriEvaluationTests.swift", file: "MemoSiriEvaluationTests-09.swift", previousFile: "MemoSiriEvaluationTests-08.swift")
+            }
+        }
+    }
+
+    @Section(title: "Talk to Siri on a device") {
+        @ContentAndMedia {
+            Finally, try the words people would actually say.
+        }
+
+        @Steps {
+            @Step {
+                Vary the phrasing and mix in fillers like "um". Compare whether "Mark this done" works
+                with the memo on screen and without it.
+                Add the phrasings that worked to your Siri Evaluations scenarios, too, so they're checked every time.
+
+                @Code(name: "MemoSiriEvaluationTests.swift", file: "MemoSiriEvaluationTests-10.swift", previousFile: "MemoSiriEvaluationTests-09.swift")
+            }
+
+            @Step {
+                Also try requests that span other apps, such as "Email the milk memo".
+                With no screen, as with AirPods, check that the spoken response alone conveys the result.
+                Do the same in every language your app supports.
+                If you add tests for these scenarios too, you can see the effect when you revise intent descriptions or the app skill.
+
+                @Code(name: "MemoSiriEvaluationTests.swift", file: "MemoSiriEvaluationTests-11.swift", previousFile: "MemoSiriEvaluationTests-10.swift")
+            }
+        }
+    }
+
+    @Section(title: "Next steps") {
+        @ContentAndMedia {
+            Have Claude Code prepare App Intents Testing integration tests and Siri Evaluations scenarios.
+        }
+
+        @Steps {
+            @Step {
+                When you've understood the chapter, paste this into Claude Code. It handles the implementation
+                through building and checking that it works.
+
+                @Code(name: "prompt.txt", file: "08-prompt.txt")
+            }
+        }
+    }
+}

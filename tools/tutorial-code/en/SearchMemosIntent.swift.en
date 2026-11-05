@@ -1,0 +1,4 @@
+ja|// .system.searchInApp: 「〜をアプリで検索して」で呼ばれ、アプリ内の検索結果を開く
+en|// .system.searchInApp: called by "Search the app for …", and opens the in-app search results
+ja|// 検索語は criteria.term に入る
+en|// The search term is in criteria.term

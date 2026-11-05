@@ -1,0 +1,6 @@
+ja|// Transferable にすると、Siriが他のアプリへメモを渡せる
+en|// Making it Transferable lets Siri hand memos to other apps
+ja|// 「このメモをメールで送って」は、この変換でメモがメールアプリに渡って初めて成り立つ
+en|// "Email this memo" works only when this conversion hands the memo to the Mail app
+ja|// 文字列として渡す。受け取る側のアプリが読める形を選ぶ
+en|// Hand it over as a string. Choose a form the receiving app can read

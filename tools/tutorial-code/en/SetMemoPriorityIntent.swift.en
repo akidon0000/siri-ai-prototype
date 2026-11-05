@@ -1,0 +1,26 @@
+ja|// Developer Preview（iOS 27.3 beta）のAPIを使うので、型にavailabilityを付ける。マクロもこれを引き継ぐ
+en|// It uses Developer Preview (iOS 27.3 beta) APIs, so mark the type's availability. The macro inherits it
+ja|// .tool は AppIntentTraits の値。[.tool] と配列でも書ける。変数や計算した値は渡せない
+en|// .tool is an AppIntentTraits value. [.tool] works too. No variables or computed values
+ja|// アプリが前面にある・Live Activityを表示中・Siriアプリの会話に出てきた、のどれかならアプリ名なしで呼ばれる
+en|// Called without the app name if the app is in front, has a Live Activity, or came up in a Siri app conversation
+ja|// アプリが後ろにあるときは、依頼にアプリ名があるか、MemoEntityが検索結果に出たときに呼ばれる
+en|// In the background, called when the request names the app or a MemoEntity appears in search results
+ja|static let title: LocalizedStringResource = "メモの優先度を変える"
+en|static let title: LocalizedStringResource = "Change Memo Priority"
+ja|// Siriのモデルはこの説明を読んで、いつこのツールを使うかを決める。アプリを知らない人に向けて書く
+en|// Siri's model reads this to decide when to use the tool. Write for someone who doesn't know the app
+ja|static let description = IntentDescription("メモ1件の優先度を、低・通常・高のいずれかに変更する。")
+en|static let description = IntentDescription("Changes the priority of one memo to Low, Normal or High.")
+ja|@Parameter(title: "メモ")
+en|@Parameter(title: "Memo")
+ja|// 何を渡せばよいかを書く
+en|// Say what to pass
+ja|@Parameter(title: "メモ", description: "優先度を変えたいメモ")
+en|@Parameter(title: "Memo", description: "The memo whose priority to change")
+ja|@Parameter(title: "優先度")
+en|@Parameter(title: "Priority")
+ja|// 取りうる値があれば書いておく
+en|// List the possible values, if any
+ja|@Parameter(title: "優先度", description: "変更後の優先度。低・通常・高のいずれか")
+en|@Parameter(title: "Priority", description: "The new priority. One of Low, Normal or High")

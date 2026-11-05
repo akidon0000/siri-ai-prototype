@@ -1,0 +1,9 @@
+import AppIntents
+
+// A Journaling domain schema. As is, it can be used only in the Shortcuts app
+@AppIntent(schema: .journal.createEntry)
+struct CreateJournalEntryIntent {
+    // Declare the schema's properties without @Parameter
+    var message: AttributedString
+    var title: String?
+}

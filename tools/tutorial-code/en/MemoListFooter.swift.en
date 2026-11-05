@@ -1,0 +1,4 @@
+ja|// AddMemoIntent に登録したフレーズを「Siriに〜と話しかけてみてください」と表示する
+en|// Shows the phrase registered for AddMemoIntent as a "Try saying to Siri: …" hint
+ja|// タップすると、Shortcutsアプリでこのアプリのショートカット一覧が開く
+en|// Tapping it opens this app's list of shortcuts in the Shortcuts app

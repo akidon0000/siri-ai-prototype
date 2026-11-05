@@ -1,0 +1,4 @@
+ja|// テスト専用のintent。リリースビルドには入れない
+en|// A test-only intent. Keep it out of release builds
+ja|static let title: LocalizedStringResource = "メモを初期データに戻す"
+en|static let title: LocalizedStringResource = "Reset Memos to Seed Data"

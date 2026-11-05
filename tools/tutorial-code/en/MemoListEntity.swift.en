@@ -1,0 +1,2 @@
+ja|// Remindersドメインの list スキーマ。id と name は名前も型もスキーマ通りにする
+en|// The Reminders domain's list schema. id and name must match the schema in name and type

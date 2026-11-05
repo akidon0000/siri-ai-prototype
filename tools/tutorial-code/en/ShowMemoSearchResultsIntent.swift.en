@@ -1,0 +1,6 @@
+ja|// ビジュアルインテリジェンスの「さらに表示」から呼ばれ、アプリ内の検索結果を開く
+en|// Called from visual intelligence's "More results", and opens the in-app search results
+ja|// カメラやスクリーンショットから読み取った内容
+en|// What was recognized from the camera or a screenshot
+ja|// MemoVisualSearchQuery と同じ条件で探した一覧を、アプリの画面に出す
+en|// Show the list found with the same conditions as MemoVisualSearchQuery on the app's screen

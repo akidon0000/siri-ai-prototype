@@ -1,0 +1,8 @@
+ja|// SiriKitのカスタムintentのハンドラ。Xcodeが生成したプロトコルに準拠する
+en|// A handler for a SiriKit custom intent. It conforms to the protocol Xcode generated
+ja|// resolve: パラメータが揃っているかを確かめる。無ければ needsValue で聞き返す
+en|// resolve: check that the parameters are present. If not, ask back with needsValue
+ja|// confirm: 実行できる状態かを確かめる
+en|// confirm: check that the intent is ready to run
+ja|// handle: 実際に処理して、結果をレスポンスのコードで返す
+en|// handle: do the work and return the result as a response code

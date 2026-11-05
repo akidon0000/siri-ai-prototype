@@ -1,0 +1,473 @@
+@Tutorial(time: 50) {
+    @Intro(title: "Siri AI Developer Preview: tools and app skills") {
+        With the Siri AI Developer Preview, Siri can also find and run your app's own actions and data
+        that don't fit any schema. The entry points are `@AppIntent(.tool)`, which turns an App Intent into a "tool",
+        and "app skills", which teach Siri how to use several tools together.
+
+        Every API and feature in this chapter arrived with the Siri AI Developer Preview (iOS 27.3 beta).
+        Names and behavior may change before the final release.
+
+        Sources: `docs/apple-doc/apple-intelligence/siri-ai-developer-preview.md`,
+        [Siri AI Developer Preview](https://developer.apple.com/documentation/appintents/siri-ai-developer-preview),
+        [Bringing custom actions and content to Siri](https://developer.apple.com/documentation/appintents/bringing-custom-actions-and-content-to-siri),
+        [Orchestrating complex actions with app skills](https://developer.apple.com/documentation/appintents/orchestrating-complex-actions-with-app-skills)
+    }
+
+    @Section(title: "Choose which intents become tools") {
+        @ContentAndMedia {
+            Your app decides which intents become tools. Making everything a tool isn't the answer.
+            The criteria are summarized in [ToolIntent](https://developer.apple.com/documentation/appintents/toolintent).
+            Here, the intents in this chapter are listed as "make a tool (○)" or "don't (×)".
+            You write their contents in later sections.
+        }
+
+        @Steps {
+            @Step {
+                Good candidates are actions people can ask for in one sentence, where that sentence fills in the parameters.
+                "Make the milk memo high priority" contains both the memo and the priority in one sentence.
+                Make this "change the priority" a tool.
+
+                @Code(name: "ToolCandidates.swift", file: "ToolCandidates-01.swift")
+            }
+
+            @Step {
+                Don't mark intents that follow Siri-enabled schemas (such as `createReminder`) from chapter 5 as tools.
+                They're exposed to Siri as soon as they follow the schema, and marking them is a build error.
+                The exception is schemas from Shortcuts-only domains, covered in a reference section later.
+
+                @Code(name: "ToolCandidates.swift", file: "ToolCandidates-02.swift", previousFile: "ToolCandidates-01.swift")
+            }
+
+            @Step {
+                Also don't make tools out of intents with no action to perform, such as widget configuration intents;
+                intents that only make sense as one step inside a shortcut;
+                or intents with side effects a person should start explicitly, such as ordering and paying.
+                A `WidgetConfigurationIntent` can still be a tool if its `perform()` does an action of its own.
+
+                @Code(name: "ToolCandidates.swift", file: "ToolCandidates-03.swift", previousFile: "ToolCandidates-02.swift")
+            }
+
+            @Step {
+                In the Memo app, creating, updating and deleting are already exposed through chapter 5's schemas.
+                In addition to "change the priority", which has no schema, make "find memos by conditions" a tool too.
+
+                @Code(name: "ToolCandidates.swift", file: "ToolCandidates-04.swift", previousFile: "ToolCandidates-03.swift")
+            }
+        }
+    }
+
+    @Section(title: "Build a tool") {
+        @ContentAndMedia {
+            Build `SetMemoPriorityIntent`, which changes the priority, as an ordinary App Intent first, then make it a tool.
+        }
+
+        @Steps {
+            @Step {
+                Write a struct that conforms to `AppIntent`, and a `title`.
+
+                @Code(name: "SetMemoPriorityIntent.swift", file: "SetMemoPriorityIntent-01.swift")
+            }
+
+            @Step {
+                Receive the target memo and the new priority with `@Parameter`.
+
+                @Code(name: "SetMemoPriorityIntent.swift", file: "SetMemoPriorityIntent-02.swift", previousFile: "SetMemoPriorityIntent-01.swift")
+            }
+
+            @Step {
+                Write `perform()`. Up to this point it's an ordinary App Intent, just like in chapter 2.
+
+                @Code(name: "SetMemoPriorityIntent.swift", file: "SetMemoPriorityIntent-03.swift", previousFile: "SetMemoPriorityIntent-02.swift")
+            }
+
+            @Step {
+                Add `@AppIntent(.tool)` above the type. This one line is the only change.
+                The [AppIntent(_:)](https://developer.apple.com/documentation/appintents/appintent(_:)) macro
+                adds a `ToolIntent` conformance to the type. It takes the type's `@available` if it has one, and otherwise
+                the availability of `ToolIntent`.
+
+                @Code(name: "SetMemoPriorityIntent.swift", file: "SetMemoPriorityIntent-04.swift", previousFile: "SetMemoPriorityIntent-03.swift")
+            }
+
+            @Step {
+                The `.tool` passed to the macro is a value of
+                [AppIntentTraits](https://developer.apple.com/documentation/appintents/appintenttraits)
+                that describes the role the intent plays. You can write a single value like `.tool` or an array like `[.tool]`.
+                The macro reads the value as written, so you can't pass a variable or a computed value.
+
+                @Code(name: "SetMemoPriorityIntent.swift", file: "SetMemoPriorityIntent-05.swift", previousFile: "SetMemoPriorityIntent-04.swift")
+            }
+
+            @Step {
+                Add a `description`, and a `description` for each `@Parameter`. Siri's model
+                reads these to decide what the tool does and what to pass to it.
+                Write for someone who doesn't know your app, and include string formats, numeric ranges and units where they apply
+                ([ToolIntent](https://developer.apple.com/documentation/appintents/toolintent),
+                [Bringing custom actions and content to Siri](https://developer.apple.com/documentation/appintents/bringing-custom-actions-and-content-to-siri)).
+
+                @Code(name: "SetMemoPriorityIntent.swift", file: "SetMemoPriorityIntent-06.swift", previousFile: "SetMemoPriorityIntent-05.swift")
+            }
+        }
+    }
+
+    @Section(title: "When Siri can call your tools") {
+        @ContentAndMedia {
+            The tools you build aren't called at any time. Siri uses an app's tools only
+            when it can tell that the app is relevant to the conversation.
+        }
+
+        @Steps {
+            @Step {
+                When the app is in the foreground, when it has a Live Activity running, or when the app came up in a conversation in the Siri app,
+                its tools are used even if the person doesn't say the app's name. For example, saying
+                "Change the pickup location" while looking at a ride-hailing app's Live Activity
+                ([Siri AI Developer Preview](https://developer.apple.com/documentation/appintents/siri-ai-developer-preview)).
+
+                @Code(name: "SetMemoPriorityIntent.swift", file: "SetMemoPriorityIntent-07.swift", previousFile: "SetMemoPriorityIntent-06.swift")
+            }
+
+            @Step {
+                When the app is in the background, its tools are used if the request includes the app's name.
+                They're also used when one of the app's entities shows up in search results
+                ([ToolIntent](https://developer.apple.com/documentation/appintents/toolintent)).
+                This is where putting `MemoEntity` in the Spotlight index in chapter 6 pays off.
+
+                @Code(name: "SetMemoPriorityIntent.swift", file: "SetMemoPriorityIntent-08.swift", previousFile: "SetMemoPriorityIntent-07.swift")
+            }
+
+            @Step {
+                The Developer Preview runs on iOS, iPadOS, macOS and visionOS on Apple Intelligence-capable devices.
+                You can try it only on a device with an app signed with a development profile, or as an internal TestFlight tester.
+                It doesn't work for external testers or App Store builds. You don't need a new entitlement or to join another program.
+                When you add it to an app that's already shipping, mark the type `@available(iOS 27.3, *)` so older OS versions don't use it.
+
+                @Code(name: "SetMemoPriorityIntent.swift", file: "SetMemoPriorityIntent-09.swift", previousFile: "SetMemoPriorityIntent-08.swift")
+            }
+        }
+    }
+
+    @Section(title: "Reference: make a Shortcuts-only schema a tool") {
+        @ContentAndMedia {
+            Schemas from domains available only in the Shortcuts app (Journaling, Books and so on) aren't exposed to Siri.
+            Intents that follow these schemas can also become tools with
+            [AppIntent(_:schema:)](https://developer.apple.com/documentation/appintents/appintent(_:schema:)).
+            No such domain fits the Memo app, so this uses a journaling app as the example.
+        }
+
+        @Steps {
+            @Step {
+                Create an intent that follows the Journaling domain's `createEntry` schema.
+                Start with `message` and `title`.
+
+                @Code(name: "CreateJournalEntryIntent.swift", file: "CreateJournalEntryIntent-01.swift")
+            }
+
+            @Step {
+                Add the remaining properties the schema defines: `location`, `mediaItems` and `entryDate`.
+
+                @Code(name: "CreateJournalEntryIntent.swift", file: "CreateJournalEntryIntent-02.swift", previousFile: "CreateJournalEntryIntent-01.swift")
+            }
+
+            @Step {
+                In `perform()`, create the journal entry and return its entity. At this point
+                it can be used only in the Shortcuts app.
+
+                @Code(name: "CreateJournalEntryIntent.swift", file: "CreateJournalEntryIntent-03.swift", previousFile: "CreateJournalEntryIntent-02.swift")
+            }
+
+            @Step {
+                Replace `@AppIntent(schema:)` with `@AppIntent(.tool, schema:)`.
+                Everything `@AppIntent(schema:)` adds is still added, plus a `ToolIntent` conformance.
+                Writing this for a schema from a Siri-enabled domain (such as `.messages.sendMessage`) is a build error.
+
+                @Code(name: "CreateJournalEntryIntent.swift", file: "CreateJournalEntryIntent-04.swift", previousFile: "CreateJournalEntryIntent-03.swift")
+            }
+        }
+    }
+
+    @Section(title: "Let Siri build values") {
+        @ContentAndMedia {
+            For a request like "Find high-priority shopping memos", the search condition itself
+            doesn't exist in your app's database. Let Siri build values like this directly from the request
+            ([GenerableEntity](https://developer.apple.com/documentation/appintents/generableentity)).
+        }
+
+        @Steps {
+            @Step {
+                Create `MemoSearch`, which represents the search conditions, as a `TransientAppEntity` and add `@AppEntity(.generable)`.
+                The [AppEntity(_:)](https://developer.apple.com/documentation/appintents/appentity(_:)) macro
+                adds a `GenerableEntity` conformance, and Siri can then create this value without calling a query.
+                The macro can be added only to types that conform to `TransientAppEntity`.
+
+                @Code(name: "MemoSearch.swift", file: "MemoSearch-01.swift")
+            }
+
+            @Step {
+                `.generable` is a value of
+                [AppEntityTraits](https://developer.apple.com/documentation/appintents/appentitytraits).
+                As with `AppIntentTraits`, you can write `.generable` or `[.generable]`, and you can't pass a computed value.
+                To make a transient entity that follows a schema generable, use
+                [AppEntity(_:schema:)](https://developer.apple.com/documentation/appintents/appentity(_:schema:))
+                instead of `@AppEntity(schema:)` and write `@AppEntity(.generable, schema: ...)`.
+
+                @Code(name: "MemoSearch.swift", file: "MemoSearch-02.swift", previousFile: "MemoSearch-01.swift")
+            }
+
+            @Step {
+                Declare properties with `@Property` and give each a `description`.
+                Siri reads these descriptions to decide which part of the request goes into which property.
+                Properties of a generable entity can only be value types such as `String`, App Enums,
+                other generable entities, or arrays of these; any other type is a compile error.
+                That's why the priority is an array.
+
+                @Code(name: "MemoSearch.swift", file: "MemoSearch-03.swift", previousFile: "MemoSearch-02.swift")
+            }
+
+            @Step {
+                Add `displayRepresentation` and an `init()` the system uses to create values.
+
+                @Code(name: "MemoSearch.swift", file: "MemoSearch-04.swift", previousFile: "MemoSearch-03.swift")
+            }
+
+            @Step {
+                Create `FindMemosIntent`, a tool that takes a `MemoSearch`.
+
+                @Code(name: "FindMemosIntent.swift", file: "FindMemosIntent-01.swift")
+            }
+
+            @Step {
+                Add a `description` and a parameter of type `MemoSearch`.
+
+                @Code(name: "FindMemosIntent.swift", file: "FindMemosIntent-02.swift", previousFile: "FindMemosIntent-01.swift")
+            }
+
+            @Step {
+                Return the matching `MemoEntity` array from `perform()`. The memos you return
+                are passed as is to the next call, such as `SetMemoPriorityIntent` or `UpdateMemoIntent`.
+                When a parameter's type is an entity your app owns, like `MemoEntity`,
+                Siri looks it up with `MemoQuery` instead of building it.
+
+                @Code(name: "FindMemosIntent.swift", file: "FindMemosIntent-03.swift", previousFile: "FindMemosIntent-02.swift")
+            }
+        }
+    }
+
+    @Section(title: "Decide what may be shown") {
+        @ContentAndMedia {
+            By default, entity information is shown in Siri and Shortcuts without authentication.
+            Restrict values you don't want seen, property by property
+            ([Bringing custom actions and content to Siri](https://developer.apple.com/documentation/appintents/bringing-custom-actions-and-content-to-siri)).
+        }
+
+        @Steps {
+            @Step {
+                Add the body of a locked memo with `@Property` and set its `authenticationPolicy` to
+                `.requiresLocalDeviceAuthentication`. Siri asks for device authentication before a response that includes the body.
+                Set the default for the whole entity with `static let authenticationPolicy`, and override it on properties.
+                The property setting applies only to Siri's responses, so if the intent's result itself is sensitive,
+                require authentication in the intent.
+
+                @Code(name: "MemoEntity.swift", file: "MemoEntity-12.swift", previousFile: "MemoEntity-11.swift")
+            }
+
+            @Step {
+                Add `visibility: .internal` to values that mean nothing outside the app, such as a sync revision number.
+                [IntentVisibility](https://developer.apple.com/documentation/appintents/intentvisibility) has
+                `.default`, which shows the value to Siri and Shortcuts as well, and `.internal`, which shows it only to the app and its extensions (widgets and so on).
+                Using `.internal` together with `indexingKey` or `customIndexingKey`
+                makes the value visible from Spotlight, so don't combine them.
+
+                @Code(name: "MemoEntity.swift", file: "MemoEntity-13.swift", previousFile: "MemoEntity-12.swift")
+            }
+        }
+    }
+
+    @Section(title: "Show Siri more properties: ComputedProperty and DeferredProperty") {
+        @ContentAndMedia {
+            With stored properties alone, Siri can answer only a limited set of questions.
+            To answer "Which memos are overdue?", you need to show values you don't store.
+            Expose values you can compute with `@ComputedProperty`, and values that take time to fetch with `@DeferredProperty`.
+        }
+
+        @Steps {
+            @Step {
+                Add `isOverdue`, which returns whether the memo is overdue, with `@ComputedProperty`. It turns a computed property with a get accessor
+                (and a set accessor if needed) into an entity property that Siri and shortcuts can read
+                ([ComputedProperty(title:description:authenticationPolicy:visibility:)](https://developer.apple.com/documentation/appintents/computedproperty(title:description:authenticationpolicy:visibility:))).
+                As with `@Property`, you can set `title`, `description`, `authenticationPolicy` and `visibility`.
+
+                @Code(name: "MemoEntity.swift", file: "MemoEntity-14.swift", previousFile: "MemoEntity-13.swift")
+            }
+
+            @Step {
+                Add `noteText`, which returns the memo's body text, with `indexingKey: \.contentDescription`.
+                The value goes into the index as Spotlight's existing `contentDescription` attribute, so chapter 6's semantic search matches the body
+                ([ComputedProperty(…, indexingKey:)](https://developer.apple.com/documentation/appintents/computedproperty(title:description:authenticationpolicy:visibility:indexingkey:))).
+                The key's type is `CSSearchableItemAttributeSet`, so import `CoreSpotlight`.
+
+                @Code(name: "MemoEntity.swift", file: "MemoEntity-15.swift", previousFile: "MemoEntity-14.swift")
+            }
+
+            @Step {
+                For a value with no matching Spotlight attribute, pass your app's own key as `customIndexingKey`.
+                Here the list name goes into the index with a `CSCustomAttributeKey`
+                ([ComputedProperty(…, customIndexingKey:)](https://developer.apple.com/documentation/appintents/computedproperty(title:description:authenticationpolicy:visibility:customindexingkey:))).
+                Include your app and type names in the key name so it doesn't collide with other apps.
+
+                @Code(name: "MemoEntity.swift", file: "MemoEntity-16.swift", previousFile: "MemoEntity-15.swift")
+            }
+
+            @Step {
+                Make values that need a server request, such as the names of people a memo is shared with, a `@DeferredProperty`,
+                and return them with `get async`. Siri fetches the value only when it needs it
+                ([DeferredProperty(title:description:authenticationPolicy:visibility:)](https://developer.apple.com/documentation/appintents/deferredproperty(title:description:authenticationpolicy:visibility:))).
+                This one also requires authentication with `authenticationPolicy`.
+
+                @Code(name: "MemoEntity.swift", file: "MemoEntity-17.swift", previousFile: "MemoEntity-16.swift")
+            }
+
+            @Step {
+                A `@DeferredProperty` without `indexingKey` isn't included when an `IndexedEntity` is indexed,
+                so the `collaboratorNames` above isn't in the index either. To index one, use
+                [DeferredProperty(…, indexingKey:)](https://developer.apple.com/documentation/appintents/deferredproperty(title:description:authenticationpolicy:visibility:indexingkey:)).
+                Here the text read from attached images goes into the index as `textContent`.
+                Spotlight fetches the value every time it builds the index, so a slow fetch also slows indexing
+                ([Making app entities available in Spotlight](https://developer.apple.com/documentation/appintents/making-app-entities-available-in-spotlight)).
+
+                @Code(name: "MemoEntity.swift", file: "MemoEntity-18.swift", previousFile: "MemoEntity-17.swift")
+            }
+        }
+    }
+
+    @Section(title: "Help Siri find your custom content") {
+        @ContentAndMedia {
+            Even with tools, Siri won't use them if it can't find the entities to put in their parameters.
+            [Bringing custom actions and content to Siri](https://developer.apple.com/documentation/appintents/bringing-custom-actions-and-content-to-siri)
+            lists the following as preparation for bringing custom actions and data to Siri.
+            All of these APIs existed before, and they work as is for Developer Preview tools.
+        }
+
+        @Steps {
+            @Step {
+                Make entities findable. The basic way is the Spotlight index from chapter 6.
+                For entities you don't index, if there are few of them, return them all with `EnumerableEntityQuery`.
+                Turn chapter 5's `MemoListQuery` into a query that returns every list from `allEntities()`.
+
+                @Code(name: "MemoListQuery.swift", file: "MemoListQuery-01.swift")
+            }
+
+            @Step {
+                `EnumerableEntityQuery` is also a kind of `EntityQuery`, so write `entities(for:)`, which returns lists by ID, too.
+
+                @Code(name: "MemoListQuery.swift", file: "MemoListQuery-02.swift", previousFile: "MemoListQuery-01.swift")
+            }
+
+            @Step {
+                Another way is to offer options for a parameter with `DynamicOptionsProvider`.
+                Siri can pick the parameter's value from the memos `results()` returns.
+                Pass this type to the `@Parameter` that uses it with `optionsProvider:`.
+
+                @Code(name: "PinnedMemosOptionsProvider.swift", file: "PinnedMemosOptionsProvider-01.swift")
+            }
+
+            @Step {
+                Chapter 6's on-screen annotations and donations work as is for custom entities and intents that don't follow a schema.
+                They help with references like "this memo" and with interpreting vague requests.
+                First, add a method to `MemoListModel` that the screen's priority menu calls.
+
+                @Code(name: "MemoListModel.swift", file: "MemoListModel-05.swift", previousFile: "MemoListModel-04.swift")
+            }
+
+            @Step {
+                As with chapter 6's `CreateMemoIntent`, build the `SetMemoPriorityIntent` tool and donate it.
+                There's no result to pass, so use `donate(intent:)` without `result:`.
+
+                @Code(name: "MemoListModel.swift", file: "MemoListModel-06.swift", previousFile: "MemoListModel-05.swift")
+            }
+
+            @Step {
+                To hand one app's entity to another app, make the entity conform to `Transferable` (chapter 6).
+                "Email this memo" works only if the Memo app's `MemoEntity` can be converted into a form the Mail app can read.
+
+                @Code(name: "MemoEntity+Transferable.swift", file: "MemoEntity+Transferable-03.swift", previousFile: "MemoEntity+Transferable-02.swift")
+            }
+        }
+    }
+
+    @Section(title: "Teach the steps for using several tools: app skills") {
+        @ContentAndMedia {
+            A single tool does only one action. A request like "Tidy up my backlog of memos" needs
+            finding, completing and changing priorities combined, but from the individual tool descriptions alone
+            Siri may not be able to work out how to combine them. So you provide additional instructions as an app skill
+            ([Orchestrating complex actions with app skills](https://developer.apple.com/documentation/appintents/orchestrating-complex-actions-with-app-skills)).
+            The format is frontmatter with `name` and `description` plus a Markdown body, the same shape as Claude Code's
+            `.claude/skills/*/SKILL.md`.
+        }
+
+        @Steps {
+            @Step {
+                In Xcode, choose File > New > File from Template, select Skills Bundle, keep the name `Skills`,
+                and add it to the app target. Create one folder per skill and put only a `SKILL.md` in it.
+                The app target can have only one `.skillsbundle`,
+                and it doesn't reach Siri unless it's in Copy Bundle Resources.
+
+                @Code(name: "Skills.skillsbundle", file: "SkillsBundle-01.txt")
+            }
+
+            @Step {
+                Write `name` and `description` in the frontmatter. `name` is 1–64 characters of lowercase letters, digits and hyphens,
+                and must match the folder name. `description` is one line of at most 1,024 characters.
+                Siri first reads only the `description` to decide whether to use this skill.
+
+                @Code(name: "memo-triage/SKILL.md", file: "MemoTriageSkill-01.txt")
+            }
+
+            @Step {
+                Write the steps in the body (up to 10,000 characters). Refer to intents by their role, such as "the tool that changes the priority",
+                not by type names like `SetMemoPriorityIntent`. Don't repeat what's already written in code,
+                such as titles and descriptions.
+
+                @Code(name: "memo-triage/SKILL.md", file: "MemoTriageSkill-02.txt", previousFile: "MemoTriageSkill-01.txt")
+            }
+
+            @Step {
+                You can also write what not to do. But an app skill isn't a mechanism for running things in a fixed order.
+                It's additional information Siri uses in its decisions, and the tools aren't guaranteed to be called in the order you wrote.
+                Check the behavior on a device or in internal TestFlight testing, not in Simulator.
+
+                @Code(name: "memo-triage/SKILL.md", file: "MemoTriageSkill-03.txt", previousFile: "MemoTriageSkill-02.txt")
+            }
+        }
+    }
+
+    @Section(title: "Siri Integration Advisor") {
+        @ContentAndMedia {
+            The Developer Preview Xcode includes the Siri Integration Advisor, which reads your App Intents implementation
+            and points out improvements for Siri
+            ([Bringing custom actions and content to Siri](https://developer.apple.com/documentation/appintents/bringing-custom-actions-and-content-to-siri)).
+        }
+
+        @Steps {
+            @Step {
+                It gives findings and suggestions for letting Siri handle your app's own actions and data
+                (the official documentation doesn't list exactly what it checks, so look in Xcode after you implement).
+                After writing the code, clear the Advisor's findings before moving on to chapter 8's automated tests.
+            }
+        }
+    }
+
+    @Section(title: "Next steps") {
+        @ContentAndMedia {
+            Have Claude Code turn actions that have no schema into tools and prepare one app skill.
+        }
+
+        @Steps {
+            @Step {
+                When you've understood the chapter, paste this into Claude Code. It handles the implementation
+                through building and checking that it works.
+
+                @Code(name: "prompt.txt", file: "07-prompt.txt")
+            }
+        }
+    }
+}

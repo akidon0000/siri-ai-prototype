@@ -1,0 +1,2 @@
+ja|// 日本でサイドボタンを長押ししたときに呼ばれる。entitlementの申請が要る
+en|// Called when the side button is pressed and held in Japan. You need to request the entitlement

@@ -1,0 +1,30 @@
+ja|// アプリのintentとEntityを名前で引くための定義
+en|// Definitions for looking up the app's intents and entities by name
+ja|UserTurn("SiriAIPrototypeに牛乳を買うってメモして") {
+en|UserTurn("Make a memo in SiriAIPrototype to buy milk") {
+ja|Calls { memoIntents.intents["CreateMemoIntent"].expect(title: .contains("牛乳")) }
+en|Calls { memoIntents.intents["CreateMemoIntent"].expect(title: .contains("milk")) }
+ja|// 削除が呼ばれたら失敗にする。確認を求めた段階でも失敗になる
+en|// Fail if delete is called. Even asking for confirmation counts as a failure
+ja|// 2ターンの会話。ターンをまたぐ期待は expectation 側に書く
+en|// A two-turn conversation. Write expectations that span turns in expectation
+ja|UserTurn("SiriAIPrototypeにメモを追加して")
+en|UserTurn("Add a memo in SiriAIPrototype")
+ja|UserTurn("牛乳を買う")
+en|UserTurn("Buy milk")
+ja|// 実機で話しかけて通じた言い方も、シナリオにして毎回確かめる
+en|// Turn phrasings that worked on a device into scenarios and check them every time
+ja|UserTurn("えーと、SiriAIPrototypeに、牛乳を買うってメモしといて") {
+en|UserTurn("Um, put a memo in SiriAIPrototype to, uh, buy milk") {
+ja|// シナリオごとに1回呼ばれる。実行前の状態作りや後片付けもここに書ける
+en|// Called once per scenario. You can also set up state and clean up here
+ja|// シナリオに書いた期待と、実際の呼び出しを比べて採点する
+en|// Score by comparing the expectations in the scenario with the actual calls
+ja|@Test(.evaluates(MemoEvaluation(name: "メモの追加", dataset: SiriScenarioLoader { addMemoScenario })))
+en|@Test(.evaluates(MemoEvaluation(name: "Add a memo", dataset: SiriScenarioLoader { addMemoScenario })))
+ja|@Test(.evaluates(MemoEvaluation(name: "聞き返し", dataset: SiriScenarioLoader { addMemoWithFollowUp })))
+en|@Test(.evaluates(MemoEvaluation(name: "Follow-up question", dataset: SiriScenarioLoader { addMemoWithFollowUp })))
+ja|// 通じなかった言い方も残し、intentの説明やapp skillを直したら通るようになるかを見る
+en|// Keep phrasings that failed too, and see whether they pass after revising intent descriptions or the app skill
+ja|@Test(.evaluates(MemoEvaluation(name: "言いよどみ", dataset: SiriScenarioLoader { addMemoWithFiller })))
+en|@Test(.evaluates(MemoEvaluation(name: "Hesitation", dataset: SiriScenarioLoader { addMemoWithFiller })))

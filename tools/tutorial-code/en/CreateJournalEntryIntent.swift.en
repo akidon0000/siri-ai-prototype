@@ -1,0 +1,6 @@
+ja|// Journalingドメインのスキーマ。このままではShortcutsアプリでしか使えない
+en|// A Journaling domain schema. As is, it can be used only in the Shortcuts app
+ja|// .tool を足すとSiriのツールにもなる。この書き方ができるのはShortcuts専用ドメインのスキーマだけ
+en|// Adding .tool makes it a Siri tool too. Only schemas from Shortcuts-only domains allow this
+ja|// スキーマのプロパティは @Parameter を書かずに宣言する
+en|// Declare the schema's properties without @Parameter
