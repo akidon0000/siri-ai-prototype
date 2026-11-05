@@ -1,7 +1,9 @@
 #name MemoEntity+Ownership.swift
 1|import AppIntents
 1|
-1|// メモが共有されているかをSiriに伝える。共有メモの更新では確認が挟まる
+1|// メモが共有されているかをSiriに伝える
+1|// 伝えないと、Siriは全てのメモを「自分だけのもの」とみなし、確認なしで書き換えることがある
+1|// .shared を返すと、家族と共有中のメモを「完了にして」と言われたときに、実行前に確認が挟まる
 1|extension MemoEntity: OwnershipProvidingEntity {
 1|    var ownership: EntityOwnership {
 1|        sharedWith.isEmpty ? .unknown : .shared
