@@ -1,0 +1,4 @@
+ja|// Siri AIがメモを見せるときのカードを決める
+en|// Defines the card Siri AI uses to show a memo
+ja|// 中身には第4章の MemoSnippetView をそのまま使う
+en|// Reuse chapter 4's MemoSnippetView as the content

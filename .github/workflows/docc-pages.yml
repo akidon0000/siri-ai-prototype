@@ -6,6 +6,14 @@ on:
     paths:
       - "ios/Library/**"
       - "tools/docc-redirects.sh"
+      - "tools/docc-language-switch.*"
+      - ".github/workflows/docc-pages.yml"
+  # PRではビルドと警告の検査だけを行い、公開はしない
+  pull_request:
+    paths:
+      - "ios/Library/**"
+      - "tools/docc-redirects.sh"
+      - "tools/docc-language-switch.*"
       - ".github/workflows/docc-pages.yml"
   workflow_dispatch:
 
@@ -15,7 +23,7 @@ permissions:
   id-token: write
 
 concurrency:
-  group: pages
+  group: ${{ github.event_name == 'pull_request' && format('docc-{0}', github.ref) || 'pages' }}
   cancel-in-progress: true
 
 jobs:
@@ -24,7 +32,8 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - name: Build DocC site
+      # 日本語版を /siri-ai-tutorials/ に、英語版を /siri-ai-tutorials/en/ に置く。下のパスは同じ
+      - name: Build DocC site (Japanese)
         run: |
           xcrun docc convert ios/Library/Sources/AppFeature/AppFeature.docc \
             --output-path _site \
@@ -32,17 +41,37 @@ jobs:
             --fallback-bundle-identifier com.akidon0000.siri-ai-tutorials.AppFeature \
             --fallback-bundle-version 1.0 \
             --transform-for-static-hosting \
-            --hosting-base-path siri-ai-tutorials
+            --hosting-base-path siri-ai-tutorials \
+            --warnings-as-errors
+
+      - name: Build DocC site (English)
+        run: |
+          xcrun docc convert ios/Library/Documentation/en/AppFeature.docc \
+            --output-path _site_en \
+            --fallback-display-name AppFeature \
+            --fallback-bundle-identifier com.akidon0000.siri-ai-tutorials.AppFeature \
+            --fallback-bundle-version 1.0 \
+            --transform-for-static-hosting \
+            --hosting-base-path siri-ai-tutorials/en \
+            --warnings-as-errors
+          mv _site_en _site/en
+
+      - name: Add the language switch
+        run: sh tools/docc-language-switch.sh _site siri-ai-tutorials
 
       - name: Add redirects for renamed tutorials
-        run: sh tools/docc-redirects.sh _site siri-ai-tutorials
+        run: |
+          sh tools/docc-redirects.sh _site siri-ai-tutorials ja
+          sh tools/docc-redirects.sh _site/en siri-ai-tutorials/en en
 
       - name: Upload Pages artifact
+        if: github.event_name != 'pull_request'
         uses: actions/upload-pages-artifact@v3
         with:
           path: _site
 
   deploy:
+    if: github.event_name != 'pull_request'
     needs: build
     runs-on: ubuntu-latest
     environment:

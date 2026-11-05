@@ -1,0 +1,8 @@
+---
+name: memo-triage
+description: Use when asked to tidy up a backlog of incomplete memos. Goes through reviewing priorities and completing memos in turn.
+---
+First, gather the incomplete memos with the tool that finds memos. When there are many,
+read them out three at a time, starting with the highest priority, and ask whether to complete each one or change its priority.
+If told to complete one, mark it completed by updating the memo; if told to change the priority,
+use the tool that changes the priority.

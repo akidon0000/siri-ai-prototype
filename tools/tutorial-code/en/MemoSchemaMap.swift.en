@@ -1,0 +1,14 @@
+ja|// Siriで使えるドメイン（Reminders・Mail・Photosなど）のスキーマに合わせると、Siriにも公開される
+en|// Following a schema from a Siri-enabled domain (Reminders, Mail, Photos, ...) exposes it to Siri
+ja|// Shortcutsアプリでだけ使えるドメイン（Journaling・Booksなど）のスキーマは、Siriには公開されない
+en|// Schemas from Shortcuts-only domains (Journaling, Books, ...) aren't exposed to Siri
+ja|// Memoは完了・未完了を持つので、NotesではなくRemindersのスキーマに合わせる
+en|// A memo is done or not done, so follow the Reminders schemas rather than Notes
+ja|// 更新と削除も .reminders.updateReminder と .reminders.deleteReminders に合わせる
+en|// Updating and deleting also follow .reminders.updateReminder and .reminders.deleteReminders
+ja|// Mailのように use-case group を持つドメインでは、組のスキーマを全て採用する
+en|// In domains with use-case groups, such as Mail, adopt every schema in the group
+ja|// 一部だけを採用すると、欠けているスキーマごとにビルド警告が出る
+en|// Adopting only some gives a build warning for each missing schema
+ja|// Xcodeで reminders_ と入力して補完からスキーマを選ぶと、必要なプロパティが全て入ったテンプレートが展開される
+en|// Type reminders_ in Xcode and pick a schema from completion to expand a template with every required property

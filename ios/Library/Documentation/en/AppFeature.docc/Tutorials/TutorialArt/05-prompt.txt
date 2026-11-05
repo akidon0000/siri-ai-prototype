@@ -1,0 +1,41 @@
+[Workshop] Siri AI Tutorials Chapter 5: Bring your app to Apple Intelligence with schemas
+
+Tutorial: https://akidon0000.github.io/siri-ai-tutorials/en/tutorials/appfeature/05-app-schemas
+Repository: https://github.com/akidon0000/siri-ai-tutorials (work in this already-cloned directory)
+
+Read the tutorial above first to understand the order in which the code is built and why it's written that way.
+If you can't open it, read ios/Library/Documentation/en/AppFeature.docc/Tutorials/05-app-schemas.tutorial.
+Original documents to read alongside:
+  - docs/apple-doc/apple-intelligence/apple-intelligence-and-siri-ai.md
+  - https://developer.apple.com/documentation/appintents/app-schema-domain-reminders
+The tutorial's MemoStore corresponds to MemoClient in Clients and LiveMemoClient in ClientsLive in this repository.
+
+## Build
+Make Memo support the schemas of the App Intents Reminders domain.
+
+- Add MemoListType (@AppEnum(schema: .reminders.listType)) and MemoListEntity (@AppEntity(schema: .reminders.list))
+- Add @AppEntity(schema: .reminders.reminder) to MemoEntity, rename isDone to isCompleted, and provide the schema's required properties
+- For locationTrigger / section, also provide entities for the .reminders.locationTrigger / .reminders.section schemas
+- Create a new CreateMemoIntent (.reminders.createReminder) with isAssistantOnly = true (keep AddMemoIntent)
+- Add UpdateMemoIntent (.reminders.updateReminder)
+- Fit DeleteMemoIntent to .reminders.deleteReminders
+- Add SearchMemosIntent (.system.searchInApp) and OpenMemoIntent (.system.open)
+- Compare each schema with the template Xcode's completion expands (reminders_ / system_)
+- Update the existing tests and TestMemoClient for the new properties
+
+## Run it and check
+1. Unit tests: `cd ios/Library && xcodebuild test -scheme Library -destination 'platform=iOS Simulator,name=iPhone 18 Pro'`
+   (You may change the simulator name to an iPhone you have, from `xcrun simctl list devices available`)
+2. Build the app and launch it in Simulator:
+   `cd ios/App && xcodebuild build -scheme SiriAIPrototype -destination 'platform=iOS Simulator,name=iPhone 18 Pro' -derivedDataPath build`
+   `xcrun simctl boot 'iPhone 18 Pro' ; open -a Simulator ; xcrun simctl install booted ios/App/build/Build/Products/Debug-iphonesimulator/SiriAIPrototype.app ; xcrun simctl launch booted com.akidon0000.SiriAIPrototype`
+   After launching, take a screenshot with `xcrun simctl io booted screenshot` and check it.
+3. The build fails when a property or type the schema requires is missing. If you get an error, fix it as the message says until it builds.
+   Write what you fixed (which schema was missing what) in your report.
+4. Check that the intents you added appear (or don't appear) in the Shortcuts app's action list as expected (CreateMemoIntent is assistant-only, so it doesn't appear).
+   If you have no tool that can operate the UI, walk the user through these steps and ask for the results.
+
+When you're done, report in these three parts:
+- What you made (files added or changed)
+- What you confirmed by running it (commands run and their results, screenshots)
+- What you couldn't confirm (with reasons). Don't write "it worked" for anything you didn't check

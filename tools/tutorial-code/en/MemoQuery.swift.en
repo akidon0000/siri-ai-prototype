@@ -1,0 +1,12 @@
+ja|// SiriやショートカットがIDからメモを取り出すときのクエリ
+en|// The query Siri and shortcuts use to get memos from their IDs
+ja|// EntityStringQuery にすると、名前（文字列）からも探せる
+en|// With EntityStringQuery, memos can also be found by name (a string)
+ja|// 候補の一覧に出すメモ。ここでは最近のメモを返す
+en|// Memos to list as suggestions. Here it returns recent memos
+ja|// Siriが聞き取った名前で探す
+en|// Search by the name Siri heard
+ja|// 表示だけが要るときに、Entity全体を作らずに表示を返す
+en|// When only the display is needed, return it without building whole entities
+ja|// Spotlightから索引のやり直しを頼まれたときに呼ばれる
+en|// Called when Spotlight asks the app to index again

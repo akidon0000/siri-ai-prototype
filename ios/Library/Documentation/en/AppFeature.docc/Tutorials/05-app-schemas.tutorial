@@ -1,0 +1,290 @@
+@Tutorial(time: 35) {
+    @Intro(title: "Bring your app to Apple Intelligence with schemas") {
+        A schema is a template provided by App Intents ("an app of this kind has intents and entities of this shape"),
+        and it acts as a contract between your app and the system. Intents that follow a schema go into Apple Intelligence's
+        "app toolbox", and Siri can connect many different phrasings to those intents.
+        In this chapter you fit the Memo app to the schemas of the Reminders domain.
+
+        Sources: `docs/apple-doc/apple-intelligence/apple-intelligence-and-siri-ai.md`,
+        [App schema domains](https://developer.apple.com/documentation/appintents/app-schema-domains),
+        [Making actions and content discoverable by Apple Intelligence](https://developer.apple.com/documentation/appintents/making-actions-and-content-discoverable-by-apple-intelligence),
+        [Reminders](https://developer.apple.com/documentation/appintents/app-schema-domain-reminders)
+    }
+
+    @Section(title: "Choose a domain") {
+        @ContentAndMedia {
+            Schemas are grouped by "domain". First, look for the domain that fits your app's features.
+        }
+
+        @Steps {
+            @Step {
+                The primary domains available in Siri are Audio, Calendar, Camera, Clock, Mail, Maps, Messages,
+                Notes, Phone, Photos, Reminders, System and in-app search, and Video.
+                Books, Browser, Files, Journaling, Presentation, Reader, Spreadsheet, Whiteboard and
+                Word processor are domains available only in the Shortcuts app.
+                Lay out the schemas you adopt in this chapter up front, as a map.
+
+                @Code(name: "MemoSchemaMap.swift", file: "MemoSchemaMap-01.swift")
+            }
+
+            @Step {
+                A memo has a "title" and a "completion state", so Reminders, which deals with done and not done,
+                fits better than Notes, which is for notebooks. Reminders has intent schemas such as `createReminder`, `updateReminder` and
+                `deleteReminders`, and entity schemas such as `reminder` and `list`.
+                Don't apply a schema to a feature that doesn't match the domain's intended purpose.
+
+                @Code(name: "MemoSchemaMap.swift", file: "MemoSchemaMap-02.swift", previousFile: "MemoSchemaMap-01.swift")
+            }
+
+            @Step {
+                Audio, Clock, Mail, Maps and Messages have "use-case groups":
+                sets of schemas that serve the same purpose. To use them with Siri AI you need to adopt every schema in the group,
+                and if you adopt only some, Xcode shows a build warning for each missing schema.
+                Reminders has no such groups, so the Memo app doesn't need to worry about them.
+
+                @Code(name: "MemoSchemaMap.swift", file: "MemoSchemaMap-03.swift", previousFile: "MemoSchemaMap-02.swift")
+            }
+
+            @Step {
+                When you type `reminders_` in Xcode, code completion offers the schemas,
+                and you can expand a template that contains every required property. The code that follows starts from these templates.
+
+                @Code(name: "MemoSchemaMap.swift", file: "MemoSchemaMap-04.swift", previousFile: "MemoSchemaMap-03.swift")
+            }
+        }
+    }
+
+    @Section(title: "Fit the entities to the schema") {
+        @ContentAndMedia {
+            The `reminder` schema requires the list (`list`) the reminder belongs to.
+            Create the list's entity and enum first, then fit `MemoEntity` to the schema.
+        }
+
+        @Steps {
+            @Step {
+                Add `@AppEnum(schema: .reminders.listType)` to the enum that represents the kind of list.
+                The macro adds the `AppEnum` conformance, so you don't write it yourself.
+
+                @Code(name: "MemoListType.swift", file: "MemoListType-01.swift")
+            }
+
+            @Step {
+                Add `@AppEntity(schema: .reminders.list)` to the entity that represents a memo list.
+                Properties defined by the schema (`id`, `name`) must match the schema in both name and type.
+
+                @Code(name: "MemoListEntity.swift", file: "MemoListEntity-01.swift")
+            }
+
+            @Step {
+                Add the remaining required properties, `type` and `displayRepresentation`.
+
+                @Code(name: "MemoListEntity.swift", file: "MemoListEntity-02.swift", previousFile: "MemoListEntity-01.swift")
+            }
+
+            @Step {
+                Add `defaultQuery`. Write `MemoListQuery` in the same shape as chapter 2's `MemoQuery`.
+
+                @Code(name: "MemoListEntity.swift", file: "MemoListEntity-03.swift", previousFile: "MemoListEntity-02.swift")
+            }
+
+            @Step {
+                Add `@AppEntity(schema: .reminders.reminder)` to `MemoEntity` and remove the `AppEntity` conformance.
+                Remove `typeDisplayRepresentation` as well. Neither is part of the template Xcode expands.
+
+                @Code(name: "MemoEntity.swift", file: "MemoEntity-07.swift", previousFile: "MemoEntity-06.swift")
+            }
+
+            @Step {
+                The schema calls the completion state `isCompleted`, so rename `isDone`.
+                Update the reference inside `displayRepresentation` too. If a required property is missing
+                or has a different name, the macro tells you with a build error.
+
+                @Code(name: "MemoEntity.swift", file: "MemoEntity-08.swift", previousFile: "MemoEntity-07.swift")
+            }
+
+            @Step {
+                Add the properties the schema asks for. Start with `note`, `tags`, `urls`, `dueDate` and `recurrence`.
+                Even for features the Memo app doesn't support, provide the property and return `nil` or an empty value.
+
+                @Code(name: "MemoEntity.swift", file: "MemoEntity-09.swift", previousFile: "MemoEntity-08.swift")
+            }
+
+            @Step {
+                Next, add `isFlagged`, `creationDate`, `completionDate`, `list` and `locationTrigger`.
+                `list` uses the `MemoListEntity` you just made.
+                The type of `locationTrigger`, `MemoLocationTriggerEntity`, also has to be created separately as an entity that follows the
+                `.reminders.locationTrigger` schema (it's built the same way as `MemoListEntity`, so it's omitted here).
+
+                @Code(name: "MemoEntity.swift", file: "MemoEntity-10.swift", previousFile: "MemoEntity-09.swift")
+            }
+
+            @Step {
+                Update chapter 4's `MemoSnippetView` for the renamed `isCompleted` as well.
+
+                @Code(name: "MemoSnippetView.swift", file: "MemoSnippetView-04.swift", previousFile: "MemoSnippetView-03.swift")
+            }
+        }
+    }
+
+    @Section(title: "Fit the intents to the schema") {
+        @ContentAndMedia {
+            `AddMemoIntent` has a `priority`, but the `createReminder` schema has no priority.
+            Rewriting an existing intent whose properties don't fit the schema breaks the shortcuts that use it.
+            What Apple recommends is to create a separate schema-conforming intent alongside it.
+        }
+
+        @Steps {
+            @Step {
+                Add `@AppIntent(schema: .reminders.createReminder)` to a new `CreateMemoIntent`.
+                Declare the schema's properties as ordinary properties, without `@Parameter`.
+                The system fills these properties in before it calls `perform()`.
+
+                @Code(name: "CreateMemoIntent.swift", file: "CreateMemoIntent-01.swift")
+            }
+
+            @Step {
+                Add the other properties the schema defines. Start with `note`, `isFlagged`, `images`, `tags` and `urls`.
+
+                @Code(name: "CreateMemoIntent.swift", file: "CreateMemoIntent-02.swift", previousFile: "CreateMemoIntent-01.swift")
+            }
+
+            @Step {
+                Next, add `dueDate`, `recurrence`, `locationTrigger` and `section`. For `section`, also provide a separate entity
+                that follows the `.reminders.section` schema.
+                Apple Intelligence uses only the properties the schema defines;
+                any other optional properties you add are used only by the Shortcuts app.
+
+                @Code(name: "CreateMemoIntent.swift", file: "CreateMemoIntent-03.swift", previousFile: "CreateMemoIntent-02.swift")
+            }
+
+            @Step {
+                Write `perform()`. It returns `ReturnsValue<MemoEntity>`, which returns a `MemoEntity`.
+
+                @Code(name: "CreateMemoIntent.swift", file: "CreateMemoIntent-04.swift", previousFile: "CreateMemoIntent-03.swift")
+            }
+
+            @Step {
+                Set `isAssistantOnly` to `true`. This intent no longer appears in the Shortcuts app
+                and is used only from Siri (Apple Intelligence). The old `AddMemoIntent` stays in Shortcuts,
+                so the same action doesn't appear twice. Once people have moved their shortcuts over,
+                delete this line and retire the old intent.
+
+                @Code(name: "CreateMemoIntent.swift", file: "CreateMemoIntent-05.swift", previousFile: "CreateMemoIntent-04.swift")
+            }
+
+            @Step {
+                Completing a memo is expressed by `isCompleted` in the `updateReminder` schema.
+                Create `UpdateMemoIntent`, starting with the `target` to update and `isCompleted`.
+
+                @Code(name: "UpdateMemoIntent.swift", file: "UpdateMemoIntent-01.swift")
+            }
+
+            @Step {
+                Add `title`, `note`, `tags`, `urls` and `dueDate`. Because this is an update schema,
+                every property is optional, and `nil` means "don't change".
+
+                @Code(name: "UpdateMemoIntent.swift", file: "UpdateMemoIntent-02.swift", previousFile: "UpdateMemoIntent-01.swift")
+            }
+
+            @Step {
+                Add the rest: `recurrence`, `isFlagged`, `list` and `locationTrigger`.
+
+                @Code(name: "UpdateMemoIntent.swift", file: "UpdateMemoIntent-03.swift", previousFile: "UpdateMemoIntent-02.swift")
+            }
+
+            @Step {
+                Write `perform()`. Now "Complete this memo" and "Make it due tomorrow"
+                are both handled by the same `UpdateMemoIntent`.
+
+                @Code(name: "UpdateMemoIntent.swift", file: "UpdateMemoIntent-04.swift", previousFile: "UpdateMemoIntent-03.swift")
+            }
+
+            @Step {
+                Fit chapter 4's `DeleteMemoIntent` to the `deleteReminders` schema.
+                Change its conformance to `DeleteIntent`, remove `title` and the `@Parameter`,
+                and replace them with the schema's `entities` (the array of memos to delete).
+                This intent hasn't shipped yet, so it's rewritten in place;
+                if it had shipped, you'd create a separate intent alongside it, as with `CreateMemoIntent`.
+
+                @Code(name: "DeleteMemoIntent.swift", file: "DeleteMemoIntent-03.swift", previousFile: "DeleteMemoIntent-02.swift")
+            }
+        }
+    }
+
+    @Section(title: "Put search and display on schemas") {
+        @ContentAndMedia {
+            The System and in-app search domain works for any kind of app.
+            Even an app that fits no other domain can let Siri handle search and display.
+        }
+
+        @Steps {
+            @Step {
+                Add `@AppIntent(schema: .system.searchInApp)` to `SearchMemosIntent` and conform it to
+                `ShowInAppSearchResultsIntent`. `criteria` holds the search term the person said to Siri.
+
+                @Code(name: "SearchMemosIntent.swift", file: "SearchMemosIntent-01.swift")
+            }
+
+            @Step {
+                In `perform()`, open the app's search screen and search for `criteria.term`.
+                When someone says "Search Memo for shopping", you can show the results
+                on the app's own search screen instead of in Siri's results.
+
+                @Code(name: "SearchMemosIntent.swift", file: "SearchMemosIntent-02.swift", previousFile: "SearchMemosIntent-01.swift")
+            }
+
+            @Step {
+                Add `@AppIntent(schema: .system.open)` to `OpenMemoIntent` and conform it to `OpenIntent`.
+                `target` is the memo to open.
+
+                @Code(name: "OpenMemoIntent.swift", file: "OpenMemoIntent-01.swift")
+            }
+
+            @Step {
+                In `perform()`, open that memo's screen. This intent is also used when someone taps a memo you put in Spotlight in chapter 6,
+                and when a memo is opened from visual intelligence search results.
+
+                @Code(name: "OpenMemoIntent.swift", file: "OpenMemoIntent-02.swift", previousFile: "OpenMemoIntent-01.swift")
+            }
+        }
+    }
+
+    @Section(title: "Reference: side button launch, Japan only") {
+        @ContentAndMedia {
+            The Assistant domain's `activate` schema launches a voice conversation app when someone presses and holds
+            the iPhone side button, and it's available only in Japan. The Memo app isn't a voice conversation app, so it doesn't adopt it,
+            but take a quick look at its shape as a Siri-related feature for Japan.
+        }
+
+        @Steps {
+            @Step {
+                Add `@AppIntent(schema: .assistant.activate)` and set `supportedModes` to `.foreground`.
+                It requires the `com.apple.developer.side-button-access.allow` entitlement,
+                and in production the person's Apple Account country or region must be Japan and they must be in Japan.
+
+                @Code(name: "ActivateConversationIntent.swift", file: "ActivateConversationIntent-01.swift")
+            }
+
+            @Step {
+                In `perform()`, open the conversation screen and start an audio session so the person can talk right away.
+
+                @Code(name: "ActivateConversationIntent.swift", file: "ActivateConversationIntent-02.swift", previousFile: "ActivateConversationIntent-01.swift")
+            }
+        }
+    }
+
+    @Section(title: "Next steps") {
+        @ContentAndMedia {
+            Have Claude Code make Memo support the Reminders domain schemas.
+        }
+
+        @Steps {
+            @Step {
+                When you've understood the chapter, paste this into Claude Code. It handles the implementation
+                through building and checking that it works.
+
+                @Code(name: "prompt.txt", file: "05-prompt.txt")
+            }
+        }
+    }
+}

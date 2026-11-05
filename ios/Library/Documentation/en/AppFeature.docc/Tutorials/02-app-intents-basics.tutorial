@@ -1,0 +1,177 @@
+@Tutorial(time: 25) {
+    @Intro(title: "App Intents basics") {
+        Build the four pieces, App Entity (data), Entity Query (how to find data), App Enum (choices)
+        and App Intent (actions), line by line using the Memo app.
+        You keep growing the `MemoEntity` and `AddMemoIntent` files you make here from chapter 4 on.
+
+        Sources: `docs/apple-doc/app-intents/app-intents.md`,
+        [App Intents](https://developer.apple.com/documentation/appintents),
+        [Defining app entities for your custom data types](https://developer.apple.com/documentation/appintents/defining-app-entities-for-your-custom-data-types)
+    }
+
+    @Section(title: "App Entity: show your data to the system") {
+        @ContentAndMedia {
+            An App Entity is a type for the part of your app's data that Siri and Shortcuts may refer to.
+            In the Memo app, one memo becomes a `MemoEntity`. Don't expose database rows as they are;
+            keep it light, with only what people are likely to say (the title and whether it's done).
+        }
+
+        @Steps {
+            @Step {
+                Write a struct that conforms to `AppEntity`, with three properties. `id` uniquely identifies the entity:
+                Siri and shortcuts store only this `id` and come back for the full entity later.
+                The protocol requirements aren't met yet, so this doesn't build.
+
+                @Code(name: "MemoEntity.swift", file: "MemoEntity-01.swift")
+            }
+
+            @Step {
+                Add `typeDisplayRepresentation`. It's the name of the type itself, "Memo",
+                used in Shortcuts parameter fields and in Siri's follow-up questions ("Which memo?").
+
+                @Code(name: "MemoEntity.swift", file: "MemoEntity-02.swift", previousFile: "MemoEntity-01.swift")
+            }
+
+            @Step {
+                Add `displayRepresentation`. This is how each individual memo looks; here it returns only the title.
+                You add a subtitle and an image in chapter 4.
+
+                @Code(name: "MemoEntity.swift", file: "MemoEntity-03.swift", previousFile: "MemoEntity-02.swift")
+            }
+
+            @Step {
+                Finally, add `defaultQuery`. It's where the system goes to fetch a `MemoEntity` again from its `id`,
+                and it points to `MemoQuery`, which you write in the next section. That completes the AppEntity requirements.
+
+                @Code(name: "MemoEntity.swift", file: "MemoEntity-04.swift", previousFile: "MemoEntity-03.swift")
+            }
+        }
+    }
+
+    @Section(title: "Entity Query: teach the system how to find data") {
+        @ContentAndMedia {
+            When someone tells Siri "Complete the milk memo", the only way Siri can learn which `MemoEntity`
+            "the milk memo" actually is, is through a query your app provides.
+        }
+
+        @Steps {
+            @Step {
+                Conform to `EntityQuery` and write the required `entities(for:)`. It returns `MemoEntity` values
+                for an array of stored `id`s and is called every time a shortcut runs.
+
+                @Code(name: "MemoQuery.swift", file: "MemoQuery-01.swift")
+            }
+
+            @Step {
+                Add `suggestedEntities()`. Its results are listed when Siri asks back "Which memo?"
+                and when someone picks a parameter in Shortcuts. Narrow it to likely picks, such as recent memos.
+
+                @Code(name: "MemoQuery.swift", file: "MemoQuery-02.swift", previousFile: "MemoQuery-01.swift")
+            }
+
+            @Step {
+                Change the conformance to `EntityStringQuery` and add `entities(matching:)`.
+                Now you can return the memos that match a string someone said, like "milk",
+                so Siri can find a memo by name.
+
+                @Code(name: "MemoQuery.swift", file: "MemoQuery-03.swift", previousFile: "MemoQuery-02.swift")
+            }
+        }
+    }
+
+    @Section(title: "App Enum: expose a fixed set of choices") {
+        @ContentAndMedia {
+            Make a type with a fixed set of values, such as a memo's priority, an App Enum.
+            Siri can then understand a phrase like "with high priority" as a particular case.
+        }
+
+        @Steps {
+            @Step {
+                Conform an enum with `String` raw values to `AppEnum`.
+                The raw value is what gets stored in shortcuts, so pick values you won't change later.
+
+                @Code(name: "MemoPriority.swift", file: "MemoPriority-01.swift")
+            }
+
+            @Step {
+                Add the type's name, `typeDisplayRepresentation`.
+
+                @Code(name: "MemoPriority.swift", file: "MemoPriority-02.swift", previousFile: "MemoPriority-01.swift")
+            }
+
+            @Step {
+                Set each case's display name with `caseDisplayRepresentations`.
+                Siri reads out and listens for these names, "Low", "Normal" and "High", not case names like `low`.
+
+                @Code(name: "MemoPriority.swift", file: "MemoPriority-03.swift", previousFile: "MemoPriority-02.swift")
+            }
+        }
+    }
+
+    @Section(title: "App Intent: encapsulate an action") {
+        @ContentAndMedia {
+            Define "add a memo" as `AddMemoIntent`. It uses the `MemoEntity` and `MemoPriority`
+            you've built so far as its parameters and return value.
+        }
+
+        @Steps {
+            @Step {
+                Conform to `AppIntent` and give it a `title`. People look for the action by this `title`,
+                not by the function name, so keep it short and concrete.
+
+                @Code(name: "AddMemoIntent.swift", file: "AddMemoIntent-01.swift")
+            }
+
+            @Step {
+                Add `description`. Besides being shown as the action's description in the Shortcuts app,
+                in chapter 7's Siri AI it's also what Siri uses to decide whether to use this intent.
+
+                @Code(name: "AddMemoIntent.swift", file: "AddMemoIntent-02.swift", previousFile: "AddMemoIntent-01.swift")
+            }
+
+            @Step {
+                Declare the required input `title` with `@Parameter`. If the intent runs without a value,
+                the system asks for it automatically.
+
+                @Code(name: "AddMemoIntent.swift", file: "AddMemoIntent-03.swift", previousFile: "AddMemoIntent-02.swift")
+            }
+
+            @Step {
+                Declare `priority` with `default: .normal`. Even when the person doesn't say a priority,
+                the memo is added as "Normal" without a follow-up question.
+
+                @Code(name: "AddMemoIntent.swift", file: "AddMemoIntent-04.swift", previousFile: "AddMemoIntent-03.swift")
+            }
+
+            @Step {
+                Write `perform()`. Including `ReturnsValue<MemoEntity>` in the return type lets you pass the added memo
+                to the next action in Shortcuts or use it in Siri's response.
+
+                @Code(name: "AddMemoIntent.swift", file: "AddMemoIntent-05.swift", previousFile: "AddMemoIntent-04.swift")
+            }
+
+            @Step {
+                Add `parameterSummary`. The Shortcuts app shows this action as a single sentence,
+                "Add *Title* with priority *Normal*", and you can tap the values in it to edit them.
+
+                @Code(name: "AddMemoIntent.swift", file: "AddMemoIntent-06.swift", previousFile: "AddMemoIntent-05.swift")
+            }
+        }
+    }
+
+    @Section(title: "Next steps") {
+        @ContentAndMedia {
+            Have Claude Code implement AppEntity, EntityQuery, AppEnum and AppIntent in `ios/Library`
+            for Memo (id, title, isDone). The code so far is for learning and isn't in the package yet.
+        }
+
+        @Steps {
+            @Step {
+                When you've understood the chapter, paste this into Claude Code. It handles the implementation
+                through building and checking that it works.
+
+                @Code(name: "prompt.txt", file: "02-prompt.txt")
+            }
+        }
+    }
+}

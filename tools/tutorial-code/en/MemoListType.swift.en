@@ -1,0 +1,4 @@
+ja|// Remindersドメインの listType スキーマ。AppEnum への準拠はマクロが付ける
+en|// The Reminders domain's listType schema. The macro adds the AppEnum conformance
+ja|static let caseDisplayRepresentations: [Self: DisplayRepresentation] = [.standard: "通常"]
+en|static let caseDisplayRepresentations: [Self: DisplayRepresentation] = [.standard: "Standard"]

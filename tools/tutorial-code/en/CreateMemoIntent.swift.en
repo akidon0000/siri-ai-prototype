@@ -1,0 +1,8 @@
+ja|// スキーマのプロパティ。perform() を呼ぶ前にシステムが値を入れる
+en|// The schema's properties. The system fills them in before calling perform()
+ja|// section も .reminders.section スキーマに合わせたEntityを使う
+en|// section also uses an entity that follows the .reminders.section schema
+ja|// Shortcutsアプリには出さず、Siriからだけ使う。Shortcutsには旧 AddMemoIntent が残る
+en|// Hidden from the Shortcuts app and used only from Siri. The old AddMemoIntent stays in Shortcuts
+ja|// スキーマは作ったリマインダー（MemoEntity）を返すことを求める
+en|// The schema requires returning the created reminder (MemoEntity)

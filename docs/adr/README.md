@@ -18,6 +18,7 @@
 | 0007 | チュートリアルのコードのコメントを、コードから読み取れないことだけに絞る | Accepted | 各行にコメントを書く規則をやめ、コードを言い直すだけのコメント40行を削る。0004の決定事項1の一部を置き換える | [0007-keep-only-non-obvious-code-comments.md](0007-keep-only-non-obvious-code-comments.md) |
 | 0008 | ios/ を実装前の土台として残し、全章を実装したコードを Example/ に置く | Accepted | 完成形を `ios/` と同じ構成で `Example/` に章ごとの積み上げPRで置く。iOS 27.3 beta のAPIは `#if SIRI_AI_PREVIEW` で囲む | [0008-example-directory-with-chapter-implementations.md](0008-example-directory-with-chapter-implementations.md) |
 | 0009 | チュートリアルを skill にして、Claude Code プラグインと APM パッケージとして配る | Accepted | `plugins/siri-ai/` に skill を置き、章ごとの参照資料は `.tutorial` と `.seq` から生成する。Apple の原文は入れない | [0009-distribute-tutorial-as-agent-skill.md](0009-distribute-tutorial-as-agent-skill.md) |
+| 0010 | 英語版のDocCカタログを並べて置き、/en/ に公開して言語切り替えを付ける | Accepted | `ios/Library/Documentation/en/` に英語版カタログを置き、コードは `.seq` と行単位の対訳から生成する。公開時に全ページへ言語切り替えを差し込む | [0010-english-catalog-with-language-switch.md](0010-english-catalog-with-language-switch.md) |
 
 ### 状態
 

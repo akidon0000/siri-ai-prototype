@@ -1,0 +1,4 @@
+ja|// ビジュアルインテリジェンスの検索を受けるクエリ。アプリに1つだけ置ける
+en|// The query that receives visual intelligence searches. An app can have only one
+ja|// labels には「milk」のような英語のラベルが入る。翻訳も類義語の展開もされない
+en|// labels holds English labels like "milk", with no translation or synonym expansion

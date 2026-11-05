@@ -1,0 +1,6 @@
+ja|// リストは数が少ないので、Spotlightの索引に入れずに全件を返す
+en|// There are few lists, so return them all instead of putting them in the Spotlight index
+ja|// EnumerableEntityQuery にすると、Siriはこの全件の中からリストを見つけられる
+en|// With EnumerableEntityQuery, Siri can find a list among all of these
+ja|// EntityQuery としての、IDからリストを返す処理も要る
+en|// As an EntityQuery, it also needs to return lists by ID

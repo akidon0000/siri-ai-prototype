@@ -1,0 +1,84 @@
+@Tutorials(name: "Siri AI") {
+    @Intro(title: "From SiriKit to Siri AI") {
+        Learn SiriKit, App Intents, schemas, Apple Intelligence and the Siri AI Developer Preview
+        by building the Memo app's code a few lines per step.
+        The material is Apple's official documentation (some of it saved under `docs/apple-doc/`) and WWDC26 sessions.
+        At the end of each tutorial there's a prompt for having Claude Code implement the chapter and run it to check.
+        As you finish each chapter, paste its prompt and carry on through the implementation.
+
+        Created by Opus 5.5 with Dan Akiyama ([@akidon0000](https://github.com/akidon0000))
+
+        If you find a mistake or something missing, feel free to open a PR at [akidon0000/siri-ai-tutorials](https://github.com/akidon0000/siri-ai-tutorials).
+    }
+
+    @Chapter(name: "Chapter 1: From SiriKit to App Intents") {
+        @Image(source: "chapter1.svg", alt: "Chapter 1 illustration")
+
+        Write SiriKit's resolve, confirm and handle, then rewrite the same action with App Intents.
+        Also learn how apps that used SiriKit custom intents migrate.
+
+        @TutorialReference(tutorial: "doc:01-sirikit-to-app-intents")
+    }
+
+    @Chapter(name: "Chapter 2: App Intents basics") {
+        @Image(source: "chapter2.svg", alt: "Chapter 2 illustration")
+
+        Expose your app's data and actions to the system with four pieces:
+        App Entity, Entity Query, App Enum and App Intent.
+
+        @TutorialReference(tutorial: "doc:02-app-intents-basics")
+    }
+
+    @Chapter(name: "Chapter 3: Fix phrases with App Shortcuts") {
+        @Image(source: "chapter3.svg", alt: "Chapter 3 illustration")
+
+        Register the phrases people say with AppShortcutsProvider, and point them out inside the app with SiriTipView.
+
+        @TutorialReference(tutorial: "doc:03-app-shortcuts")
+    }
+
+    @Chapter(name: "Chapter 4: Design the conversation with Siri") {
+        @Image(source: "chapter4.svg", alt: "Chapter 4 illustration")
+
+        Covers the words of responses, follow-up questions, confirmation before running and ownership, static and interactive snippets,
+        Siri AI cards (iOS 27.3 beta), and the HIG's guidance on response text.
+
+        @TutorialReference(tutorial: "doc:04-siri-conversation")
+    }
+
+    @Chapter(name: "Chapter 5: Bring your app to Apple Intelligence with schemas") {
+        @Image(source: "chapter5.svg", alt: "Chapter 5 illustration")
+
+        Choose a fitting domain from App schema domains and fit Memo to the Reminders schemas.
+        Also covers migrating without breaking existing shortcuts, in-app search, and the Japan-only side button launch.
+
+        @TutorialReference(tutorial: "doc:05-app-schemas")
+    }
+
+    @Chapter(name: "Chapter 6: Give Apple Intelligence context") {
+        @Image(source: "chapter6.svg", alt: "Chapter 6 illustration")
+
+        Tell Siri "which memo we're talking about" with Spotlight's semantic index, annotations on screens and notifications,
+        donations of UI actions, Transferable, and visual intelligence.
+
+        @TutorialReference(tutorial: "doc:06-apple-intelligence-context")
+    }
+
+    @Chapter(name: "Chapter 7: Siri AI Developer Preview [iOS 27.3 beta]") {
+        @Image(source: "chapter7.svg", alt: "Chapter 7 illustration")
+
+        Turn actions that no schema covers into tools with `@AppIntent(.tool)`, and use GenerableEntity and
+        app skills to let Siri handle complex requests.
+
+        @TutorialReference(tutorial: "doc:07-siri-ai-tools")
+    }
+
+    @Chapter(name: "Chapter 8: Verify your implementation") {
+        @Image(source: "chapter8.svg", alt: "Chapter 8 illustration")
+
+        Write App Intents Testing integration tests, check by hand in Shortcuts and Spotlight,
+        and automate conversation tests with Siri Evaluations (iOS 27.3 beta).
+
+        @TutorialReference(tutorial: "doc:08-verification")
+    }
+}

@@ -1,0 +1,8 @@
+ja|// 実際に人が行った操作だけをdonateする。実際より多いと、システムはこのアプリのdonationを無視する
+en|// Donate only actions people actually took. Donating more makes the system ignore this app's donations
+ja|// パラメータはなるべく埋める。ただし予測に使ってほしくない値（本文など）は入れない
+en|// Fill in as many parameters as you can, but leave out values not meant for predictions (bodies etc.)
+ja|// 同じ操作に当たるintentを組み立てる。システムはこれを実行せず、記録して学習に使う
+en|// Build the intent for the same action. The system doesn't run it; it records it and learns from it
+ja|// スキーマに合わせていないツールのintentも、同じようにdonateできる
+en|// Tool intents that don't follow a schema can be donated the same way

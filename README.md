@@ -4,6 +4,8 @@ Memoアプリを1ステップ数行ずつ組み立てながら、SiriKit から 
 
 **読む:** [akidon0000.github.io/siri-ai-tutorials/tutorials/](https://akidon0000.github.io/siri-ai-tutorials/tutorials/)
 
+**Read in English:** [akidon0000.github.io/siri-ai-tutorials/en/tutorials/](https://akidon0000.github.io/siri-ai-tutorials/en/tutorials/)（各ページ右下のボタンで日本語と英語を切り替えられる）
+
 Created by Opus 5.5 with Dan Akiyama ([@akidon0000](https://github.com/akidon0000))
 
 誤りや不足を見つけたら 気軽に [akidon0000/siri-ai-tutorials](https://github.com/akidon0000/siri-ai-tutorials) にPRを。
@@ -45,7 +47,8 @@ apm install akidon0000/siri-ai-tutorials/plugins/siri-ai
 | パス | 中身 |
 |---|---|
 | `ios/Library/Sources/AppFeature/AppFeature.docc/` | チュートリアル本体（`.tutorial`） |
-| `tools/tutorial-code/` | チュートリアルに載せるコードの元ファイル（`seq/*.seq`）と生成スクリプト |
+| `ios/Library/Documentation/en/AppFeature.docc/` | チュートリアルの英語版。`/en/` に公開する（[ADR 0010](./docs/adr/0010-english-catalog-with-language-switch.md)） |
+| `tools/tutorial-code/` | チュートリアルに載せるコードの元ファイル（`seq/*.seq`）、英語版のコード用の対訳（`en/*.en`）と生成スクリプト |
 | `ios/App`、`ios/Library` | Memoアプリ（SwiftUI の殻と SPM パッケージ）。Siri 連携はまだ入っておらず、章末プロンプトで実装していく |
 | `Example/` | 第1章から第8章までを実装し終えた Memoアプリ。構成は `ios/` と同じ。答え合わせ用（[Example/README.md](./Example/README.md)） |
 | `plugins/siri-ai/` | チュートリアルを skill にした Claude Code プラグイン（APM・skills CLI でも入る）。`references/` は `tools/skill/generate.py` の生成物 |
@@ -54,9 +57,9 @@ apm install akidon0000/siri-ai-tutorials/plugins/siri-ai
 
 ## チュートリアルを直すとき
 
-コードは `tools/tutorial-code/seq/` を編集して `python3 tools/tutorial-code/generate.py` で生成する。生成先の `TutorialArt/Code/` は直接触らない。本文かコードを変えたら `python3 tools/skill/generate.py` で skill も作り直す。`.seq` の書式、1ステップの行数制限、`.tutorial` の改名時のリダイレクト、PR 前の確認は [CONTRIBUTING.md](./CONTRIBUTING.md) にまとめてある。
+コードは `tools/tutorial-code/seq/` を編集して `python3 tools/tutorial-code/generate.py` で生成する。生成先の `TutorialArt/Code/` は直接触らない。本文かコードを変えたら、英語版（`ios/Library/Documentation/en/` と `tools/tutorial-code/en/`）も同じ PR で直し、`python3 tools/skill/generate.py` で skill も作り直す。`.seq` の書式、1ステップの行数制限、`.tutorial` の改名時のリダイレクト、PR 前の確認は [CONTRIBUTING.md](./CONTRIBUTING.md) にまとめてある。
 
-手元での確認は `xcrun docc convert` が警告0件で通ればよい（コマンドは [docc-pages.yml](./.github/workflows/docc-pages.yml) と同じ）。`main` に push すると GitHub Pages に自動で再公開される。
+手元での確認は、日本語版と英語版の両方のカタログで `xcrun docc convert` が警告0件で通ればよい（コマンドは [docc-pages.yml](./.github/workflows/docc-pages.yml) と同じ。PR でも CI が両方を変換する）。`main` に push すると GitHub Pages に自動で再公開される。
 
 ## Apple ドキュメントのアーカイブ
 

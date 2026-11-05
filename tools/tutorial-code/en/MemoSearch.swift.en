@@ -1,0 +1,20 @@
+ja|// Siriが依頼の文から直接組み立てる検索条件。クエリで探さずに値を作れる
+en|// Search conditions Siri builds directly from the request. It creates the value without a query
+ja|// .generable は AppEntityTraits の値。[.generable] と配列でも書ける。変数や計算した値は渡せない
+en|// .generable is an AppEntityTraits value. [.generable] works too. No variables or computed values
+ja|// スキーマに合わせた一時的なEntityなら @AppEntity(.generable, schema: ...) と書く
+en|// For a transient entity that follows a schema, write @AppEntity(.generable, schema: ...)
+ja|static let typeDisplayRepresentation: TypeDisplayRepresentation = "メモ検索"
+en|static let typeDisplayRepresentation: TypeDisplayRepresentation = "Memo Search"
+ja|// Siriはこの description を見て、依頼のどの部分をどのプロパティに入れるかを決める
+en|// Siri reads these descriptions to decide which part of the request goes into which property
+ja|@Property(title: "キーワード", description: "メモのタイトルに含まれる語")
+en|@Property(title: "Keyword", description: "A word contained in the memo's title")
+ja|// 使える型は値型・AppEnum・GenerableなEntityと、それらの配列だけ
+en|// Only value types, AppEnums, generable entities and arrays of these are allowed
+ja|@Property(title: "優先度", description: "絞り込む優先度。空なら全ての優先度")
+en|@Property(title: "Priorities", description: "Priorities to filter by. Empty means all priorities")
+ja|"「\(keyword)」の検索"
+en|"Search for '\(keyword)'"
+ja|// システムが値を作るときに使う
+en|// Used when the system creates the value

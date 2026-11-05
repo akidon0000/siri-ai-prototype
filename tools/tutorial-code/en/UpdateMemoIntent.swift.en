@@ -1,0 +1,4 @@
+ja|// 完了・期限・タイトルなどの変更を、この1つのintentで受ける
+en|// This one intent handles changes to completion, due date, title and so on
+ja|// 更新のスキーマなので全てオプショナル。nil は「変更しない」
+en|// It's an update schema, so everything is optional. nil means "don't change"

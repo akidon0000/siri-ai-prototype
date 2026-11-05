@@ -1,0 +1,12 @@
+ja|// 複数のメモを消す deleteReminders スキーマ。準拠先は DeleteIntent
+en|// The deleteReminders schema, which deletes several memos. It conforms to DeleteIntent
+ja|static let title: LocalizedStringResource = "メモを削除"
+en|static let title: LocalizedStringResource = "Delete Memo"
+ja|@Parameter(title: "メモ")
+en|@Parameter(title: "Memo")
+ja|// 消す前に確認する。取り消されると例外が投げられ、次の行は実行されない
+en|// Confirm before deleting. If cancelled, an error is thrown and the next line doesn't run
+ja|try await requestConfirmation(dialog: "「\(memo.title)」を削除しますか？")
+en|try await requestConfirmation(dialog: "Delete '\(memo.title)'?")
+ja|try await requestConfirmation(dialog: "\(entities.count)件のメモを削除しますか？")
+en|try await requestConfirmation(dialog: "Delete \(entities.count) memos?")

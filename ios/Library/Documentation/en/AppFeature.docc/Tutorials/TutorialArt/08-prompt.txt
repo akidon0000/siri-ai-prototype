@@ -1,0 +1,39 @@
+[Workshop] Siri AI Tutorials Chapter 8: Verify your implementation
+
+Tutorial: https://akidon0000.github.io/siri-ai-tutorials/en/tutorials/appfeature/08-verification
+Repository: https://github.com/akidon0000/siri-ai-tutorials (work in this already-cloned directory)
+
+Read the tutorial above first to understand the order in which the code is built and why it's written that way.
+If you can't open it, read ios/Library/Documentation/en/AppFeature.docc/Tutorials/08-verification.tutorial.
+Original documents to read alongside:
+  - https://developer.apple.com/documentation/appintentstesting/testing-your-app-intents-code
+  - https://developer.apple.com/documentation/sirievaluations
+The tutorial's MemoStore corresponds to MemoClient in Clients and LiveMemoClient in ClientsLive in this repository.
+
+## Build
+Add tests that verify Memo's App Intents implementation.
+
+- Add ResetMemosIntent (isDiscoverable = false) inside #if DEBUG to AppFeature
+- Add a UI test target to ios/App, and with App Intents Testing write tests that check
+  running CreateMemoIntent / MemoEntity's entities(matching:) / spotlightQuery
+- In the same target, write Siri Evaluations evaluations
+  (a one-turn add, Calls(.disallowed) to check delete isn't called, a two-turn scenario that answers a follow-up question, a scenario with hesitant phrasing)
+- Leave the steps for checking by hand in the Shortcuts app, Spotlight and Siri on a device as a checklist in ios/App's README
+
+## Run it and check
+1. Unit tests: `cd ios/Library && xcodebuild test -scheme Library -destination 'platform=iOS Simulator,name=iPhone 18 Pro'`
+   (You may change the simulator name to an iPhone you have, from `xcrun simctl list devices available`)
+2. Build the app and launch it in Simulator:
+   `cd ios/App && xcodebuild build -scheme SiriAIPrototype -destination 'platform=iOS Simulator,name=iPhone 18 Pro' -derivedDataPath build`
+   `xcrun simctl boot 'iPhone 18 Pro' ; open -a Simulator ; xcrun simctl install booted ios/App/build/Build/Products/Debug-iphonesimulator/SiriAIPrototype.app ; xcrun simctl launch booted com.akidon0000.SiriAIPrototype`
+   After launching, take a screenshot with `xcrun simctl io booted screenshot` and check it.
+3. Run the UI tests: `cd ios/App && xcodebuild test -scheme SiriAIPrototype -destination 'platform=iOS Simulator,name=iPhone 18 Pro'`
+   Fix things until the App Intents Testing tests are green. When a test fails, suspect the app's implementation before suspecting the test.
+4. Siri Evaluations needs an environment that supports the Siri AI Developer Preview. If you can't run them, report why and what environment is needed.
+   Report writing the evaluations under "What you made", and what you ran and checked under "What you confirmed".
+5. Give the README checklist to the user and have them go through it on a device.
+
+When you're done, report in these three parts:
+- What you made (files added or changed)
+- What you confirmed by running it (commands run and their results, screenshots)
+- What you couldn't confirm (with reasons). Don't write "it worked" for anything you didn't check

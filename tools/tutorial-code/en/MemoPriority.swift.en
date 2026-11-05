@@ -1,0 +1,10 @@
+ja|// AppEnum にすると、Siriは決まった選択肢の中から値を選ぶ。フレーズにも埋め込める
+en|// As an AppEnum, Siri picks a value from a fixed set of choices. It can also go in phrases
+ja|static let typeDisplayRepresentation: TypeDisplayRepresentation = "優先度"
+en|static let typeDisplayRepresentation: TypeDisplayRepresentation = "Priority"
+ja|.low: "低",
+en|.low: "Low",
+ja|.normal: "通常",
+en|.normal: "Normal",
+ja|.high: "高",
+en|.high: "High",

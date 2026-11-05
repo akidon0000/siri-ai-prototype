@@ -1,0 +1,4 @@
+---
+name: memo-triage
+description: Use when asked to tidy up a backlog of incomplete memos. Goes through reviewing priorities and completing memos in turn.
+---

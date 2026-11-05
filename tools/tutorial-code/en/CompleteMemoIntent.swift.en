@@ -1,0 +1,30 @@
+ja|// ビルド時に、この型からSiri・Shortcuts・Spotlight用のメタデータが生成される
+en|// At build time, metadata for Siri, Shortcuts and Spotlight is generated from this type
+ja|// インストールした時点でShortcutsアプリに「メモを完了にする」が並ぶ
+en|// "Complete Memo" appears in the Shortcuts app as soon as the app is installed
+ja|// SiriKitの CompleteMemoIntent を置き換える。旧intentのショートカットとdonationが引き継がれる
+en|// Replaces SiriKit's CompleteMemoIntent. Shortcuts and donations of the old intent carry over
+ja|// 新規アプリでは要らない。SiriKitから移行するときだけ準拠させる
+en|// Not needed in a new app. Conform only when migrating from SiriKit
+ja|static let title: LocalizedStringResource = "メモを完了にする"
+en|static let title: LocalizedStringResource = "Complete Memo"
+ja|// 値が無ければ、システムが MemoEntity の候補を出して聞き返す
+en|// If there's no value, the system asks back with MemoEntity suggestions
+ja|@Parameter(title: "メモ")
+en|@Parameter(title: "Memo")
+ja|// システムがintentを作るときに使う
+en|// Used when the system creates the intent
+ja|// スニペットのボタンから、対象のメモを渡して作るときに使う
+en|// Used by the snippet's button to create the intent with the memo
+ja|// 独自の応答は、Siriが結果から組み立てる応答で足りないときだけ返す
+en|// Return your own response only when the one Siri builds from the result isn't enough
+ja|// 状況が分かるエラーを投げる。「完了できませんでした」では何が起きたか分からない
+en|// Throw an error that explains the situation. "Couldn't complete it" doesn't say what happened
+ja|// 短く、何が起きたかだけを書く。アプリ名はシステムが伝えるので入れない
+en|// Keep it short and say only what happened. The system conveys the app name, so leave it out
+ja|return .result(dialog: "「\(memo.title)」を完了にしました")
+en|return .result(dialog: "Completed '\(memo.title)'")
+ja|// 「この画面で」のような端末に依存する言い方はしない。full は音声だけで伝わる文にする
+en|// Avoid device-dependent wording like "on this screen". Make full work by voice alone
+ja|return .result(dialog: IntentDialog(full: "「\(memo.title)」を完了にしました", supporting: "完了にしました"))
+en|return .result(dialog: IntentDialog(full: "Completed '\(memo.title)'", supporting: "Completed"))

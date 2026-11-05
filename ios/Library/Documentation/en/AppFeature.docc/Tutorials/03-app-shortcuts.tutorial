@@ -1,0 +1,133 @@
+@Tutorial(time: 20) {
+    @Intro(title: "Fix phrases with App Shortcuts") {
+        Creating an App Intent doesn't guarantee that people can call it by talking to Siri.
+        When you register phrases with `AppShortcutsProvider` ("say it this way to run this intent"),
+        they work in Siri, Spotlight and the Shortcuts app right after the app is installed.
+
+        Sources: `docs/apple-doc/shortcuts/app-shortcuts.md`,
+        [App Shortcuts](https://developer.apple.com/documentation/appintents/app-shortcuts),
+        [Human Interface Guidelines: App Shortcuts](https://developer.apple.com/design/human-interface-guidelines/app-shortcuts)
+    }
+
+    @Section(title: "Write an AppShortcutsProvider") {
+        @ContentAndMedia {
+            An App Shortcut combines an App Intent with a title, an icon and the phrases people say.
+            The whole app has exactly one type that conforms to `AppShortcutsProvider`, and you list them there.
+        }
+
+        @Steps {
+            @Step {
+                Create a struct that conforms to `AppShortcutsProvider`. You don't call any registration API;
+                the compiler finds this type and generates the metadata.
+
+                @Code(name: "MemoShortcuts.swift", file: "MemoShortcuts-01.swift")
+            }
+
+            @Step {
+                Write the first `AppShortcut` in `appShortcuts`. Pass the App Intent to run as `intent`,
+                and the ways people say it as `phrases`. Every phrase must include `\(.applicationName)`;
+                a phrase without the app name can't be registered.
+
+                @Code(name: "MemoShortcuts.swift", file: "MemoShortcuts-02.swift", previousFile: "MemoShortcuts-01.swift")
+            }
+
+            @Step {
+                Add `shortTitle` and `systemImageName`. Tiles in the Shortcuts app and Spotlight
+                show this short name and SF Symbols icon.
+
+                @Code(name: "MemoShortcuts.swift", file: "MemoShortcuts-03.swift", previousFile: "MemoShortcuts-02.swift")
+            }
+
+            @Step {
+                Add a second phrase that contains `\(\.$priority)`. That part is filled with a value
+                of `AddMemoIntent`'s `priority` parameter (Low, Normal or High).
+                Only parameters of `AppEnum` or `AppEntity` types can go into a phrase;
+                a `String` such as `title` can't. Siri asks for the title after the shortcut runs.
+
+                @Code(name: "MemoShortcuts.swift", file: "MemoShortcuts-04.swift", previousFile: "MemoShortcuts-03.swift")
+            }
+
+            @Step {
+                Add a shortcut for chapter 1's `CompleteMemoIntent`. `\(\.$memo)` is a `MemoEntity`,
+                so people can say the memo's title itself as part of the phrase, as in "Complete Buy milk in Memo".
+
+                @Code(name: "MemoShortcuts.swift", file: "MemoShortcuts-05.swift", previousFile: "MemoShortcuts-04.swift")
+            }
+
+            @Step {
+                Set the color of the app's tiles in the Shortcuts app with `shortcutTileColor`.
+
+                @Code(name: "MemoShortcuts.swift", file: "MemoShortcuts-06.swift", previousFile: "MemoShortcuts-05.swift")
+            }
+
+            @Step {
+                A phrase with an embedded entity, like `\(\.$memo)`, can only be recognized if the system
+                already knows the list of memo titles. Whenever memos are added or removed,
+                call `updateAppShortcutParameters()` so the system reads the results of `suggestedEntities()` again.
+
+                @Code(name: "MemoStore+Shortcuts.swift", file: "MemoStore+Shortcuts-01.swift")
+            }
+
+            @Step {
+                Conversely, you can register phrases that should not launch this app
+                in `AppShortcutsProvider`'s `negativePhrases`.
+                Apple states that it may anonymize localized phrases and display names and use them to train models,
+                so choose natural phrasings that people actually say.
+
+                @Code(name: "MemoShortcuts.swift", file: "MemoShortcuts-07.swift", previousFile: "MemoShortcuts-06.swift")
+            }
+        }
+    }
+
+    @Section(title: "Teach phrases inside the app") {
+        @ContentAndMedia {
+            The Shortcuts app discovers phrases automatically, but people using your app rarely get a chance to learn them.
+            Put a hint on the app's screen.
+        }
+
+        @Steps {
+            @Step {
+                Create a view to place below the memo list.
+
+                @Code(name: "MemoListFooter.swift", file: "MemoListFooter-01.swift")
+            }
+
+            @Step {
+                Pass the intent to `SiriTipView`, and the phrase registered for that intent is shown
+                as a hint like "Try saying to Siri: …".
+
+                @Code(name: "MemoListFooter.swift", file: "MemoListFooter-02.swift", previousFile: "MemoListFooter-01.swift")
+            }
+
+            @Step {
+                Arrange them in a `VStack` and add a `ShortcutsLink`. Tapping it opens
+                this app's list of shortcuts in the Shortcuts app.
+
+                @Code(name: "MemoListFooter.swift", file: "MemoListFooter-03.swift", previousFile: "MemoListFooter-02.swift")
+            }
+
+            @Step {
+                App Shortcuts can also be assigned to the Action button on iPhone and Apple Watch.
+                When it's pressed from the Action button, the person may not be looking at the screen,
+                so make sure the spoken response you build in chapter 4 conveys the result on its own.
+
+                @Code(name: "MemoShortcuts.swift", file: "MemoShortcuts-08.swift", previousFile: "MemoShortcuts-07.swift")
+            }
+        }
+    }
+
+    @Section(title: "Next steps") {
+        @ContentAndMedia {
+            Have Claude Code set phrases, icons and a tile color for the intents you built in chapter 2.
+        }
+
+        @Steps {
+            @Step {
+                When you've understood the chapter, paste this into Claude Code. It handles the implementation
+                through building and checking that it works.
+
+                @Code(name: "prompt.txt", file: "03-prompt.txt")
+            }
+        }
+    }
+}
