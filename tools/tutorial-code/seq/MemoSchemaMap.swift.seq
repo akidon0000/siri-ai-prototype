@@ -1,11 +1,35 @@
 #name MemoSchemaMap.swift
 1|import AppIntents
 1|
-1|// Siriで使えるドメイン（Reminders・Mail・Photosなど）のスキーマに合わせると、Siriにも公開される
+1|// Siriで使えるPrimary domain（Swiftでの書き方）:
+1|//   .audio  https://developer.apple.com/documentation/appintents/app-schema-domain-audio
+1|//   .calendar  https://developer.apple.com/documentation/appintents/app-schema-domain-calendar
+1|//   .camera  https://developer.apple.com/documentation/appintents/app-schema-domain-camera
+1|//   .clock  https://developer.apple.com/documentation/appintents/app-schema-domain-clock
+1|//   .mail  https://developer.apple.com/documentation/appintents/app-schema-domain-mail
+1|//   .maps  https://developer.apple.com/documentation/appintents/app-schema-domain-maps
+1|//   .messages  https://developer.apple.com/documentation/appintents/app-schema-domain-messages
+1|//   .notes  https://developer.apple.com/documentation/appintents/app-schema-domain-notes
+1|//   .phone  https://developer.apple.com/documentation/appintents/app-schema-domain-phone
+1|//   .photos  https://developer.apple.com/documentation/appintents/app-schema-domain-photos
+1|//   .reminders  https://developer.apple.com/documentation/appintents/app-schema-domain-reminders
+1|//   .system  https://developer.apple.com/documentation/appintents/app-schema-domain-system-and-in-app-search
+1|//   Video（SDK 27.1に無い）  https://developer.apple.com/documentation/appintents/app-schema-domain-video
+1|// これらのスキーマに合わせると、Siriにも公開される
 1|@AppIntent(schema: .reminders.createReminder)
 1|struct CreateMemoIntent { /* … */ }
 1|
-1|// Shortcutsアプリでだけ使えるドメイン（Journaling・Booksなど）のスキーマは、Siriには公開されない
+1|// Shortcutsアプリでだけ使えるドメイン:
+1|//   .books  https://developer.apple.com/documentation/appintents/app-schema-domain-books
+1|//   .browser  https://developer.apple.com/documentation/appintents/app-schema-domain-browser
+1|//   .files  https://developer.apple.com/documentation/appintents/app-schema-domain-files
+1|//   .journal  https://developer.apple.com/documentation/appintents/app-schema-domain-journaling
+1|//   .presentation  https://developer.apple.com/documentation/appintents/app-schema-domain-presentation
+1|//   .reader  https://developer.apple.com/documentation/appintents/app-schema-domain-reader
+1|//   .spreadsheet  https://developer.apple.com/documentation/appintents/app-schema-domain-spreadsheet
+1|//   .whiteboard  https://developer.apple.com/documentation/appintents/app-schema-domain-whiteboard
+1|//   .wordProcessor  https://developer.apple.com/documentation/appintents/app-schema-domain-word-processor
+1|// これらのスキーマは、Siriには公開されない
 1|@AppIntent(schema: .journal.createEntry)
 1|struct CreateJournalEntryIntent { /* … */ }
 2|
@@ -13,6 +37,10 @@
 2|@AppEntity(schema: .reminders.reminder)
 2|struct MemoEntity { /* … */ }
 2|// 更新と削除も .reminders.updateReminder と .reminders.deleteReminders に合わせる
+2|// Remindersのintentは createReminder・updateReminder・deleteReminders・createList・createSection の5つ
+2|// EntityはreminderとlistとsectionとgroupとlocationTrigger、Enumは listType と locationTriggerEvent
+2|// Notesにも createNote・updateNote・appendText と、note・folder・account のEntityがある
+2|// 完了や期限を持たない文章中心のメモなら、Notesのスキーマが合う
 3|
 3|// Mailのように use-case group を持つドメインでは、組のスキーマを全て採用する
 3|// 一部だけを採用すると、欠けているスキーマごとにビルド警告が出る

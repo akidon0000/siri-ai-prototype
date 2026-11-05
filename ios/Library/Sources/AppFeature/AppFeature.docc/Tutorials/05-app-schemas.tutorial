@@ -32,6 +32,9 @@
                 完了・未完了を扱うRemindersが合う。Remindersには `createReminder`・`updateReminder`・
                 `deleteReminders` などのintentスキーマと、`reminder`・`list` などのEntityスキーマがある。
                 ドメインの本来の目的に合わない機能には、スキーマを当てはめない。
+                Primary domainのスキーマに合わせたアプリは、Siriからそのドメインのアプリとして扱われる。
+                Notesにも `createNote`・`updateNote`・`appendText` があるので、
+                完了や期限を持たない文章中心のメモなら、Notesのスキーマを選ぶ。
 
                 @Code(name: "MemoSchemaMap.swift", file: "MemoSchemaMap-02.swift", previousFile: "MemoSchemaMap-01.swift")
             }

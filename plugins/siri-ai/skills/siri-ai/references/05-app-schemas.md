@@ -13,7 +13,7 @@
 スキーマは「ドメイン」ごとにまとまっている。まずアプリの機能に合うドメインを探す。
 
 1. Siriで使えるPrimary domainは、Audio・Calendar・Camera・Clock・Mail・Maps・Messages・ Notes・Phone・Photos・Reminders・System and in-app search・Video。Books・Browser・Files・Journaling・Presentation・Reader・Spreadsheet・Whiteboard・ Word processorは、Shortcutsアプリでだけ使えるドメイン。この章で合わせるスキーマを、見取り図として先に並べておく。 — コード: `MemoSchemaMap.swift`
-2. Memoは「タイトル」と「完了状態」を持つので、メモ帳のNotesより、完了・未完了を扱うRemindersが合う。Remindersには `createReminder`・`updateReminder`・ `deleteReminders` などのintentスキーマと、`reminder`・`list` などのEntityスキーマがある。ドメインの本来の目的に合わない機能には、スキーマを当てはめない。 — コード: `MemoSchemaMap.swift`
+2. Memoは「タイトル」と「完了状態」を持つので、メモ帳のNotesより、完了・未完了を扱うRemindersが合う。Remindersには `createReminder`・`updateReminder`・ `deleteReminders` などのintentスキーマと、`reminder`・`list` などのEntityスキーマがある。ドメインの本来の目的に合わない機能には、スキーマを当てはめない。Primary domainのスキーマに合わせたアプリは、Siriからそのドメインのアプリとして扱われる。Notesにも `createNote`・`updateNote`・`appendText` があるので、完了や期限を持たない文章中心のメモなら、Notesのスキーマを選ぶ。 — コード: `MemoSchemaMap.swift`
 3. Audio・Clock・Mail・Maps・Messagesには「use-case group」という、同じ目的のスキーマの組がある。Siri AIで使うには組の全てを採用する必要があり、一部だけを採用するとXcodeが欠けているスキーマごとにビルド警告を出す。Remindersにはこの組が無いので、Memoアプリでは気にしなくてよい。 — コード: `MemoSchemaMap.swift`
 4. Xcodeで `reminders_` と入力すると、スキーマを選ぶ補完候補が出て、必要なプロパティが全て入ったテンプレートを展開できる。以降のコードはこのテンプレートから作る。 — コード: `MemoSchemaMap.swift`
 
@@ -24,11 +24,35 @@
 ```swift
 import AppIntents
 
-// Siriで使えるドメイン（Reminders・Mail・Photosなど）のスキーマに合わせると、Siriにも公開される
+// Siriで使えるPrimary domain（Swiftでの書き方）:
+//   .audio  https://developer.apple.com/documentation/appintents/app-schema-domain-audio
+//   .calendar  https://developer.apple.com/documentation/appintents/app-schema-domain-calendar
+//   .camera  https://developer.apple.com/documentation/appintents/app-schema-domain-camera
+//   .clock  https://developer.apple.com/documentation/appintents/app-schema-domain-clock
+//   .mail  https://developer.apple.com/documentation/appintents/app-schema-domain-mail
+//   .maps  https://developer.apple.com/documentation/appintents/app-schema-domain-maps
+//   .messages  https://developer.apple.com/documentation/appintents/app-schema-domain-messages
+//   .notes  https://developer.apple.com/documentation/appintents/app-schema-domain-notes
+//   .phone  https://developer.apple.com/documentation/appintents/app-schema-domain-phone
+//   .photos  https://developer.apple.com/documentation/appintents/app-schema-domain-photos
+//   .reminders  https://developer.apple.com/documentation/appintents/app-schema-domain-reminders
+//   .system  https://developer.apple.com/documentation/appintents/app-schema-domain-system-and-in-app-search
+//   Video（SDK 27.1に無い）  https://developer.apple.com/documentation/appintents/app-schema-domain-video
+// これらのスキーマに合わせると、Siriにも公開される
 @AppIntent(schema: .reminders.createReminder)
 struct CreateMemoIntent { /* … */ }
 
-// Shortcutsアプリでだけ使えるドメイン（Journaling・Booksなど）のスキーマは、Siriには公開されない
+// Shortcutsアプリでだけ使えるドメイン:
+//   .books  https://developer.apple.com/documentation/appintents/app-schema-domain-books
+//   .browser  https://developer.apple.com/documentation/appintents/app-schema-domain-browser
+//   .files  https://developer.apple.com/documentation/appintents/app-schema-domain-files
+//   .journal  https://developer.apple.com/documentation/appintents/app-schema-domain-journaling
+//   .presentation  https://developer.apple.com/documentation/appintents/app-schema-domain-presentation
+//   .reader  https://developer.apple.com/documentation/appintents/app-schema-domain-reader
+//   .spreadsheet  https://developer.apple.com/documentation/appintents/app-schema-domain-spreadsheet
+//   .whiteboard  https://developer.apple.com/documentation/appintents/app-schema-domain-whiteboard
+//   .wordProcessor  https://developer.apple.com/documentation/appintents/app-schema-domain-word-processor
+// これらのスキーマは、Siriには公開されない
 @AppIntent(schema: .journal.createEntry)
 struct CreateJournalEntryIntent { /* … */ }
 
@@ -36,6 +60,10 @@ struct CreateJournalEntryIntent { /* … */ }
 @AppEntity(schema: .reminders.reminder)
 struct MemoEntity { /* … */ }
 // 更新と削除も .reminders.updateReminder と .reminders.deleteReminders に合わせる
+// Remindersのintentは createReminder・updateReminder・deleteReminders・createList・createSection の5つ
+// EntityはreminderとlistとsectionとgroupとlocationTrigger、Enumは listType と locationTriggerEvent
+// Notesにも createNote・updateNote・appendText と、note・folder・account のEntityがある
+// 完了や期限を持たない文章中心のメモなら、Notesのスキーマが合う
 
 // Mailのように use-case group を持つドメインでは、組のスキーマを全て採用する
 // 一部だけを採用すると、欠けているスキーマごとにビルド警告が出る
